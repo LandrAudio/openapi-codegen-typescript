@@ -1,5 +1,13 @@
 # OpenApi-codegen-typescript
 
+## Installation
+
+yarn
+`yarn add -D openapi-codegen-typescript`
+npm
+`npm install openapi-codegen-typescript --save-dev`
+
+## Description
 What is this library for?
 
   - For fetching json file (mostly for "Swagger json")
@@ -68,3 +76,28 @@ async function main() {
 
 main();
 ```
+
+## Methods:
+
+#### fetchSwaggerJsonFile(url)
+`url`: `string` - url to swagger json file 
+
+Returns a swagger json object;
+
+#### convertToTypes({ json, fileName, folderPath, swaggerVersion })
+`json`: `object` - swagger json data;
+`fileName`: `string` - name of the file, where typescript types data will be saved;
+`folderPath`: `string` - folder path the `fileName`, where typescript types data will be saved;
+`swaggerVersion`: `number` - version of the swagger json file (specification). `1` by default;
+
+Returns `void`;
+
+#### convertToMocks({ json, fileName, folderPath, typesPath, swaggerVersion })
+`json`: `object` - swagger json data;
+`fileName`: `string` - name of the file, where mocks data will be saved;
+`folderPath`: `string` - folder path the `fileName`, where mocks data will be saved;
+`typesPath`: `string` - folder path to `types`, where typescript types data are saved. 
+Path to `types` will be inserted to the type imports in generated mocks (generated -> import {...} from `typesPath`;);
+`swaggerVersion`: `number` - version of the swagger json file (specification);
+
+Returns `void`;

@@ -1,22 +1,40 @@
 {
     "name": "openapi-codegen-typescript",
     "version": "0.1.0",
-    "description": "",
+    "description": "OpenApi codegen for generating types an mocks from swagger json file",
     "main": "dist/index.ts",
     "types": "dist/index.d.ts",
     "private": true,
+    "repository": "LandrAudio/openapi-codegen-typescript",
+    "author": {
+        "name": "Artem Diashkin",
+        "email": "nemrosim1988@gmail.com",
+        "url": "https://github.com/nemrosim"
+    },
+    "license": "MIT",
+    "keywords": [
+        "openapi",
+        "open-api",
+        "swagger",
+        "parser",
+        "codegen",
+        "typescript",
+        "mocks",
+        "fakes"
+    ],
     "scripts": {
         "build": "tsc",
-        "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix && tsc --noEmit",
-        "prettify": "prettier --config ./.prettierrc.js --write",
-        "test": "jest --watchAll -u --coverage"
+        "test": "jest --watchAll -u --coverage",
+        "auto:version": "yarn version --`auto version` --message 'Bump version to: %s [skip ci]'",
+        "auto:publish": "yarn publish && git push --follow-tags --set-upstream origin $CIRCLE_BRANCH",
+        "release": "auto changelog && yarn auto:version && yarn auto:publish && auto release"
     },
     "devDependencies": {
         "@types/jest": "24.9.1",
         "@types/node": "13.7.4",
         "@typescript-eslint/eslint-plugin": "2.20.0",
         "@typescript-eslint/parser": "2.20.0",
-        "casual": "1.6.2",
+        "auto": "^9.13.0",
         "eslint": "6.8.0",
         "eslint-config-prettier": "6.10.0",
         "eslint-loader": "3.0.3",
@@ -31,6 +49,7 @@
         "typescript": "3.8.2"
     },
     "dependencies": {
+        "casual": "1.6.2",
         "node-fetch": "2.6.0"
     }
 }
