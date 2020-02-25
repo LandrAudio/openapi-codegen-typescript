@@ -7,9 +7,8 @@ import {
     StringFormats,
     SwaggerProps,
 } from './types';
-import { getSchemaProperties, getSchemas, writeToFile } from './shared';
+import {getSchemaProperties, getSchemas, hashedString, writeToFile} from './shared';
 import casual from 'casual';
-casual.seed(123);
 
 const parseRefType = (refType: string[]): string => refType[refType.length - 1];
 
@@ -46,6 +45,8 @@ function getStringFakeValue({
     minLength: number;
     maxLength: number;
 }) {
+    casual.seed(hashedString(name+propertyName));
+
     if (!format) {
         return `'${propertyName}-${name.toLowerCase()}'`;
     } else if (format === StringFormats.Guid || propertyName === PropertyNames.Id) {
@@ -101,6 +102,8 @@ export const parseSchema = ({ schema, name, DTOs }: { schema: any; name: any; DT
         if (obj.properties) {
             getSchemaProperties(obj.properties).map(
                 ({ propertyName, $ref, items, type, format, maxLength, minLength, oneOf, minimum, maximum }) => {
+                    casual.seed(hashedString(name+propertyName));
+
                     if (type === DataTypes.String) {
                         mocks.push({
                             propertyName,
@@ -229,10 +232,9 @@ export const convertToMocks = ({
     fileName,
     folderPath,
     typesPath,
-    swaggerVersion = 1,
-}: ConvertToMocksProps): void => {
+    swaggerVersion = 3,
+}: ConvertToMocksProps): string => {
     const schemas = getSchemas({ json, swaggerVersion });
-    console.log('schemas', schemas);
 
     const imports = Object.keys(schemas).join(', ');
 
@@ -241,9 +243,12 @@ export const convertToMocks = ({
     const importsDescription = `import {${imports}} from '${typesPath}';\n`;
 
     const result = parseSchemas({ json, swaggerVersion });
+    const resultString = `${disableNoUse}${disableNoUsedVars}${importsDescription}${result}`;
     writeToFile({
         folderPath,
         fileName,
-        resultString: `${disableNoUse}${disableNoUsedVars}${importsDescription}${result}`,
+        resultString,
     });
+
+    return resultString;
 };

@@ -1,4 +1,4 @@
-import { parseEnum, parseObject, parseSchemas } from '../typesConverter';
+import { parseEnum, parseObject, parseSchemas } from '../src/typesConverter';
 
 describe('TS types generation', () => {
     it('should convert id guid property', async () => {
@@ -541,7 +541,7 @@ export interface AssetDto {
             },
         };
 
-        const resultString = parseSchemas({ json: example, swaggerVersion: 1 });
+        const resultString = parseSchemas({ json: example, swaggerVersion: 3 });
 
         const expectedString = `export interface AssetDto {
     id: string; // format: "guid"
@@ -581,7 +581,7 @@ export type FileKind = 'Original' | 'Stream' | 'Waveform';
             },
         };
 
-        const resultString = parseSchemas({ json: example, swaggerVersion: 1 });
+        const resultString = parseSchemas({ json: example, swaggerVersion: 3 });
 
         const expectedString = '// TODO: ERROR! Something wrong with FileState \n \n';
 
@@ -623,7 +623,7 @@ export type FileKind = 'Original' | 'Stream' | 'Waveform';
             },
         };
 
-        const resultString = parseSchemas({ json: example, swaggerVersion: 1 });
+        const resultString = parseSchemas({ json: example, swaggerVersion: 3 });
 
         const expectedString = `export interface AssetDto {
     id: string; // format: "guid"
