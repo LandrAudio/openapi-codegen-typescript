@@ -4,13 +4,17 @@
     "description": "OpenApi codegen for generating types an mocks from swagger json file",
     "main": "dist/index.ts",
     "types": "dist/index.d.ts",
-    "private": true,
     "repository": "LandrAudio/openapi-codegen-typescript",
     "author": {
+        "name": "LANDR Audio Inc.",
+        "email": "development@landr.com",
+        "url": "https://github.com/LandrAudio"
+    },
+    "contributors": [{
         "name": "Artem Diashkin",
         "email": "nemrosim1988@gmail.com",
         "url": "https://github.com/nemrosim"
-    },
+    }],
     "license": "MIT",
     "keywords": [
         "openapi",
