@@ -296,7 +296,6 @@ export const parseSchemas = ({ json, swaggerVersion }: GetSchemasProps) => {
 };
 
 export const convertToTypes = ({ json, fileName, folderPath, swaggerVersion }: ConvertToTypesProps) => {
-    console.log('VERSION:', swaggerVersion);
     const resultString = parseSchemas({ json, swaggerVersion });
     writeToFile({
         folderPath,

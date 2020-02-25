@@ -1,4 +1,7 @@
-import { combineProperties, getSchemaInterfaces, parseSchema } from '../mockConverter';
+import { combineProperties, convertToMocks, getSchemaInterfaces, parseSchema, parseSchemas } from '../mockConverter';
+jest.mock('fs');
+
+const fs = require('fs');
 
 describe('Mock generation', () => {
     it('should generate number type', async () => {
@@ -21,7 +24,7 @@ describe('Mock generation', () => {
         const expectedString = `
 export const aServiceTypeDtoAPI = (overrides?: Partial<ServiceTypeDto>): ServiceTypeDto => {
   return {
-    price: 69.646918727085,
+    price: 11.842845170758665,
   ...overrides,
   };
 };
@@ -213,8 +216,8 @@ export const aDatesAPI = (overrides?: Partial<Dates>): Dates => {
   return {
     refType: [anAssetDtoAPI()],
   oneOf: ['Community'],
-  simpleType: ['quo'],
-  maxItems: ['quis'],
+  simpleType: ['pariatur'],
+  maxItems: ['autem'],
   ...overrides,
   };
 };
@@ -270,7 +273,7 @@ export const aDatesAPI = (overrides?: Partial<Dates>): Dates => {
         const expectedString = `
 export const anAssetDtoAPI = (overrides?: Partial<AssetDto>): AssetDto => {
   return {
-    id: '73b8bb76-df6a-4972-965a-a5730b69ba27',
+    id: 'b0803452-5ceb-4ba3-ba9f-0c84b4b5262f',
   name: 'name-assetdto',
   isConfigured: true,
   type: 'Audio',
@@ -406,9 +409,9 @@ export const aCreateBriefDtoAPI = (overrides?: Partial<CreateBriefDto>): CreateB
     title: 'title-createbriefdto',
   description: 'description-createbriefdto',
   briefType: 'Contest',
-  inspirationalLinks: ['dolor'],
+  inspirationalLinks: ['ipsa'],
   serviceType: aServiceTypeBasicDtoAPI(),
-  providerServiceId: '08b86a4d-6bb9-45b6-9a55-234fac1c6062',
+  providerServiceId: '674371a6-fd8b-41b2-94f0-321c64b7e346',
   ...overrides,
   };
 };
@@ -541,6 +544,114 @@ export const aCreateServiceDtoAPI = (overrides?: Partial<CreateServiceDto>): Cre
   ...overrides,
   };
 };
+`;
+        expect(result).toEqual(expectedString);
+    });
+
+    it('should properly parse schemas', async () => {
+        fs.existsSync.mockReturnValue(false);
+        fs.mkdirSync.mockReturnValue(false);
+
+        const json = {
+            paths: {},
+            servers: {},
+            info: {},
+            components: {
+                schemas: {
+                    One: {
+                        type: 'object',
+                        properties: {
+                            name: {
+                                type: 'string',
+                            },
+                        },
+                    },
+                    Two: {
+                        type: 'object',
+                        properties: {
+                            name: {
+                                type: 'number',
+                            },
+                        },
+                    },
+                },
+            },
+        };
+
+        const result = parseSchemas({ json, swaggerVersion: 3 });
+
+        const expectedString = `
+export const anOneAPI = (overrides?: Partial<One>): One => {
+  return {
+    name: 'name-one',
+  ...overrides,
+  };
+};
+
+export const aTwoAPI = (overrides?: Partial<Two>): Two => {
+  return {
+    name: 29.84020493226126,
+  ...overrides,
+  };
+};
+ 
+`;
+        expect(result).toEqual(expectedString);
+    });
+
+    it('should convert to mocks hole json object', async () => {
+        const json = {
+            paths: {},
+            servers: {},
+            info: {},
+            components: {
+                schemas: {
+                    One: {
+                        type: 'object',
+                        properties: {
+                            name: {
+                                type: 'string',
+                            },
+                        },
+                    },
+                    Two: {
+                        type: 'object',
+                        properties: {
+                            name: {
+                                type: 'number',
+                            },
+                        },
+                    },
+                },
+            },
+        };
+
+        const result = await convertToMocks({
+            json,
+            fileName: 'doesnt matter',
+            folderPath: './someFolder',
+            typesPath: './pathToTypes',
+            swaggerVersion: 3,
+        });
+
+        const expectedString = `/* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {One, Two} from './pathToTypes';
+
+export const anOneAPI = (overrides?: Partial<One>): One => {
+  return {
+    name: 'name-one',
+  ...overrides,
+  };
+};
+
+export const aTwoAPI = (overrides?: Partial<Two>): Two => {
+  return {
+    name: 29.84020493226126,
+  ...overrides,
+  };
+};
+ 
 `;
         expect(result).toEqual(expectedString);
     });

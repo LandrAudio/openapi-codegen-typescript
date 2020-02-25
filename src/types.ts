@@ -73,7 +73,7 @@ export interface ConvertToMocksProps {
 
 export interface GetSchemasProps {
     json: { components?: { schemas?: any }; definitions?: any };
-    swaggerVersion: number;
+    swaggerVersion?: number;
 }
 
 export interface ResultStringPropsForNumberType extends ResultStringProps {
