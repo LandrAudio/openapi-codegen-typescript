@@ -10,11 +10,13 @@
         "email": "development@landr.com",
         "url": "https://github.com/LandrAudio"
     },
-    "contributors": [{
-        "name": "Artem Diashkin",
-        "email": "nemrosim1988@gmail.com",
-        "url": "https://github.com/nemrosim"
-    }],
+    "contributors": [
+        {
+            "name": "Artem Diashkin",
+            "email": "nemrosim1988@gmail.com",
+            "url": "https://github.com/nemrosim"
+        }
+    ],
     "license": "MIT",
     "keywords": [
         "openapi",
@@ -55,5 +57,10 @@
     "dependencies": {
         "casual": "1.6.2",
         "node-fetch": "2.6.0"
-    }
+    },
+    "files": [
+        "dist/**/*",
+        "LICENCE",
+        "README.md"
+    ]
 }
