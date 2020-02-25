@@ -1,4 +1,4 @@
-import { combineProperties, convertToMocks, getSchemaInterfaces, parseSchema, parseSchemas } from '../mockConverter';
+import { combineProperties, convertToMocks, getSchemaInterfaces, parseSchema, parseSchemas } from '../src/mockConverter';
 jest.mock('fs');
 
 const fs = require('fs');

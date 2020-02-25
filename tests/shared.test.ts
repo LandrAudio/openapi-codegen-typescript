@@ -1,7 +1,7 @@
 jest.mock('node-fetch');
 jest.mock('fs');
 
-import { fetchSwaggerJsonFile, getSchemas, hashedString, writeToFile } from '../shared';
+import { fetchSwaggerJsonFile, getSchemas, hashedString, writeToFile } from '../src/shared';
 const { Response } = jest.requireActual('node-fetch');
 const fetch = require('node-fetch');
 const fs = require('fs');
@@ -202,7 +202,7 @@ describe('TS types generation', () => {
         fs.existsSync.mockReturnValue(false);
         fs.mkdirSync.mockReturnValue(false);
 
-        const result = writeToFile({
+        writeToFile({
             fileName: 'test',
             folderPath: './not-existing-folder/some',
             resultString: 'result',

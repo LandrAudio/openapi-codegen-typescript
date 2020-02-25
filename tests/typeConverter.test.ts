@@ -1,4 +1,4 @@
-import { parseEnum, parseObject, parseSchemas } from '../typesConverter';
+import { parseEnum, parseObject, parseSchemas } from '../src/typesConverter';
 
 describe('TS types generation', () => {
     it('should convert id guid property', async () => {
