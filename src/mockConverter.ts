@@ -7,7 +7,7 @@ import {
     StringFormats,
     SwaggerProps,
 } from './types';
-import {getSchemaProperties, getSchemas, hashedString, writeToFile} from './shared';
+import { getSchemaProperties, getSchemas, hashedString, writeToFile } from './shared';
 import casual from 'casual';
 
 const parseRefType = (refType: string[]): string => refType[refType.length - 1];
@@ -45,7 +45,7 @@ function getStringFakeValue({
     minLength: number;
     maxLength: number;
 }) {
-    casual.seed(hashedString(name+propertyName));
+    casual.seed(hashedString(name + propertyName));
 
     if (!format) {
         return `'${propertyName}-${name.toLowerCase()}'`;
@@ -93,6 +93,26 @@ export const combineProperties = ({ schema, schemas, interfaces }: any) => {
     }
 };
 
+export const convertRefType = ({
+    propertyName,
+    ref,
+    isArray = false,
+}: {
+    propertyName: string;
+    ref: any;
+    isArray?: boolean;
+}) => {
+    if (isArray) {
+        return { propertyName, value: ownPropString(propertyName, `[${isAn(ref)}${ref}API()]`) };
+    } else {
+        return { propertyName, value: ownPropString(propertyName, `${isAn(ref)}${ref}API()`) };
+    }
+};
+
+const ownPropString = (propName: string, result: string) => {
+    return `overrides?.hasOwnProperty('${propName}') ? overrides?.${propName} : ${result}`;
+};
+
 export const parseSchema = ({ schema, name, DTOs }: { schema: any; name: any; DTOs?: any }) => {
     const parseSwaggerJsonObject = (obj: any, interfaces?: Array<string>): string => {
         obj = combineProperties({ schema: obj, schemas: DTOs, interfaces });
@@ -102,7 +122,7 @@ export const parseSchema = ({ schema, name, DTOs }: { schema: any; name: any; DT
         if (obj.properties) {
             getSchemaProperties(obj.properties).map(
                 ({ propertyName, $ref, items, type, format, maxLength, minLength, oneOf, minimum, maximum }) => {
-                    casual.seed(hashedString(name+propertyName));
+                    casual.seed(hashedString(name + propertyName));
 
                     if (type === DataTypes.String) {
                         mocks.push({
@@ -135,7 +155,7 @@ export const parseSchema = ({ schema, name, DTOs }: { schema: any; name: any; DT
                             if (schema && schema.enum) {
                                 mocks.push({ propertyName, value: `['${schema.enum[0]}']` });
                             } else {
-                                mocks.push({ propertyName, value: `[${isAn(ref)}${ref}API()]` });
+                                mocks.push(convertRefType({ propertyName, ref, isArray: true }));
                             }
                         } else {
                             const type = items.oneOf
@@ -162,7 +182,7 @@ export const parseSchema = ({ schema, name, DTOs }: { schema: any; name: any; DT
                         if (schema && schema.enum) {
                             mocks.push({ propertyName, value: `'${schema.enum[0]}'` });
                         } else {
-                            mocks.push({ propertyName, value: `${isAn(ref)}${ref}API()` });
+                            mocks.push(convertRefType({ propertyName, ref }));
                         }
                     }
 
@@ -175,7 +195,7 @@ export const parseSchema = ({ schema, name, DTOs }: { schema: any; name: any; DT
                         if (schema && schema.enum) {
                             mocks.push({ propertyName, value: `'${schema.enum[0]}'` });
                         } else if (schema) {
-                            mocks.push({ propertyName, value: `${isAn(ref)}${ref}API()` });
+                            mocks.push(convertRefType({ propertyName, ref }));
                         } else {
                             mocks.push({
                                 propertyName: `ERROR in ${propertyName} ref:${ref}`,
