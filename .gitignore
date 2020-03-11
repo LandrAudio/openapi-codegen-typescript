@@ -4,3 +4,4 @@ dist
 .idea
 coverage
 example.js
+src/generated
