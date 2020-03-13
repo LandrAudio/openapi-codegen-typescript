@@ -1,3 +1,15 @@
+# v0.1.4 (Fri Mar 13 2020)
+
+#### 🐛 Bug Fix
+
+- fix(openapi-codegen): fix TS2322: Type '"typeName"[] | undefined' is not assignable to type '"typeName"[]'. [#4](https://github.com/LandrAudio/openapi-codegen-typescript/pull/4) ([@nemrosim](https://github.com/nemrosim))
+
+#### Authors: 1
+
+- Artem Diashkin ([@nemrosim](https://github.com/nemrosim))
+
+---
+
 # v0.1.3 (Wed Feb 26 2020)
 
 #### 🐛  Bug Fix
