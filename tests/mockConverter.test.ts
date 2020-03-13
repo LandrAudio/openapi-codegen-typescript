@@ -220,7 +220,7 @@ export const aBooleanAPI = (overrides?: Partial<Boolean>): Boolean => {
         const expectedString = `
 export const aDatesAPI = (overrides?: Partial<Dates>): Dates => {
   return {
-    refType: overrides?.hasOwnProperty('refType') ? overrides?.refType : [anAssetDtoAPI()],
+    refType: overrides?.refType || [anAssetDtoAPI()],
   oneOf: ['Community'],
   simpleType: ['pariatur'],
   maxItems: ['autem'],
@@ -283,7 +283,7 @@ export const anAssetDtoAPI = (overrides?: Partial<AssetDto>): AssetDto => {
   name: 'name-assetdto',
   isConfigured: true,
   type: 'Audio',
-  files: overrides?.hasOwnProperty('files') ? overrides?.files : [anAssetFileDtoAPI()],
+  files: overrides?.files || [anAssetFileDtoAPI()],
   ...overrides,
   };
 };
@@ -343,8 +343,8 @@ export const anAssetDtoAPI = (overrides?: Partial<AssetDto>): AssetDto => {
         const expectedString = `
 export const aServiceTypeDtoAPI = (overrides?: Partial<ServiceTypeDto>): ServiceTypeDto => {
   return {
-    serviceCategory: overrides?.hasOwnProperty('serviceCategory') ? overrides?.serviceCategory : aServiceCategoryDtoAPI(),
-  priceRanges: overrides?.hasOwnProperty('priceRanges') ? overrides?.priceRanges : [aServiceTypePriceRangeDtoAPI()],
+    serviceCategory: overrides?.serviceCategory || aServiceCategoryDtoAPI(),
+  priceRanges: overrides?.priceRanges || [aServiceTypePriceRangeDtoAPI()],
   code: 'code-servicetypedto',
   ...overrides,
   };
@@ -416,7 +416,7 @@ export const aCreateBriefDtoAPI = (overrides?: Partial<CreateBriefDto>): CreateB
   description: 'description-createbriefdto',
   briefType: 'Contest',
   inspirationalLinks: ['ipsa'],
-  serviceType: overrides?.hasOwnProperty('serviceType') ? overrides?.serviceType : aServiceTypeBasicDtoAPI(),
+  serviceType: overrides?.serviceType || aServiceTypeBasicDtoAPI(),
   providerServiceId: '674371a6-fd8b-41b2-94f0-321c64b7e346',
   ...overrides,
   };
@@ -546,7 +546,7 @@ export const aPatchBriefDtoAPI = (overrides?: Partial<PatchBriefDto>): PatchBrie
         const expectedString = `
 export const aCreateServiceDtoAPI = (overrides?: Partial<CreateServiceDto>): CreateServiceDto => {
   return {
-    serviceType: overrides?.hasOwnProperty('serviceType') ? overrides?.serviceType : aServiceTypeBasicDtoAPI(),
+    serviceType: overrides?.serviceType || aServiceTypeBasicDtoAPI(),
   ...overrides,
   };
 };

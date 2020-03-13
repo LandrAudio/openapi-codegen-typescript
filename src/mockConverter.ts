@@ -110,7 +110,7 @@ export const convertRefType = ({
 };
 
 const ownPropString = (propName: string, result: string) => {
-    return `overrides?.hasOwnProperty('${propName}') ? overrides?.${propName} : ${result}`;
+    return `overrides?.${propName} || ${result}`;
 };
 
 export const parseSchema = ({ schema, name, DTOs }: { schema: any; name: any; DTOs?: any }) => {
