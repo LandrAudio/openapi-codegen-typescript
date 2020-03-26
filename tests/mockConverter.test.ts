@@ -38,6 +38,35 @@ export const aServiceTypeDtoAPI = (overrides?: Partial<ServiceTypeDto>): Service
         expect(result).toEqual(expectedString);
     });
 
+    it('should generate array of numbers type', async () => {
+        const schema = {
+            type: "object",
+            additionalProperties: false,
+            properties: {
+                data: {
+                    type: "array",
+                    nullable: true,
+                    items: {
+                        type: "number",
+                        format: "double"
+                    }
+                },
+            }
+        };
+
+        const result = parseSchema({ schema, name: 'VisualizationDto' });
+
+        const expectedString = `
+export const aVisualizationDtoAPI = (overrides?: Partial<VisualizationDto>): VisualizationDto => {
+  return {
+    data: [88.24278227984905,107.01676551252604],
+  ...overrides,
+  };
+};
+`;
+        expect(result).toEqual(expectedString);
+    });
+
     it('should get interfaces', async () => {
         const schema = {
             allOf: [

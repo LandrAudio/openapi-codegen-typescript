@@ -168,7 +168,11 @@ export const parseSchema = ({ schema, name, DTOs }: { schema: any; name: any; DT
                                     mocks.push({ propertyName, value: `['${schema.enum[0]}']` });
                                 }
                             } else {
-                                mocks.push({ propertyName, value: `['${casual.word}']` });
+                                if (items.type === DataTypes.Number) {
+                                    mocks.push({ propertyName, value: `[${casual.double()},${casual.double()}]` });
+                                } else {
+                                    mocks.push({ propertyName, value: `['${casual.word}']` });
+                                }
                             }
                         }
                     }
