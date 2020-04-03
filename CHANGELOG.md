@@ -1,3 +1,15 @@
+# v0.1.6 (Fri Apr 03 2020)
+
+#### 🐛 Bug Fix
+
+- build(deps): bump acorn from 6.4.0 to 6.4.1 [#6](https://github.com/LandrAudio/openapi-codegen-typescript/pull/6) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+
+#### Authors: 1
+
+- [@dependabot[bot]](https://github.com/dependabot[bot])
+
+---
+
 # v0.1.5 (Thu Mar 26 2020)
 
 #### 🐛 Bug Fix
