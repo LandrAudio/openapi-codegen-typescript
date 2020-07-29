@@ -30,6 +30,7 @@ export enum StringFormats {
     Hostname = 'hostname',
     Ipv4 = 'ipv4',
     Ipv6 = 'ipv6',
+    TimeSpan = 'time-span'
 }
 
 export enum StringAdditionalProps {
@@ -103,6 +104,42 @@ export interface MockArrayProps {
     value: any;
 }
 
+export interface GetStringMockProps {
+    name: string;
+    propertyName: string;
+    format: string;
+    minLength: number;
+    maxLength: number;
+}
+
+export interface GetNumberMockProps {
+    type: DataTypes.Integer | DataTypes.Number;
+    propertyName: string;
+    minimum: number;
+    maximum: number;
+}
+
+export interface GetArrayOfItemsMockProps {
+    propertyName: string;
+    items: any;
+    DTOs: any;
+    parseRefType: Function;
+}
+
+export interface GetArrayOfOneOfMockProps {
+    propertyName: string;
+    oneOf: any;
+    DTOs: any;
+    parseRefType: Function;
+}
+
+export interface GetRefTypeMockProps {
+    $ref: string;
+    propertyName: string;
+    DTOs: any;
+    parseRefType: Function;
+}
+
 export interface ParseProps {
     schema: any;
     schemaKey: string;
@@ -113,6 +150,25 @@ export interface SwaggerSchema {
     properties?: {
         type?: string;
     };
+}
+
+export interface ConvertRefType {
+    propertyName: string;
+    /**
+     * Reference to another object DTO
+     */
+    ref: string;
+    isArray?: boolean;
+}
+
+export interface ParseSchemaProps {
+    schema: any;
+    /**
+     * DTO name
+     * Examples: MembersEmailDto, InviteMembersRequestDto, InviteAssetsMembersRequestDto
+     */
+    name: any;
+    DTOs?: any;
 }
 
 export interface Props {

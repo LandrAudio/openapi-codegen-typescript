@@ -1,226 +1,194 @@
 import {
+    ConvertRefType,
     ConvertToMocksProps,
     DataTypes,
     GetSchemasProps,
     MockArrayProps,
-    PropertyNames,
-    StringFormats,
     SwaggerProps,
 } from './types';
 import { getSchemaProperties, getSchemas, hashedString, writeToFile } from './shared';
 import casual from 'casual';
+import { MockTypesGenerator } from './MockTypesGenerator';
 
 const parseRefType = (refType: string[]): string => refType[refType.length - 1];
 
-const getVariables = (varNamesAndValues: Array<MockArrayProps>) =>
-    varNamesAndValues.map((mock: MockArrayProps) => `  ${mock.propertyName}: ${mock.value},`).join('\n');
-
-const isAn = (word: string) => {
-    const symbol = word[0].toLowerCase();
-    const isAn =
-        symbol === 'a' || symbol === 'e' || symbol === 'i' || symbol === 'o' || symbol === 'y' || symbol === 'u';
-
-    return isAn ? 'an' : 'a';
-};
-
-const getMockTemplateString = ({ typeName, varNamesAndValues }: any) => `
-export const ${isAn(typeName)}${typeName}API = (overrides?: Partial<${typeName}>): ${typeName} => {
-  return {
-  ${getVariables(varNamesAndValues)}
-  ...overrides,
-  };
-};
-`;
-
-function getStringFakeValue({
-    name,
-    propertyName,
-    format,
-    minLength,
-    maxLength,
-}: {
-    name: string;
-    propertyName: string;
-    format: string;
-    minLength: number;
-    maxLength: number;
-}) {
-    casual.seed(hashedString(name + propertyName));
-
-    if (!format) {
-        return `'${propertyName}-${name.toLowerCase()}'`;
-    } else if (format === StringFormats.Guid || propertyName === PropertyNames.Id) {
-        return `'${casual.uuid}'`;
-    } else {
-        switch (format) {
-            case StringFormats.DateTime: {
-                return `'2019-06-10T06:20:01.389Z'`;
-            }
-            case StringFormats.Date: {
-                return `'2019-06-10'`;
-            }
-        }
-    }
+const getIsSchemaContainsAllOfArray = (schema:any) => {
+    return schema && schema[SwaggerProps.AllOf] && Array.isArray(schema[SwaggerProps.AllOf]);
 }
 
-export const getSchemaInterfaces = (schema: any): Array<string> | undefined => {
-    if (schema[SwaggerProps.AllOf] && Array.isArray(schema[SwaggerProps.AllOf])) {
-        return schema[SwaggerProps.AllOf]
+/**
+ * Get all interfaces that this schema exteds
+ * @param schema DTO schema
+ * @param DTOs all DTOs
+ */
+export const getSchemaInterfaces = (schema: any, DTOs: any): Array<string> | undefined => {
+
+    if (getIsSchemaContainsAllOfArray(schema)) {
+        const result = [] as Array<string>;
+
+        schema[SwaggerProps.AllOf]
             .filter((e: { $ref?: string }) => e[SwaggerProps.$ref])
-            .map((obj: any) => {
+            .forEach((obj: any) => {
                 const refType = obj[SwaggerProps.$ref].split('/');
-                return parseRefType(refType);
+                /*
+                Example: will return InviteMembersRequestDto
+                if "SomeDTo extends InviteMembersRequestDto"
+                 */
+                const parsedRefType = parseRefType(refType);
+
+                // Repeat "getSchemaInterfaces" in cycle for inner interfaces
+                const newSchema = DTOs[parsedRefType];
+                if (getIsSchemaContainsAllOfArray(newSchema)) {
+                    getSchemaInterfaces(newSchema, DTOs)?.forEach(b => {
+                        result.push(b);
+                    });
+                } else {
+                    if (newSchema) {
+                        result.push(parsedRefType);
+                    }
+                }
+
+                result.push(parsedRefType);
             });
+
+        return result;
     } else {
         return undefined;
     }
 };
 
-export const combineProperties = ({ schema, schemas, interfaces }: any) => {
-    if (interfaces) {
-        let properties = Object.assign({}, schema.properties);
-        interfaces.map((interfaceName: string) => {
-            const dto = schemas[interfaceName];
-            if (dto && dto.properties) {
-                properties = Object.assign(properties, dto.properties);
-            }
-        });
+interface CombinePropertiesProps {
+    schema: any;
+    schemas: any;
+    interfaces: Array<string>;
+}
 
-        schema.properties = properties;
-        return Object.assign({}, schema);
-    } else {
-        return schema;
-    }
+/**
+ * Combines all properties from extended DTOs into one object.
+ *
+ * @param schema
+ * @param schemas
+ * @param interfaces
+ */
+export const combineProperties = ({ schema, schemas, interfaces }: CombinePropertiesProps) => {
+    let properties = Object.assign({}, schema.properties);
+
+    interfaces.forEach((interfaceName: string) => {
+        const dto = schemas[interfaceName];
+
+        if (dto && dto.properties) {
+            properties = Object.assign(properties, dto.properties);
+        }
+
+        if (dto && dto[SwaggerProps.AllOf] && dto[SwaggerProps.AllOf][1].properties) {
+            properties = Object.assign(properties, dto[SwaggerProps.AllOf][1].properties);
+        }
+    });
+
+    schema.properties = properties;
+    return Object.assign({}, schema);
 };
 
-export const convertRefType = ({
-    propertyName,
-    ref,
-    isArray = false,
-}: {
-    propertyName: string;
-    ref: any;
-    isArray?: boolean;
-}) => {
-    if (isArray) {
-        return { propertyName, value: ownPropString(propertyName, `[${isAn(ref)}${ref}API()]`) };
-    } else {
-        return { propertyName, value: ownPropString(propertyName, `${isAn(ref)}${ref}API()`) };
-    }
-};
+interface ParseSchemaProps {
+    schema: any;
+    /**
+     * DTO name
+     * Examples: MembersEmailDto, InviteMembersRequestDto, InviteAssetsMembersRequestDto
+     */
+    name: any;
+    /**
+     * All parsed DTOs from swagger json file
+     */
+    DTOs?: any;
+}
 
-const ownPropString = (propName: string, result: string) => {
-    return `overrides?.${propName} || ${result}`;
-};
+export const parseSchema = ({ schema, name, DTOs }: ParseSchemaProps) => {
 
-export const parseSchema = ({ schema, name, DTOs }: { schema: any; name: any; DTOs?: any }) => {
     const parseSwaggerJsonObject = (obj: any, interfaces?: Array<string>): string => {
-        obj = combineProperties({ schema: obj, schemas: DTOs, interfaces });
+        if (interfaces) {
+            obj = combineProperties({ schema: obj, schemas: DTOs, interfaces });
+        }
 
         let mocks: Array<MockArrayProps> = [];
 
         if (obj.properties) {
-            getSchemaProperties(obj.properties).map(
-                ({ propertyName, $ref, items, type, format, maxLength, minLength, oneOf, minimum, maximum }) => {
-                    casual.seed(hashedString(name + propertyName));
+            const schemaProperties = getSchemaProperties(obj.properties);
 
-                    if (type === DataTypes.String) {
-                        mocks.push({
-                            propertyName,
-                            value: getStringFakeValue({ name, propertyName, format, minLength, maxLength }),
-                        });
-                    }
+            schemaProperties.forEach(props => {
+                const {
+                    propertyName,
+                    $ref,
+                    items,
+                    type,
+                    format,
+                    maxLength,
+                    minLength,
+                    oneOf,
+                    minimum,
+                    maximum,
+                } = props;
+                casual.seed(hashedString(name + propertyName));
 
-                    if (type === DataTypes.Integer || type === DataTypes.Number) {
-                        mocks.push({
-                            propertyName,
-                            value:
-                                type === DataTypes.Integer
-                                    ? casual.integer(minimum || 0, maximum || 30)
-                                    : casual.double(minimum || 0, maximum || 30),
-                        });
-                    }
+                const mockGenerator = new MockTypesGenerator(casual);
 
-                    if (type === DataTypes.Boolean) {
-                        mocks.push({ propertyName, value: true });
-                    }
+                if (type === DataTypes.String) {
 
-                    if (type === DataTypes.Array && items) {
-                        if (items[SwaggerProps.$ref]) {
-                            const refType = items[SwaggerProps.$ref].split('/');
+                    const stringMock = mockGenerator.getStringMock({
+                        name,
+                        propertyName,
+                        format,
+                        minLength,
+                        maxLength,
+                    });
+                    mocks.push(stringMock);
+                }
 
-                            const ref = parseRefType(refType);
+                if (type === DataTypes.Integer || type === DataTypes.Number) {
+                    const numberMock = mockGenerator.getNumberMock({ propertyName, type, minimum, maximum });
+                    mocks.push(numberMock);
+                }
 
-                            const schema = DTOs[ref];
-                            if (schema && schema.enum) {
-                                mocks.push({ propertyName, value: `['${schema.enum[0]}']` });
-                            } else {
-                                mocks.push(convertRefType({ propertyName, ref, isArray: true }));
-                            }
-                        } else {
-                            const type = items.oneOf
-                                ? parseRefType(items.oneOf[0][SwaggerProps.$ref].split('/'))
-                                : items.type;
+                if (type === DataTypes.Boolean) {
+                    const boolMock = mockGenerator.getBooleanMock(propertyName);
+                    mocks.push(boolMock);
+                }
 
-                            if (items.oneOf) {
-                                const schema = DTOs[type];
-                                if (schema && schema.enum) {
-                                    mocks.push({ propertyName, value: `['${schema.enum[0]}']` });
-                                }
-                            } else {
-                                if (items.type === DataTypes.Number) {
-                                    mocks.push({ propertyName, value: `[${casual.double()},${casual.double()}]` });
-                                } else {
-                                    mocks.push({ propertyName, value: `['${casual.word}']` });
-                                }
-                            }
-                        }
-                    }
+                if (type === DataTypes.Array && items) {
+                    const arrayOfItemsMock = mockGenerator.getArrayOfItemsMock({
+                        propertyName,
+                        items,
+                        DTOs,
+                        parseRefType,
+                    });
+                    mocks.push(arrayOfItemsMock);
+                }
 
-                    if (oneOf && Array.isArray(oneOf) && oneOf[0][SwaggerProps.$ref]) {
-                        const refType = oneOf[0][SwaggerProps.$ref].split('/');
+                if (oneOf && Array.isArray(oneOf) && oneOf[0][SwaggerProps.$ref]) {
+                    const arrayOneOf = mockGenerator.getArrayOfOneOfMock({
+                        propertyName,
+                        oneOf,
+                        DTOs,
+                        parseRefType,
+                    });
+                    mocks.push(arrayOneOf);
+                }
 
-                        const ref = parseRefType(refType);
-
-                        const schema = DTOs[ref];
-                        if (schema && schema.enum) {
-                            mocks.push({ propertyName, value: `'${schema.enum[0]}'` });
-                        } else {
-                            mocks.push(convertRefType({ propertyName, ref }));
-                        }
-                    }
-
-                    if ($ref) {
-                        const refType = $ref.split('/');
-
-                        const ref = parseRefType(refType);
-
-                        const schema = DTOs[ref];
-                        if (schema && schema.enum) {
-                            mocks.push({ propertyName, value: `'${schema.enum[0]}'` });
-                        } else if (schema) {
-                            mocks.push(convertRefType({ propertyName, ref }));
-                        } else {
-                            mocks.push({
-                                propertyName: `ERROR in ${propertyName} ref:${ref}`,
-                                value: 'NULL',
-                            });
-                        }
-                    }
-                },
-            );
+                if ($ref) {
+                    const ref = mockGenerator.getRefTypeMock({$ref, propertyName, DTOs, parseRefType})
+                    mocks.push(ref);
+                }
+            });
         }
 
-        return getMockTemplateString({ typeName: name, varNamesAndValues: mocks });
+        return MockTypesGenerator.getMockTemplateString({ typeName: name, varNamesAndValues: mocks });
     };
 
     if (schema[SwaggerProps.AllOf] && Array.isArray(schema[SwaggerProps.AllOf])) {
-        const interfaces = getSchemaInterfaces(schema);
 
-        return parseSwaggerJsonObject(
-            schema.allOf.find((schema: any) => schema.type),
-            interfaces,
-        );
+        const interfaces = getSchemaInterfaces(schema, DTOs);
+
+        const object = schema.allOf.find((schema: any) => schema.type);
+        return parseSwaggerJsonObject(object, interfaces);
     } else {
         return parseSwaggerJsonObject(schema);
     }
@@ -231,7 +199,7 @@ export const parseSchemas = ({ json, swaggerVersion }: GetSchemasProps) => {
     const DTOs = Object.keys(schemas);
 
     let resultString = '';
-    DTOs.map(dtoName => {
+    DTOs.forEach(dtoName => {
         try {
             const schema = schemas[dtoName];
             if (schema.type === DataTypes.Object || schema.allOf) {
@@ -267,7 +235,9 @@ export const convertToMocks = ({
     const importsDescription = `import {${imports}} from '${typesPath}';\n`;
 
     const result = parseSchemas({ json, swaggerVersion });
+
     const resultString = `${disableNoUse}${disableNoUsedVars}${importsDescription}${result}`;
+
     writeToFile({
         folderPath,
         fileName,
