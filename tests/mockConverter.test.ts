@@ -5,7 +5,7 @@ import {
     parseSchema,
     parseSchemas,
 } from '../src/mockConverter';
-import { Comment, InviteAssetsMembersRequestDto, MemberEmailDto } from './testData';
+import { MemberEmailDto, Comment, InviteAssetsMembersRequestDto } from '../src/testData';
 
 jest.mock('fs');
 
