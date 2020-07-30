@@ -30,6 +30,7 @@ export enum StringFormats {
     Hostname = 'hostname',
     Ipv4 = 'ipv4',
     Ipv6 = 'ipv6',
+    TimeSpan = 'time-span'
 }
 
 export enum StringAdditionalProps {

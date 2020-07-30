@@ -47,20 +47,26 @@ function getStringFakeValue({
 }) {
     casual.seed(hashedString(name + propertyName));
 
+    let value;
+
     if (!format) {
-        return `'${propertyName}-${name.toLowerCase()}'`;
+        // simple string
+        value = `'${propertyName}-${name.toLowerCase()}'`;
     } else if (format === StringFormats.Guid || propertyName === PropertyNames.Id) {
-        return `'${casual.uuid}'`;
-    } else {
-        switch (format) {
-            case StringFormats.DateTime: {
-                return `'2019-06-10T06:20:01.389Z'`;
-            }
-            case StringFormats.Date: {
-                return `'2019-06-10'`;
-            }
-        }
+        value = `'${casual.uuid}'`;
+    } else if (format === StringFormats.DateTime || format === StringFormats.TimeSpan) {
+        value = `'2019-06-10T06:20:01.389Z'`;
+    } else if (format === StringFormats.Date) {
+        value = `'2019-06-10'`;
+    } else if (format === StringFormats.Email) {
+        value = `'${casual.email}'`;
     }
+
+    if (!value) {
+        value = 'TODO: FIX';
+    }
+
+    return value;
 }
 
 export const getSchemaInterfaces = (schema: any): Array<string> | undefined => {
