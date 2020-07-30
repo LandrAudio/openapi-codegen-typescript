@@ -83,7 +83,7 @@ it('should get interfaces', async () => {
         ],
     };
 
-    const result = getSchemaInterfaces(schema);
+    const result = getSchemaInterfaces(schema, {});
     expect(result).toEqual(['One', 'Two']);
 });
 
@@ -616,7 +616,7 @@ it('should properly parse schemas', async () => {
     const result = parseSchemas({ json, swaggerVersion: 3 });
 
     const expectedString = `
-export const anOneAPI = (overrides?: Partial<One>): One => {
+export const aOneAPI = (overrides?: Partial<One>): One => {
   return {
     name: 'name-one',
   ...overrides,
@@ -673,7 +673,7 @@ it('should convert to mocks hole json object', async () => {
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {One, Two} from './pathToTypes';
 
-export const anOneAPI = (overrides?: Partial<One>): One => {
+export const aOneAPI = (overrides?: Partial<One>): One => {
   return {
     name: 'name-one',
   ...overrides,
@@ -689,6 +689,122 @@ export const aTwoAPI = (overrides?: Partial<Two>): Two => {
  
 `;
     expect(result).toEqual(expectedString);
+});
+
+it('should generate mocks for "InviteAssetsMembersRequestDto" (multiple extends)', async () => {
+    const json = {
+        paths: {},
+        servers: {},
+        info: {},
+        components: {
+            schemas: {
+                MembersEmailDto: {
+                    type: 'object',
+                    additionalProperties: false,
+                    required: ['members'],
+                    properties: {
+                        members: {
+                            type: 'array',
+                            items: {
+                                $ref: '#/components/schemas/MemberEmailDto',
+                            },
+                        },
+                    },
+                },
+                UserRole: {
+                    type: 'string',
+                    description: '',
+                    'x-enumNames': ['Owner', 'Collaborator', 'Viewer'],
+                    enum: ['Owner', 'Collaborator', 'Viewer'],
+                },
+                InviteMembersRequestDto: {
+                    allOf: [
+                        {
+                            $ref: '#/components/schemas/MembersEmailDto',
+                        },
+                        {
+                            type: 'object',
+                            additionalProperties: false,
+                            required: ['role'],
+                            properties: {
+                                message: {
+                                    type: 'string',
+                                    maxLength: 5000,
+                                    nullable: true,
+                                },
+                                role: {
+                                    $ref: '#/components/schemas/UserRole',
+                                },
+                            },
+                        },
+                    ],
+                },
+                InviteAssetsMembersRequestDto: {
+                    allOf: [
+                        {
+                            $ref: '#/components/schemas/InviteMembersRequestDto',
+                        },
+                        {
+                            type: 'object',
+                            additionalProperties: false,
+                            required: ['assetIds'],
+                            properties: {
+                                assetIds: {
+                                    type: 'array',
+                                    items: {
+                                        type: 'string',
+                                        format: 'guid',
+                                    },
+                                },
+                            },
+                        },
+                    ],
+                },
+            },
+        },
+    };
+
+    const expected = `/* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {MembersEmailDto, UserRole, InviteMembersRequestDto, InviteAssetsMembersRequestDto} from './pathToTypes';
+
+export const aMembersEmailDtoAPI = (overrides?: Partial<MembersEmailDto>): MembersEmailDto => {
+  return {
+    members: overrides?.members || [aMemberEmailDtoAPI()],
+  ...overrides,
+  };
+};
+
+export const anInviteMembersRequestDtoAPI = (overrides?: Partial<InviteMembersRequestDto>): InviteMembersRequestDto => {
+  return {
+    message: 'message-invitemembersrequestdto',
+  role: 'Owner',
+  members: overrides?.members || [aMemberEmailDtoAPI()],
+  ...overrides,
+  };
+};
+
+export const anInviteAssetsMembersRequestDtoAPI = (overrides?: Partial<InviteAssetsMembersRequestDto>): InviteAssetsMembersRequestDto => {
+  return {
+    assetIds: ['officiis'],
+  members: overrides?.members || [aMemberEmailDtoAPI()],
+  message: 'message-inviteassetsmembersrequestdto',
+  role: 'Owner',
+  ...overrides,
+  };
+};
+ 
+`;
+
+    const result = await convertToMocks({
+        json,
+        fileName: "doesn't matter",
+        folderPath: './someFolder',
+        typesPath: './pathToTypes',
+        swaggerVersion: 3,
+    });
+
+    expect(result).toEqual(expected);
 });
 
 it('should generate mocks for "MemberEmailDto" (email property)', async () => {
