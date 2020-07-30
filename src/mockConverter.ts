@@ -69,34 +69,81 @@ function getStringFakeValue({
     return value;
 }
 
-export const getSchemaInterfaces = (schema: any): Array<string> | undefined => {
-    if (schema[SwaggerProps.AllOf] && Array.isArray(schema[SwaggerProps.AllOf])) {
-        return schema[SwaggerProps.AllOf]
+const getIsSchemaContainsAllOfArray = (schema:any) => {
+    return schema && schema[SwaggerProps.AllOf] && Array.isArray(schema[SwaggerProps.AllOf]);
+}
+
+/**
+ * Get all interfaces that this schema exteds
+ * @param schema DTO schema
+ * @param DTOs all DTOs
+ */
+export const getSchemaInterfaces = (schema: any, DTOs: any): Array<string> | undefined => {
+
+    if (getIsSchemaContainsAllOfArray(schema)) {
+        const result = [] as Array<string>;
+
+        schema[SwaggerProps.AllOf]
             .filter((e: { $ref?: string }) => e[SwaggerProps.$ref])
-            .map((obj: any) => {
+            .forEach((obj: any) => {
                 const refType = obj[SwaggerProps.$ref].split('/');
-                return parseRefType(refType);
+                /*
+                Example: will return InviteMembersRequestDto
+                if "SomeDTo extends InviteMembersRequestDto"
+                 */
+                const parsedRefType = parseRefType(refType);
+
+                // Repeat "getSchemaInterfaces" in cycle for inner interfaces
+                const newSchema = DTOs[parsedRefType];
+                if (getIsSchemaContainsAllOfArray(newSchema)) {
+                    getSchemaInterfaces(newSchema, DTOs)?.forEach(b => {
+                        result.push(b);
+                    });
+                } else {
+                    if (newSchema) {
+                        result.push(parsedRefType);
+                    }
+                }
+
+                result.push(parsedRefType);
             });
+
+        return result;
     } else {
         return undefined;
     }
 };
 
-export const combineProperties = ({ schema, schemas, interfaces }: any) => {
-    if (interfaces) {
-        let properties = Object.assign({}, schema.properties);
-        interfaces.map((interfaceName: string) => {
-            const dto = schemas[interfaceName];
-            if (dto && dto.properties) {
-                properties = Object.assign(properties, dto.properties);
-            }
-        });
+interface CombinePropertiesProps {
+    schema: any;
+    schemas: any;
+    interfaces: Array<string>;
+}
 
-        schema.properties = properties;
-        return Object.assign({}, schema);
-    } else {
-        return schema;
-    }
+/**
+ * Combines all properties from extended DTOs into one object.
+ *
+ * @param schema
+ * @param schemas
+ * @param interfaces
+ */
+export const combineProperties = ({ schema, schemas, interfaces }: CombinePropertiesProps) => {
+    let properties = Object.assign({}, schema.properties);
+
+    interfaces.forEach((interfaceName: string) => {
+        const dto = schemas[interfaceName];
+
+        if (dto && dto.properties) {
+            properties = Object.assign(properties, dto.properties);
+        }
+
+        if (dto && dto[SwaggerProps.AllOf] && dto[SwaggerProps.AllOf][1].properties) {
+            properties = Object.assign(properties, dto[SwaggerProps.AllOf][1].properties);
+        }
+    });
+
+    schema.properties = properties;
+    return Object.assign({}, schema);
 };
 
 export const convertRefType = ({
@@ -119,16 +166,45 @@ const ownPropString = (propName: string, result: string) => {
     return `overrides?.${propName} || ${result}`;
 };
 
-export const parseSchema = ({ schema, name, DTOs }: { schema: any; name: any; DTOs?: any }) => {
+interface ParseSchemaProps {
+    schema: any;
+    /**
+     * DTO name
+     * Examples: MembersEmailDto, InviteMembersRequestDto, InviteAssetsMembersRequestDto
+     */
+    name: any;
+    /**
+     * All parsed DTOs from swagger json file
+     */
+    DTOs?: any;
+}
+
+export const parseSchema = ({ schema, name, DTOs }: ParseSchemaProps) => {
+
     const parseSwaggerJsonObject = (obj: any, interfaces?: Array<string>): string => {
-        obj = combineProperties({ schema: obj, schemas: DTOs, interfaces });
+        if (interfaces) {
+            obj = combineProperties({ schema: obj, schemas: DTOs, interfaces });
+        }
 
         let mocks: Array<MockArrayProps> = [];
 
         if (obj.properties) {
-            getSchemaProperties(obj.properties).map(
-                ({ propertyName, $ref, items, type, format, maxLength, minLength, oneOf, minimum, maximum }) => {
-                    casual.seed(hashedString(name + propertyName));
+            const schemaProperties = getSchemaProperties(obj.properties);
+
+            schemaProperties.forEach(props => {
+                const {
+                    propertyName,
+                    $ref,
+                    items,
+                    type,
+                    format,
+                    maxLength,
+                    minLength,
+                    oneOf,
+                    minimum,
+                    maximum,
+                } = props;
+                casual.seed(hashedString(name + propertyName));
 
                     if (type === DataTypes.String) {
                         mocks.push({
@@ -221,12 +297,11 @@ export const parseSchema = ({ schema, name, DTOs }: { schema: any; name: any; DT
     };
 
     if (schema[SwaggerProps.AllOf] && Array.isArray(schema[SwaggerProps.AllOf])) {
-        const interfaces = getSchemaInterfaces(schema);
 
-        return parseSwaggerJsonObject(
-            schema.allOf.find((schema: any) => schema.type),
-            interfaces,
-        );
+        const interfaces = getSchemaInterfaces(schema, DTOs);
+
+        const object = schema.allOf.find((schema: any) => schema.type);
+        return parseSwaggerJsonObject(object, interfaces);
     } else {
         return parseSwaggerJsonObject(schema);
     }
