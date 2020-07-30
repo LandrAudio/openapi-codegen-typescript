@@ -30,6 +30,7 @@ export enum StringFormats {
     Hostname = 'hostname',
     Ipv4 = 'ipv4',
     Ipv6 = 'ipv6',
+    TimeSpan = 'time-span'
 }
 
 export enum StringAdditionalProps {
@@ -51,8 +52,14 @@ export enum ArrayAdditionalProps {
     UniqueItems = 'uniqueItems',
 }
 
-export interface ResultStringProps {
+export interface PropertyNameProp {
+    /**
+     * DTO\'s property name
+     */
     propertyName: string;
+}
+
+export interface ResultStringProps extends PropertyNameProp{
     nullable?: boolean;
 }
 
@@ -98,9 +105,36 @@ export interface ResultStringPropsForStringType extends ResultStringProps {
     maxLength?: number;
 }
 
-export interface MockArrayProps {
-    propertyName: string;
+export interface MockArrayProps extends PropertyNameProp{
     value: any;
+}
+
+export interface GetStringMockProps extends PropertyNameProp{
+    name: string;
+    format: string;
+    minLength: number;
+    maxLength: number;
+}
+
+export interface GetNumberMockProps extends PropertyNameProp {
+    type: DataTypes.Integer | DataTypes.Number;
+    minimum: number;
+    maximum: number;
+}
+
+export interface GetArrayOfItemsMockProps extends PropertyNameProp {
+    items: any;
+    DTOs: any;
+}
+
+export interface GetArrayOfOneOfMockProps extends PropertyNameProp {
+    oneOf: any;
+    DTOs: any;
+}
+
+export interface GetRefTypeMockProps extends PropertyNameProp {
+    $ref: string;
+    DTOs: any;
 }
 
 export interface ParseProps {
@@ -115,15 +149,10 @@ export interface SwaggerSchema {
     };
 }
 
-export interface Props {
-    swaggerJsonUrl: string;
+export interface ConvertRefType extends PropertyNameProp {
     /**
-     * Example: './src/types'
+     * Reference to another object DTO
      */
-    folderPath: string;
-    /**
-     * Example: swagger-profiles
-     */
-    fileName: string;
-    shouldGenerateMocks?: boolean;
+    ref: string;
+    isArray?: boolean;
 }
