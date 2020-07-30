@@ -1,4 +1,5 @@
 import casual from 'casual';
+import indefinite from 'indefinite';
 import { hashedString } from './shared';
 import {
     ConvertRefType,
@@ -82,9 +83,8 @@ export class MockGenerateHelper {
      * @param propertyName
      * @param items
      * @param DTOs
-     * @param parseRefType
      */
-    getArrayOfItemsMock({ propertyName, items, DTOs, parseRefType }: GetArrayOfItemsMockProps): MockArrayProps {
+    getArrayOfItemsMock({ propertyName, items, DTOs }: GetArrayOfItemsMockProps): MockArrayProps {
         let result = {
             propertyName: `TODO: FIX ERROR in ${propertyName}`,
             value: 'NULL',
@@ -93,7 +93,7 @@ export class MockGenerateHelper {
         if (items[SwaggerProps.$ref]) {
             const refType = items[SwaggerProps.$ref].split('/');
 
-            const ref = parseRefType(refType);
+            const ref = MockGenerateHelper.parseRefType(refType);
 
             const schema = DTOs[ref];
             if (schema && schema.enum) {
@@ -102,7 +102,9 @@ export class MockGenerateHelper {
                 result = MockGenerateHelper.convertRefType({ propertyName, ref, isArray: true });
             }
         } else {
-            const type = items.oneOf ? parseRefType(items.oneOf[0][SwaggerProps.$ref].split('/')) : items.type;
+            const type = items.oneOf
+                ? MockGenerateHelper.parseRefType(items.oneOf[0][SwaggerProps.$ref].split('/'))
+                : items.type;
 
             if (items.oneOf) {
                 const schema = DTOs[type];
@@ -126,12 +128,11 @@ export class MockGenerateHelper {
      * @param propertyName
      * @param oneOf
      * @param DTOs
-     * @param parseRefType
      */
-    getDtoMock({ propertyName, oneOf, DTOs, parseRefType }: GetArrayOfOneOfMockProps): MockArrayProps {
+    getDtoMock({ propertyName, oneOf, DTOs }: GetArrayOfOneOfMockProps): MockArrayProps {
         const refType = oneOf[0][SwaggerProps.$ref].split('/');
 
-        const ref = parseRefType(refType);
+        const ref = MockGenerateHelper.parseRefType(refType);
 
         const schema = DTOs[ref];
         if (schema && schema.enum) {
@@ -141,7 +142,7 @@ export class MockGenerateHelper {
         }
     }
 
-    getRefTypeMock = ({ $ref, propertyName, DTOs, parseRefType }: GetRefTypeMockProps): MockArrayProps => {
+    getRefTypeMock = ({ $ref, propertyName, DTOs }: GetRefTypeMockProps): MockArrayProps => {
         let result = {
             propertyName: `TODO: FIX ERROR in ${propertyName} ref:${$ref}`,
             value: 'NULL',
@@ -149,7 +150,7 @@ export class MockGenerateHelper {
 
         const refType = $ref.split('/');
 
-        const ref = parseRefType(refType);
+        const ref = MockGenerateHelper.parseRefType(refType);
 
         const schema = DTOs[ref];
         if (schema && schema.enum) {
@@ -161,19 +162,13 @@ export class MockGenerateHelper {
         return result;
     };
 
-    static getIsAnOrA = (word: string) => {
-        const symbol = word[0].toLowerCase();
-        const isAn =
-            symbol === 'a' || symbol === 'e' || symbol === 'i' || symbol === 'o' || symbol === 'y' || symbol === 'u';
-
-        return isAn ? 'an' : 'a';
-    };
+    static parseRefType = (refType: string[]): string => refType[refType.length - 1];
 
     static joinVariableNamesAndValues = (varNamesAndValues: Array<MockArrayProps>): string =>
         varNamesAndValues.map((mock: MockArrayProps) => `  ${mock.propertyName}: ${mock.value},`).join('\n');
 
     static getMockTemplateString = ({ typeName, varNamesAndValues }: any) => {
-        const prefix = MockGenerateHelper.getIsAnOrA(typeName);
+        const prefix = indefinite(typeName, {articleOnly:true});
         const joinedVarsAndNames = MockGenerateHelper.joinVariableNamesAndValues(varNamesAndValues);
         return `
 export const ${prefix}${typeName}API = (overrides?: Partial<${typeName}>): ${typeName} => {
@@ -193,7 +188,7 @@ export const ${prefix}${typeName}API = (overrides?: Partial<${typeName}>): ${typ
         propertyName: string;
         value: any;
     } => {
-        const aOrAn = MockGenerateHelper.getIsAnOrA(ref);
+        const aOrAn = indefinite(ref, { articleOnly: true });
 
         let value;
         if (isArray) {

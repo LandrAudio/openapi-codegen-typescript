@@ -125,19 +125,16 @@ export interface GetNumberMockProps extends PropertyNameProp {
 export interface GetArrayOfItemsMockProps extends PropertyNameProp {
     items: any;
     DTOs: any;
-    parseRefType: Function;
 }
 
 export interface GetArrayOfOneOfMockProps extends PropertyNameProp {
     oneOf: any;
     DTOs: any;
-    parseRefType: Function;
 }
 
 export interface GetRefTypeMockProps extends PropertyNameProp {
     $ref: string;
     DTOs: any;
-    parseRefType: Function;
 }
 
 export interface ParseProps {

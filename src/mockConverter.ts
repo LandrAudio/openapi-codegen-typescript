@@ -1,17 +1,7 @@
-import {
-    ConvertToMocksProps,
-    DataTypes,
-    GetSchemasProps,
-    MockArrayProps,
-    PropertyNames,
-    StringFormats,
-    SwaggerProps,
-} from './types';
+import { ConvertToMocksProps, DataTypes, GetSchemasProps, MockArrayProps, SwaggerProps } from './types';
 import { getSchemaProperties, getSchemas, hashedString, writeToFile } from './shared';
 import casual from 'casual';
 import { MockGenerateHelper } from './MockGenerateHelper';
-
-const parseRefType = (refType: string[]): string => refType[refType.length - 1];
 
 const getIsSchemaContainsAllOfArray = (schema: any) => {
     return schema && schema[SwaggerProps.AllOf] && Array.isArray(schema[SwaggerProps.AllOf]);
@@ -34,7 +24,7 @@ export const getSchemaInterfaces = (schema: any, DTOs: any): Array<string> | und
                 Example: will return InviteMembersRequestDto
                 if "SomeDTo extends InviteMembersRequestDto"
                  */
-                const parsedRefType = parseRefType(refType);
+                const parsedRefType = MockGenerateHelper.parseRefType(refType);
 
                 // Repeat "getSchemaInterfaces" in cycle for inner interfaces
                 const newSchema = DTOs[parsedRefType];
@@ -165,7 +155,6 @@ export const parseSchema = ({ schema, name, DTOs }: ParseSchemaProps) => {
                         propertyName,
                         items,
                         DTOs,
-                        parseRefType,
                     });
                     mocks.push(arrayOfItemsMock);
                 }
@@ -175,13 +164,12 @@ export const parseSchema = ({ schema, name, DTOs }: ParseSchemaProps) => {
                         propertyName,
                         oneOf,
                         DTOs,
-                        parseRefType,
                     });
                     mocks.push(arrayOneOf);
                 }
 
                 if ($ref) {
-                    const ref = mockGenerator.getRefTypeMock({ $ref, propertyName, DTOs, parseRefType });
+                    const ref = mockGenerator.getRefTypeMock({ $ref, propertyName, DTOs });
                     mocks.push(ref);
                 }
             });
