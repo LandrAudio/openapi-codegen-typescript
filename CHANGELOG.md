@@ -1,3 +1,15 @@
+# v0.1.8 (Thu Jul 30 2020)
+
+#### 🐛 Bug Fix
+
+- fix(mocks-codegen): fix email and duration mocks, fix multiple extend DTOs mocks, add and use 'indefinite' npm package [#9](https://github.com/LandrAudio/openapi-codegen-typescript/pull/9) ([@nemrosim](https://github.com/nemrosim))
+
+#### Authors: 1
+
+- Artem Diashkin ([@nemrosim](https://github.com/nemrosim))
+
+---
+
 # (Mon Jul 20 2020)
 
 #### 🔩 Dependency Updates
