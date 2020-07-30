@@ -1,73 +1,7 @@
-import {
-    ConvertToMocksProps,
-    DataTypes,
-    GetSchemasProps,
-    MockArrayProps,
-    PropertyNames,
-    StringFormats,
-    SwaggerProps,
-} from './types';
+import { ConvertToMocksProps, DataTypes, GetSchemasProps, MockArrayProps, SwaggerProps } from './types';
 import { getSchemaProperties, getSchemas, hashedString, writeToFile } from './shared';
 import casual from 'casual';
-
-const parseRefType = (refType: string[]): string => refType[refType.length - 1];
-
-const getVariables = (varNamesAndValues: Array<MockArrayProps>) =>
-    varNamesAndValues.map((mock: MockArrayProps) => `  ${mock.propertyName}: ${mock.value},`).join('\n');
-
-const isAn = (word: string) => {
-    const symbol = word[0].toLowerCase();
-    const isAn =
-        symbol === 'a' || symbol === 'e' || symbol === 'i' || symbol === 'o' || symbol === 'y' || symbol === 'u';
-
-    return isAn ? 'an' : 'a';
-};
-
-const getMockTemplateString = ({ typeName, varNamesAndValues }: any) => `
-export const ${isAn(typeName)}${typeName}API = (overrides?: Partial<${typeName}>): ${typeName} => {
-  return {
-  ${getVariables(varNamesAndValues)}
-  ...overrides,
-  };
-};
-`;
-
-function getStringFakeValue({
-    name,
-    propertyName,
-    format,
-    minLength,
-    maxLength,
-}: {
-    name: string;
-    propertyName: string;
-    format: string;
-    minLength: number;
-    maxLength: number;
-}) {
-    casual.seed(hashedString(name + propertyName));
-
-    let value;
-
-    if (!format) {
-        // simple string
-        value = `'${propertyName}-${name.toLowerCase()}'`;
-    } else if (format === StringFormats.Guid || propertyName === PropertyNames.Id) {
-        value = `'${casual.uuid}'`;
-    } else if (format === StringFormats.DateTime || format === StringFormats.TimeSpan) {
-        value = `'2019-06-10T06:20:01.389Z'`;
-    } else if (format === StringFormats.Date) {
-        value = `'2019-06-10'`;
-    } else if (format === StringFormats.Email) {
-        value = `'${casual.email}'`;
-    }
-
-    if (!value) {
-        value = 'TODO: FIX';
-    }
-
-    return value;
-}
+import { MockGenerateHelper } from './MockGenerateHelper';
 
 const getIsSchemaContainsAllOfArray = (schema: any) => {
     return schema && schema[SwaggerProps.AllOf] && Array.isArray(schema[SwaggerProps.AllOf]);
@@ -90,7 +24,7 @@ export const getSchemaInterfaces = (schema: any, DTOs: any): Array<string> | und
                 Example: will return InviteMembersRequestDto
                 if "SomeDTo extends InviteMembersRequestDto"
                  */
-                const parsedRefType = parseRefType(refType);
+                const parsedRefType = MockGenerateHelper.parseRefType(refType);
 
                 // Repeat "getSchemaInterfaces" in cycle for inner interfaces
                 const newSchema = DTOs[parsedRefType];
@@ -154,26 +88,6 @@ export const combineProperties = ({ schema, schemas, interfaces }: CombineProper
     };
 };
 
-export const convertRefType = ({
-    propertyName,
-    ref,
-    isArray = false,
-}: {
-    propertyName: string;
-    ref: any;
-    isArray?: boolean;
-}) => {
-    if (isArray) {
-        return { propertyName, value: ownPropString(propertyName, `[${isAn(ref)}${ref}API()]`) };
-    } else {
-        return { propertyName, value: ownPropString(propertyName, `${isAn(ref)}${ref}API()`) };
-    }
-};
-
-const ownPropString = (propName: string, result: string) => {
-    return `overrides?.${propName} || ${result}`;
-};
-
 interface ParseSchemaProps {
     schema: any;
     /**
@@ -213,93 +127,55 @@ export const parseSchema = ({ schema, name, DTOs }: ParseSchemaProps) => {
                 } = props;
                 casual.seed(hashedString(name + propertyName));
 
+                const mockGenerator = new MockGenerateHelper(casual);
+
                 if (type === DataTypes.String) {
-                    mocks.push({
+                    const stringMock = mockGenerator.getStringMock({
+                        name,
                         propertyName,
-                        value: getStringFakeValue({ name, propertyName, format, minLength, maxLength }),
+                        format,
+                        minLength,
+                        maxLength,
                     });
+                    mocks.push(stringMock);
                 }
 
                 if (type === DataTypes.Integer || type === DataTypes.Number) {
-                    mocks.push({
-                        propertyName,
-                        value:
-                            type === DataTypes.Integer
-                                ? casual.integer(minimum || 0, maximum || 30)
-                                : casual.double(minimum || 0, maximum || 30),
-                    });
+                    const numberMock = mockGenerator.getNumberMock({ propertyName, type, minimum, maximum });
+                    mocks.push(numberMock);
                 }
 
                 if (type === DataTypes.Boolean) {
-                    mocks.push({ propertyName, value: true });
+                    const boolMock = mockGenerator.getBooleanMock(propertyName);
+                    mocks.push(boolMock);
                 }
 
                 if (type === DataTypes.Array && items) {
-                    if (items[SwaggerProps.$ref]) {
-                        const refType = items[SwaggerProps.$ref].split('/');
-
-                        const ref = parseRefType(refType);
-
-                        const schema = DTOs[ref];
-                        if (schema && schema.enum) {
-                            mocks.push({ propertyName, value: `['${schema.enum[0]}']` });
-                        } else {
-                            mocks.push(convertRefType({ propertyName, ref, isArray: true }));
-                        }
-                    } else {
-                        const type = items.oneOf
-                            ? parseRefType(items.oneOf[0][SwaggerProps.$ref].split('/'))
-                            : items.type;
-
-                        if (items.oneOf) {
-                            const schema = DTOs[type];
-                            if (schema && schema.enum) {
-                                mocks.push({ propertyName, value: `['${schema.enum[0]}']` });
-                            }
-                        } else {
-                            if (items.type === DataTypes.Number) {
-                                mocks.push({ propertyName, value: `[${casual.double()},${casual.double()}]` });
-                            } else {
-                                mocks.push({ propertyName, value: `['${casual.word}']` });
-                            }
-                        }
-                    }
+                    const arrayOfItemsMock = mockGenerator.getArrayOfItemsMock({
+                        propertyName,
+                        items,
+                        DTOs,
+                    });
+                    mocks.push(arrayOfItemsMock);
                 }
 
                 if (oneOf && Array.isArray(oneOf) && oneOf[0][SwaggerProps.$ref]) {
-                    const refType = oneOf[0][SwaggerProps.$ref].split('/');
-
-                    const ref = parseRefType(refType);
-
-                    const schema = DTOs[ref];
-                    if (schema && schema.enum) {
-                        mocks.push({ propertyName, value: `'${schema.enum[0]}'` });
-                    } else {
-                        mocks.push(convertRefType({ propertyName, ref }));
-                    }
+                    const arrayOneOf = mockGenerator.getDtoMock({
+                        propertyName,
+                        oneOf,
+                        DTOs,
+                    });
+                    mocks.push(arrayOneOf);
                 }
 
                 if ($ref) {
-                    const refType = $ref.split('/');
-
-                    const ref = parseRefType(refType);
-
-                    const schema = DTOs[ref];
-                    if (schema && schema.enum) {
-                        mocks.push({ propertyName, value: `'${schema.enum[0]}'` });
-                    } else if (schema) {
-                        mocks.push(convertRefType({ propertyName, ref }));
-                    } else {
-                        mocks.push({
-                            propertyName: `ERROR in ${propertyName} ref:${ref}`,
-                            value: 'NULL',
-                        });
-                    }
+                    const ref = mockGenerator.getRefTypeMock({ $ref, propertyName, DTOs });
+                    mocks.push(ref);
                 }
             });
         }
 
-        return getMockTemplateString({ typeName: name, varNamesAndValues: mocks });
+        return MockGenerateHelper.getMockTemplateString({ typeName: name, varNamesAndValues: mocks });
     };
 
     if (schema[SwaggerProps.AllOf] && Array.isArray(schema[SwaggerProps.AllOf])) {
@@ -317,7 +193,7 @@ export const parseSchemas = ({ json, swaggerVersion }: GetSchemasProps) => {
     const DTOs = Object.keys(schemas);
 
     let resultString = '';
-    DTOs.map(dtoName => {
+    DTOs.forEach(dtoName => {
         try {
             const schema = schemas[dtoName];
             if (schema.type === DataTypes.Object || schema.allOf) {
@@ -353,7 +229,9 @@ export const convertToMocks = ({
     const importsDescription = `import {${imports}} from '${typesPath}';\n`;
 
     const result = parseSchemas({ json, swaggerVersion });
+
     const resultString = `${disableNoUse}${disableNoUsedVars}${importsDescription}${result}`;
+
     writeToFile({
         folderPath,
         fileName,

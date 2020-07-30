@@ -616,7 +616,7 @@ it('should properly parse schemas', async () => {
     const result = parseSchemas({ json, swaggerVersion: 3 });
 
     const expectedString = `
-export const anOneAPI = (overrides?: Partial<One>): One => {
+export const aOneAPI = (overrides?: Partial<One>): One => {
   return {
     name: 'name-one',
   ...overrides,
@@ -673,7 +673,7 @@ it('should convert to mocks hole json object', async () => {
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {One, Two} from './pathToTypes';
 
-export const anOneAPI = (overrides?: Partial<One>): One => {
+export const aOneAPI = (overrides?: Partial<One>): One => {
   return {
     name: 'name-one',
   ...overrides,
