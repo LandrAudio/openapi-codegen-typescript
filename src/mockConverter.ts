@@ -1,4 +1,12 @@
-import { ConvertToMocksProps, DataTypes, GetSchemasProps, MockArrayProps, SwaggerProps } from './types';
+import {
+    ConvertToMocksProps,
+    DataTypes,
+    GetSchemasProps,
+    MockArrayProps,
+    PropertyNames,
+    StringFormats,
+    SwaggerProps,
+} from './types';
 import { getSchemaProperties, getSchemas, hashedString, writeToFile } from './shared';
 import casual from 'casual';
 import { MockGenerateHelper } from './MockGenerateHelper';
@@ -34,10 +42,8 @@ export const getSchemaInterfaces = (schema: any, DTOs: any): Array<string> | und
                     getSchemaInterfaces(newSchema, DTOs)?.forEach(b => {
                         result.push(b);
                     });
-                } else {
-                    if (newSchema) {
-                        result.push(parsedRefType);
-                    }
+                } else if (newSchema) {
+                    result.push(parsedRefType);
                 }
 
                 result.push(parsedRefType);
@@ -63,22 +69,33 @@ interface CombinePropertiesProps {
  * @param interfaces
  */
 export const combineProperties = ({ schema, schemas, interfaces }: CombinePropertiesProps) => {
-    let properties = Object.assign({}, schema.properties);
+    let combinedProperties = {
+        ...schema.properties,
+    };
 
     interfaces.forEach((interfaceName: string) => {
         const dto = schemas[interfaceName];
 
-        if (dto && dto.properties) {
-            properties = Object.assign(properties, dto.properties);
-        }
+        if (dto) {
+            let extendedDtoProps;
 
-        if (dto && dto[SwaggerProps.AllOf] && dto[SwaggerProps.AllOf][1].properties) {
-            properties = Object.assign(properties, dto[SwaggerProps.AllOf][1].properties);
+            if (dto.properties) {
+                extendedDtoProps = dto.properties;
+            } else if (dto[SwaggerProps.AllOf] && dto[SwaggerProps.AllOf][1].properties) {
+                extendedDtoProps = dto[SwaggerProps.AllOf][1].properties;
+            }
+
+            combinedProperties = {
+                ...combinedProperties,
+                ...extendedDtoProps,
+            };
         }
     });
 
-    schema.properties = properties;
-    return Object.assign({}, schema);
+    schema.properties = combinedProperties;
+    return {
+        ...schema,
+    };
 };
 
 interface ParseSchemaProps {
