@@ -192,9 +192,18 @@ const convertToTypesFromSchemaProperties = ({
                     } else {
                         const shouldShowBrackets = items.oneOf && items.oneOf.type ? '' : '[]';
 
-                        const type = items.oneOf
-                            ? parseRefType(items.oneOf[0][SwaggerProps.$ref].split('/'))
-                            : items[SwaggerProps.Type];
+                        let type = '';
+
+                        if(items.oneOf){
+                            type = parseRefType(items.oneOf[0][SwaggerProps.$ref].split('/'))
+                        } else {
+                            const swaggerType = items[SwaggerProps.Type];
+                            if (swaggerType === 'integer') {
+                                type = 'number';
+                            } else {
+                                type = swaggerType;
+                            }
+                        }
 
                         result += `${parseProperty({
                             propertyName,
