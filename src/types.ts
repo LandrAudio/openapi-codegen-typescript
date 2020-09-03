@@ -30,7 +30,7 @@ export enum StringFormats {
     Hostname = 'hostname',
     Ipv4 = 'ipv4',
     Ipv6 = 'ipv6',
-    TimeSpan = 'time-span'
+    TimeSpan = 'time-span',
 }
 
 export enum StringAdditionalProps {
@@ -59,7 +59,7 @@ export interface PropertyNameProp {
     propertyName: string;
 }
 
-export interface ResultStringProps extends PropertyNameProp{
+export interface ResultStringProps extends PropertyNameProp {
     nullable?: boolean;
 }
 
@@ -105,11 +105,11 @@ export interface ResultStringPropsForStringType extends ResultStringProps {
     maxLength?: number;
 }
 
-export interface MockArrayProps extends PropertyNameProp{
+export interface MockArrayProps extends PropertyNameProp {
     value: any;
 }
 
-export interface GetStringMockProps extends PropertyNameProp{
+export interface GetStringMockProps extends PropertyNameProp {
     name: string;
     format: string;
     minLength: number;
@@ -129,6 +129,13 @@ export interface GetArrayOfItemsMockProps extends PropertyNameProp {
 
 export interface GetArrayOfOneOfMockProps extends PropertyNameProp {
     oneOf: any;
+    DTOs: any;
+}
+
+export interface GetDictionaryMockProps extends PropertyNameProp {
+    propertyName: string;
+    xDictionaryKey: any;
+    additionalProperties: any;
     DTOs: any;
 }
 

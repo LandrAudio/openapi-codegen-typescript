@@ -124,6 +124,9 @@ export const parseSchema = ({ schema, name, DTOs }: ParseSchemaProps) => {
                     oneOf,
                     minimum,
                     maximum,
+                    // Dictionary types
+                    xDictionaryKey,
+                    additionalProperties,
                 } = props;
                 casual.seed(hashedString(name + propertyName));
 
@@ -171,6 +174,16 @@ export const parseSchema = ({ schema, name, DTOs }: ParseSchemaProps) => {
                 if ($ref) {
                     const ref = mockGenerator.getRefTypeMock({ $ref, propertyName, DTOs });
                     mocks.push(ref);
+                }
+
+                if (xDictionaryKey && additionalProperties) {
+                    mocks.push(
+                        mockGenerator.getDictionaryMock({ propertyName, xDictionaryKey, additionalProperties, DTOs }),
+                    );
+                }
+
+                if (!type && !$ref && !oneOf) {
+                    mocks.push(mockGenerator.getAnyMock({ propertyName }));
                 }
             });
         }

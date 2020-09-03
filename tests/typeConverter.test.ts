@@ -5,11 +5,11 @@ describe('TS types generation', () => {
         const schema = {
             type: 'object',
             properties: {
-                id: {format: 'guid', type: 'string'},
+                id: { format: 'guid', type: 'string' },
             },
         };
 
-        const result = parseObject({schema, schemaKey: 'TypeWithId'});
+        const result = parseObject({ schema, schemaKey: 'TypeWithId' });
 
         const expectedString = `export interface TypeWithId {
     id: string; // format: "guid"
@@ -35,7 +35,7 @@ describe('TS types generation', () => {
             },
         };
 
-        const result = parseObject({schema: swaggerJson, schemaKey: 'NumberType'});
+        const result = parseObject({ schema: swaggerJson, schemaKey: 'NumberType' });
 
         const expectedString = `export interface NumberType {
     price: number; // format: "decimal"; maximum: 100; exclusiveMinimum: true; exclusiveMaximum: true
@@ -59,7 +59,7 @@ describe('TS types generation', () => {
             },
         };
 
-        const result = parseObject({schema: swaggerJson, schemaKey: 'NumberType'});
+        const result = parseObject({ schema: swaggerJson, schemaKey: 'NumberType' });
 
         const expectedString = `export interface NumberType {
     price: number; // exclusiveMinimum: true; exclusiveMaximum: true
@@ -82,7 +82,7 @@ describe('TS types generation', () => {
             },
         };
 
-        const result = parseObject({schema: swaggerJson, schemaKey: 'Format'});
+        const result = parseObject({ schema: swaggerJson, schemaKey: 'Format' });
 
         const expectedString = `export interface Format {
     password: string; // format: "password"; minLength: 1; maxLength: 255
@@ -96,15 +96,15 @@ describe('TS types generation', () => {
             additionalProperties: false,
             description: 'DESCRIPTION',
             properties: {
-                id: {format: 'guid', type: 'string'},
-                name: {nullable: true, type: 'string'},
-                type: {$ref: '#/components/schemas/AssetType'},
-                files: {items: {$ref: '#/components/schemas/AssetFileDto'}, nullable: true, type: 'array'},
+                id: { format: 'guid', type: 'string' },
+                name: { nullable: true, type: 'string' },
+                type: { $ref: '#/components/schemas/AssetType' },
+                files: { items: { $ref: '#/components/schemas/AssetFileDto' }, nullable: true, type: 'array' },
             },
             type: 'object',
         };
 
-        const result = parseObject({schema: swaggerJson, schemaKey: 'AssetDto'});
+        const result = parseObject({ schema: swaggerJson, schemaKey: 'AssetDto' });
 
         const expectedString = `/**
  * DESCRIPTION
@@ -166,7 +166,7 @@ export interface AssetDto {
             ],
         };
 
-        const result = parseObject({schema: swaggerJson, schemaKey: 'ServiceTypeDto'});
+        const result = parseObject({ schema: swaggerJson, schemaKey: 'ServiceTypeDto' });
 
         const expectedString = `export interface ServiceTypeDto extends ServiceTypeBasicDto {
     description?: string;
@@ -199,7 +199,7 @@ export interface AssetDto {
             ],
         };
 
-        const result = parseObject({schema: swaggerJson, schemaKey: 'CustomType'});
+        const result = parseObject({ schema: swaggerJson, schemaKey: 'CustomType' });
 
         const expectedString = `export interface CustomType extends One, Two, Three {
 }
@@ -265,7 +265,7 @@ export interface AssetDto {
             },
         };
 
-        const result = parseObject({schema: swaggerJson, schemaKey: 'ServiceTypePriceRangeDto'});
+        const result = parseObject({ schema: swaggerJson, schemaKey: 'ServiceTypePriceRangeDto' });
 
         const expectedString = `export interface ServiceTypePriceRangeDto {
     priceTier: PriceTier;
@@ -307,7 +307,7 @@ export interface AssetDto {
             },
         };
 
-        const result = parseObject({schema: swaggerJson, schemaKey: 'PageOfAssetDto'});
+        const result = parseObject({ schema: swaggerJson, schemaKey: 'PageOfAssetDto' });
 
         const expectedString = `export interface PageOfAssetDto {
     data?: AssetDto[];
@@ -361,7 +361,7 @@ export interface AssetDto {
             },
         };
 
-        const result = parseObject({schema: swaggerJson, schemaKey: 'CreateBriefDto'});
+        const result = parseObject({ schema: swaggerJson, schemaKey: 'CreateBriefDto' });
 
         const expectedString = `export interface CreateBriefDto {
     title: string; // minLength: 1; maxLength: 255
@@ -418,7 +418,7 @@ export interface AssetDto {
             },
         };
 
-        const result = parseObject({schema: swaggerJson, schemaKey: 'AssetFileDto'});
+        const result = parseObject({ schema: swaggerJson, schemaKey: 'AssetFileDto' });
 
         const expectedString = `export interface AssetFileDto {
     state: FileState;
@@ -443,7 +443,7 @@ export interface AssetDto {
             enum: ['Audio', 'Video', 'Image', 'Youtube'],
         };
 
-        const result = parseEnum({schema: swaggerJson, schemaKey: 'AssetType'});
+        const result = parseEnum({ schema: swaggerJson, schemaKey: 'AssetType' });
 
         const expectedString = `export type AssetType = 'Audio' | 'Video' | 'Image' | 'Youtube';\n`;
 
@@ -541,7 +541,7 @@ export interface AssetDto {
             },
         };
 
-        const resultString = parseSchemas({json: example, swaggerVersion: 3});
+        const resultString = parseSchemas({ json: example, swaggerVersion: 3 });
 
         const expectedString = `export interface AssetDto {
     id: string; // format: "guid"
@@ -575,13 +575,13 @@ export type FileKind = 'Original' | 'Stream' | 'Waveform';
                     FileState: {
                         type: 'string',
                         description: '',
-                        $ref: {wrongData: 'wrongData'},
+                        $ref: { wrongData: 'wrongData' },
                     },
                 },
             },
         };
 
-        const resultString = parseSchemas({json: example, swaggerVersion: 3});
+        const resultString = parseSchemas({ json: example, swaggerVersion: 3 });
 
         const expectedString = '// TODO: ERROR! Something wrong with FileState \n \n';
 
@@ -623,7 +623,7 @@ export type FileKind = 'Original' | 'Stream' | 'Waveform';
             },
         };
 
-        const resultString = parseSchemas({json: example, swaggerVersion: 3});
+        const resultString = parseSchemas({ json: example, swaggerVersion: 3 });
 
         const expectedString = `export interface AssetDto {
     id: string; // format: "guid"
@@ -643,27 +643,104 @@ export interface AssetFileDto {
             components: {
                 schemas: {
                     ArrayOfIntegers: {
-                        type: "object",
+                        type: 'object',
                         additionalProperties: false,
                         properties: {
                             invoiceNumbers: {
-                                "type": "array",
-                                "nullable": true,
-                                "items": {
-                                    "type": "integer",
-                                    "format": "int64"
-                                }
-                            }
-                        }
+                                type: 'array',
+                                nullable: true,
+                                items: {
+                                    type: 'integer',
+                                    format: 'int64',
+                                },
+                            },
+                        },
                     },
                 },
             },
         };
 
-        const resultString = parseSchemas({json: example, swaggerVersion: 3});
+        const resultString = parseSchemas({ json: example, swaggerVersion: 3 });
 
         const expectedString = `export interface ArrayOfIntegers {
     invoiceNumbers?: number[];
+}
+ 
+`;
+        expect(resultString).toEqual(expectedString);
+    });
+
+    it('should return "any" type for property without a type', async () => {
+        const example = {
+            components: {
+                schemas: {
+                    Notification: {
+                        type: 'object',
+                        additionalProperties: false,
+                        properties: {
+                            payload: {
+                                nullable: true,
+                            },
+                        },
+                    },
+                },
+            },
+        };
+
+        const resultString = parseSchemas({ json: example, swaggerVersion: 3 });
+
+        const expectedString = `export interface Notification {
+    payload?: any;
+}
+ 
+`;
+        expect(resultString).toEqual(expectedString);
+    });
+
+    it('should return type for a "dictionary"', async () => {
+        const example = {
+            components: {
+                schemas: {
+                    BillingProviderKind: {
+                        type: 'string',
+                        description: '',
+                        'x-enumNames': ['Legacy', 'Fusebill'],
+                        enum: ['Legacy', 'Fusebill'],
+                    },
+                    ServiceOfferKind: {
+                        type: 'string',
+                        description: '',
+                        'x-enumNames': ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution'],
+                        enum: ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution'],
+                    },
+                    UserMetadata: {
+                        type: 'object',
+                        additionalProperties: false,
+                        properties: {
+                            serviceOffers: {
+                                type: 'object',
+                                nullable: true,
+                                'x-dictionaryKey': {
+                                    $ref: '#/components/schemas/ServiceOfferKind',
+                                },
+                                additionalProperties: {
+                                    $ref: '#/components/schemas/BillingProviderKind',
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        };
+
+        const resultString = parseSchemas({ json: example, swaggerVersion: 3 });
+
+        const expectedString = `export type BillingProviderKind = 'Legacy' | 'Fusebill';
+export type ServiceOfferKind = 'MasteringAndDistribution' | 'Video' | 'Samples' | 'Mastering' | 'Distribution';
+export interface UserMetadata {
+    serviceOffers: {
+[key in ServiceOfferKind]: BillingProviderKind; 
+ }
 }
  
 `;
