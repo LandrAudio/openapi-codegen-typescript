@@ -1,3 +1,15 @@
+# v0.1.10 (Thu Sep 03 2020)
+
+#### 🐛 Bug Fix
+
+- fix(mocks): fix "any" and "dictionary" types and mocks codegen [#13](https://github.com/LandrAudio/openapi-codegen-typescript/pull/13) ([@nemrosim](https://github.com/nemrosim))
+
+#### Authors: 1
+
+- Artem Diashkin ([@nemrosim](https://github.com/nemrosim))
+
+---
+
 # v0.1.9 (Thu Sep 03 2020)
 
 #### 🐛 Bug Fix
