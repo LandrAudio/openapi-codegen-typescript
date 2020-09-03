@@ -21,6 +21,9 @@ export const getSchemaProperties = (objectProps: any) =>
             minItems,
             maxItems,
             uniqueItems,
+            // Props for "Dictionary" type
+            'x-dictionaryKey': xDictionaryKey,
+            additionalProperties,
         } = objectProps[property];
 
         return {
@@ -40,6 +43,8 @@ export const getSchemaProperties = (objectProps: any) =>
             minItems,
             maxItems,
             uniqueItems,
+            xDictionaryKey,
+            additionalProperties,
         };
     });
 

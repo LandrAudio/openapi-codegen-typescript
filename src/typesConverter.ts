@@ -149,6 +149,8 @@ const convertToTypesFromSchemaProperties = ({
                 minItems,
                 maxItems,
                 uniqueItems,
+                xDictionaryKey,
+                additionalProperties,
             }) => {
                 if (type === DataTypes.String) {
                     result += getResultStringForStringType({
@@ -194,8 +196,8 @@ const convertToTypesFromSchemaProperties = ({
 
                         let type = '';
 
-                        if(items.oneOf){
-                            type = parseRefType(items.oneOf[0][SwaggerProps.$ref].split('/'))
+                        if (items.oneOf) {
+                            type = parseRefType(items.oneOf[0][SwaggerProps.$ref].split('/'));
                         } else {
                             const swaggerType = items[SwaggerProps.Type];
                             if (swaggerType === 'integer') {
@@ -228,6 +230,20 @@ const convertToTypesFromSchemaProperties = ({
                         format,
                         isArray: false,
                     });
+                }
+
+                if (!type && !$ref && !oneOf) {
+                    result += `    ${propertyName}${nullable ? '?' : ''}: any;\n`;
+                }
+
+                // Dictionary type
+                if (xDictionaryKey && additionalProperties) {
+                    const dictionaryRef = parseRefType(xDictionaryKey[SwaggerProps.$ref].split('/'));
+                    const additionalRef = parseRefType(additionalProperties[SwaggerProps.$ref].split('/'));
+                    console.log('Schema', schema);
+                    console.log('SchemaKey', schemaKey);
+
+                    result += `    ${propertyName}: {\n[key in ${dictionaryRef}]: ${additionalRef}; \n }\n`;
                 }
             },
         );

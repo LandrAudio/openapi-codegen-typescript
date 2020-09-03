@@ -6,6 +6,7 @@ import {
     DataTypes,
     GetArrayOfItemsMockProps,
     GetArrayOfOneOfMockProps,
+    GetDictionaryMockProps,
     GetNumberMockProps,
     GetRefTypeMockProps,
     GetStringMockProps,
@@ -144,6 +145,40 @@ export class MockGenerateHelper {
         }
     }
 
+    getDictionaryMock({
+        propertyName,
+        xDictionaryKey,
+        additionalProperties,
+        DTOs,
+    }: GetDictionaryMockProps): MockArrayProps {
+        const dictionaryRef = MockGenerateHelper.parseRefType(xDictionaryKey[SwaggerProps.$ref].split('/'));
+        const additionalRef = MockGenerateHelper.parseRefType(additionalProperties[SwaggerProps.$ref].split('/'));
+
+        const dicSchema = DTOs[dictionaryRef];
+        const additionalSchema = DTOs[additionalRef];
+
+        if (dicSchema && dicSchema.enum && additionalSchema && additionalSchema.enum) {
+            let value = `{ `;
+
+            dicSchema.enum.forEach((el: string) => {
+                value += `\n"${el}": "${additionalSchema.enum[0]}",`;
+            });
+
+            value += `\n}`;
+
+            return { propertyName, value };
+        } else {
+            return { propertyName, value: ' // TODO: Wrong dictionary type' };
+        }
+    }
+
+    getAnyMock({ propertyName }: { propertyName: string }): MockArrayProps {
+        return {
+            propertyName,
+            value: `'${propertyName.toLowerCase()}'`,
+        };
+    }
+
     getRefTypeMock = ({ $ref, propertyName, DTOs }: GetRefTypeMockProps): MockArrayProps => {
         let result = {
             propertyName: `TODO: FIX ERROR in ${propertyName} ref:${$ref}`,
@@ -170,7 +205,7 @@ export class MockGenerateHelper {
         varNamesAndValues.map((mock: MockArrayProps) => `  ${mock.propertyName}: ${mock.value},`).join('\n');
 
     static getMockTemplateString = ({ typeName, varNamesAndValues }: any) => {
-        const prefix = indefinite(typeName, {articleOnly:true});
+        const prefix = indefinite(typeName, { articleOnly: true });
         const joinedVarsAndNames = MockGenerateHelper.joinVariableNamesAndValues(varNamesAndValues);
         return `
 export const ${prefix}${typeName}API = (overrides?: Partial<${typeName}>): ${typeName} => {

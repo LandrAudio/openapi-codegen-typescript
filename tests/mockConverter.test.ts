@@ -860,40 +860,40 @@ it('should generate mocks for "Comment" (duration property)', async () => {
         components: {
             schemas: {
                 Comment: {
-                    type: "object",
+                    type: 'object',
                     additionalProperties: false,
                     properties: {
                         id: {
-                            type: "string",
-                            format: "guid"
+                            type: 'string',
+                            format: 'guid',
                         },
                         message: {
-                            type: "string",
-                            nullable: true
+                            type: 'string',
+                            nullable: true,
                         },
                         userId: {
-                            type: "string",
-                            format: "guid"
+                            type: 'string',
+                            format: 'guid',
                         },
                         annotationTime: {
-                            type: "string",
-                            format: "time-span",
-                            nullable: true
+                            type: 'string',
+                            format: 'time-span',
+                            nullable: true,
                         },
                         annotationDuration: {
-                            type: "string",
-                            format: "time-span",
-                            nullable: true
+                            type: 'string',
+                            format: 'time-span',
+                            nullable: true,
                         },
                         creationTime: {
-                            type: "string",
-                            format: "date-time"
+                            type: 'string',
+                            format: 'date-time',
                         },
                         lastModifiedTime: {
-                            type: "string",
-                            format: "date-time"
-                        }
-                    }
+                            type: 'string',
+                            format: 'date-time',
+                        },
+                    },
                 },
             },
         },
@@ -916,7 +916,7 @@ export const aCommentAPI = (overrides?: Partial<Comment>): Comment => {
   };
 };
  
-`
+`;
 
     const result = await convertToMocks({
         json,
@@ -937,18 +937,18 @@ it('should generate mocks for array of integers', async () => {
         components: {
             schemas: {
                 ArrayOfIntegers: {
-                    type: "object",
+                    type: 'object',
                     additionalProperties: false,
                     properties: {
                         invoiceNumbers: {
-                            "type": "array",
-                            "nullable": true,
-                            "items": {
-                                "type": "integer",
-                                "format": "int64"
-                            }
-                        }
-                    }
+                            type: 'array',
+                            nullable: true,
+                            items: {
+                                type: 'integer',
+                                format: 'int64',
+                            },
+                        },
+                    },
                 },
             },
         },
@@ -965,7 +965,118 @@ export const anArrayOfIntegersAPI = (overrides?: Partial<ArrayOfIntegers>): Arra
   };
 };
  
-`
+`;
+    const result = await convertToMocks({
+        json,
+        fileName: "doesn't matter",
+        folderPath: './someFolder',
+        typesPath: './pathToTypes',
+        swaggerVersion: 3,
+    });
+
+    expect(result).toEqual(expected);
+});
+
+it('should generate mocks for a property without a "type"', async () => {
+    const json = {
+        paths: {},
+        servers: {},
+        info: {},
+        components: {
+            schemas: {
+                Notification: {
+                    type: 'object',
+                    additionalProperties: false,
+                    properties: {
+                        payload: {
+                            nullable: true,
+                        },
+                    },
+                },
+            },
+        },
+    };
+
+    const expected = `/* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {Notification} from './pathToTypes';
+
+export const aNotificationAPI = (overrides?: Partial<Notification>): Notification => {
+  return {
+    payload: 'payload',
+  ...overrides,
+  };
+};
+ 
+`;
+    const result = await convertToMocks({
+        json,
+        fileName: "doesn't matter",
+        folderPath: './someFolder',
+        typesPath: './pathToTypes',
+        swaggerVersion: 3,
+    });
+
+    expect(result).toEqual(expected);
+});
+
+it('should generate mocks for a "dictionary" type', async () => {
+    const json = {
+        paths: {},
+        servers: {},
+        info: {},
+        components: {
+            schemas: {
+                BillingProviderKind: {
+                    type: 'string',
+                    description: '',
+                    'x-enumNames': ['Legacy', 'Fusebill'],
+                    enum: ['Legacy', 'Fusebill'],
+                },
+                ServiceOfferKind: {
+                    type: 'string',
+                    description: '',
+                    'x-enumNames': ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution'],
+                    enum: ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution'],
+                },
+                UserMetadata: {
+                    type: 'object',
+                    additionalProperties: false,
+                    properties: {
+                        serviceOffers: {
+                            type: 'object',
+                            nullable: true,
+                            'x-dictionaryKey': {
+                                $ref: '#/components/schemas/ServiceOfferKind',
+                            },
+                            additionalProperties: {
+                                $ref: '#/components/schemas/BillingProviderKind',
+                            },
+                        },
+                    },
+                },
+            },
+        },
+    };
+
+    const expected = `/* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {BillingProviderKind, ServiceOfferKind, UserMetadata} from './pathToTypes';
+
+export const anUserMetadataAPI = (overrides?: Partial<UserMetadata>): UserMetadata => {
+  return {
+    serviceOffers: { 
+"MasteringAndDistribution": "Legacy",
+"Video": "Legacy",
+"Samples": "Legacy",
+"Mastering": "Legacy",
+"Distribution": "Legacy",
+},
+  ...overrides,
+  };
+};
+ 
+`;
     const result = await convertToMocks({
         json,
         fileName: "doesn't matter",
