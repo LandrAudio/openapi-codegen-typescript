@@ -114,6 +114,8 @@ export class MockGenerateHelper {
             } else {
                 if (items.type === DataTypes.Number) {
                     result = { propertyName, value: `[${casual.double()},${casual.double()}]` };
+                } else if (items.type === DataTypes.Integer) {
+                    result = { propertyName, value: `[${casual.integer()},${casual.integer()}]` };
                 } else {
                     result = { propertyName, value: `['${casual.word}']` };
                 }

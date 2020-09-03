@@ -928,3 +928,51 @@ export const aCommentAPI = (overrides?: Partial<Comment>): Comment => {
 
     expect(result).toEqual(expected);
 });
+
+it('should generate mocks for array of integers', async () => {
+    const json = {
+        paths: {},
+        servers: {},
+        info: {},
+        components: {
+            schemas: {
+                ArrayOfIntegers: {
+                    type: "object",
+                    additionalProperties: false,
+                    properties: {
+                        invoiceNumbers: {
+                            "type": "array",
+                            "nullable": true,
+                            "items": {
+                                "type": "integer",
+                                "format": "int64"
+                            }
+                        }
+                    }
+                },
+            },
+        },
+    };
+
+    const expected = `/* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {ArrayOfIntegers} from './pathToTypes';
+
+export const anArrayOfIntegersAPI = (overrides?: Partial<ArrayOfIntegers>): ArrayOfIntegers => {
+  return {
+    invoiceNumbers: [-389,464],
+  ...overrides,
+  };
+};
+ 
+`
+    const result = await convertToMocks({
+        json,
+        fileName: "doesn't matter",
+        folderPath: './someFolder',
+        typesPath: './pathToTypes',
+        swaggerVersion: 3,
+    });
+
+    expect(result).toEqual(expected);
+});
