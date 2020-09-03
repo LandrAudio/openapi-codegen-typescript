@@ -1,3 +1,15 @@
+# v0.1.12 (Thu Sep 03 2020)
+
+#### 🐛 Bug Fix
+
+- fix(dictionary): fix codegen for object "dictionary" [#15](https://github.com/LandrAudio/openapi-codegen-typescript/pull/15) ([@nemrosim](https://github.com/nemrosim))
+
+#### Authors: 1
+
+- Artem Diashkin ([@nemrosim](https://github.com/nemrosim))
+
+---
+
 # v0.1.11 (Thu Sep 03 2020)
 
 #### 🐛 Bug Fix
