@@ -238,10 +238,23 @@ const convertToTypesFromSchemaProperties = ({
 
                 // Dictionary type
                 if (xDictionaryKey && additionalProperties) {
-                    const dictionaryRef = parseRefType(xDictionaryKey[SwaggerProps.$ref].split('/'));
-                    const additionalRef = parseRefType(additionalProperties[SwaggerProps.$ref].split('/'));
+                    // Enum keys and Enum/Object values
+                    if (xDictionaryKey[SwaggerProps.$ref] && additionalProperties[SwaggerProps.$ref]) {
+                        const dictionaryRef = parseRefType(xDictionaryKey[SwaggerProps.$ref].split('/'));
+                        const additionalRef = parseRefType(additionalProperties[SwaggerProps.$ref].split('/'));
 
-                    result += `    ${propertyName}: {\n[key in ${dictionaryRef}]: ${additionalRef}; \n }; \n`;
+                        result += `    ${propertyName}: {\n[key in ${dictionaryRef}]: ${additionalRef}; \n }; \n`;
+
+                        // Enum keys and Boolean values
+                    } else if (xDictionaryKey[SwaggerProps.$ref]) {
+                        if (additionalProperties.type && additionalProperties.type === DataTypes.Boolean) {
+                            const dictionaryRef = parseRefType(xDictionaryKey[SwaggerProps.$ref].split('/'));
+
+                            result += `    ${propertyName}: {\n[key in ${dictionaryRef}]: boolean; \n }; \n`;
+                        }
+                    } else {
+                        result += ' "// TODO: Something in wrong" ';
+                    }
                 }
             },
         );
