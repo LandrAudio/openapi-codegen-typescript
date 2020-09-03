@@ -241,7 +241,7 @@ const convertToTypesFromSchemaProperties = ({
                     const dictionaryRef = parseRefType(xDictionaryKey[SwaggerProps.$ref].split('/'));
                     const additionalRef = parseRefType(additionalProperties[SwaggerProps.$ref].split('/'));
 
-                    result += `    ${propertyName}: {\n[key in ${dictionaryRef}]: ${additionalRef}; \n }\n`;
+                    result += `    ${propertyName}: {\n[key in ${dictionaryRef}]: ${additionalRef}; \n }; \n`;
                 }
             },
         );
