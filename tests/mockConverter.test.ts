@@ -1020,7 +1020,7 @@ export const aNotificationAPI = (overrides?: Partial<Notification>): Notificatio
     expect(result).toEqual(expected);
 });
 
-it('should generate mocks for a "dictionary" type', async () => {
+it('should generate mocks for a enum "dictionary" type', async () => {
     const json = {
         paths: {},
         servers: {},
@@ -1053,6 +1053,16 @@ it('should generate mocks for a "dictionary" type', async () => {
                                 $ref: '#/components/schemas/BillingProviderKind',
                             },
                         },
+                        copy: {
+                            type: 'object',
+                            nullable: true,
+                            'x-dictionaryKey': {
+                                $ref: '#/components/schemas/ServiceOfferKind',
+                            },
+                            additionalProperties: {
+                                $ref: '#/components/schemas/BillingProviderKind',
+                            },
+                        },
                     },
                 },
             },
@@ -1071,6 +1081,132 @@ export const anUserMetadataAPI = (overrides?: Partial<UserMetadata>): UserMetada
 "Samples": "Legacy",
 "Mastering": "Legacy",
 "Distribution": "Legacy",
+},
+  copy: { 
+"MasteringAndDistribution": "Legacy",
+"Video": "Legacy",
+"Samples": "Legacy",
+"Mastering": "Legacy",
+"Distribution": "Legacy",
+},
+  ...overrides,
+  };
+};
+ 
+`;
+    const result = await convertToMocks({
+        json,
+        fileName: "doesn't matter",
+        folderPath: './someFolder',
+        typesPath: './pathToTypes',
+        swaggerVersion: 3,
+    });
+
+    expect(result).toEqual(expected);
+});
+
+it('should generate mocks for an object "dictionary" type', async () => {
+    const json = {
+        paths: {},
+        servers: {},
+        info: {},
+        components: {
+            schemas: {
+                ServiceOfferKind: {
+                    type: 'string',
+                    description: '',
+                    'x-enumNames': ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution'],
+                    enum: ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution'],
+                },
+                CurrentSubscription: {
+                    type: 'object',
+                    additionalProperties: false,
+                    properties: {
+                        creationDate: {
+                            type: 'string',
+                            format: 'date-time',
+                        },
+                        activationDate: {
+                            type: 'string',
+                            format: 'date-time',
+                            nullable: true,
+                        },
+                    },
+                },
+                NextSubscription: {
+                    type: 'object',
+                    additionalProperties: false,
+                    properties: {
+                        startDate: {
+                            type: 'string',
+                            format: 'date-time',
+                        },
+                    },
+                },
+                UserSubscriptions: {
+                    type: 'object',
+                    additionalProperties: false,
+                    properties: {
+                        current: {
+                            type: 'object',
+                            nullable: true,
+                            'x-dictionaryKey': {
+                                $ref: '#/components/schemas/ServiceOfferKind',
+                            },
+                            additionalProperties: {
+                                $ref: '#/components/schemas/CurrentSubscription',
+                            },
+                        },
+                        next: {
+                            type: 'object',
+                            nullable: true,
+                            'x-dictionaryKey': {
+                                $ref: '#/components/schemas/ServiceOfferKind',
+                            },
+                            additionalProperties: {
+                                $ref: '#/components/schemas/NextSubscription',
+                            },
+                        },
+                    },
+                },
+            },
+        },
+    };
+
+    const expected = `/* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {ServiceOfferKind, CurrentSubscription, NextSubscription, UserSubscriptions} from './pathToTypes';
+
+export const aCurrentSubscriptionAPI = (overrides?: Partial<CurrentSubscription>): CurrentSubscription => {
+  return {
+    creationDate: '2019-06-10T06:20:01.389Z',
+  activationDate: '2019-06-10T06:20:01.389Z',
+  ...overrides,
+  };
+};
+
+export const aNextSubscriptionAPI = (overrides?: Partial<NextSubscription>): NextSubscription => {
+  return {
+    startDate: '2019-06-10T06:20:01.389Z',
+  ...overrides,
+  };
+};
+
+export const anUserSubscriptionsAPI = (overrides?: Partial<UserSubscriptions>): UserSubscriptions => {
+  return {
+    current: { 
+"MasteringAndDistribution": aCurrentSubscriptionAPI(),
+"Video": aCurrentSubscriptionAPI(),
+"Samples": aCurrentSubscriptionAPI(),
+"Mastering": aCurrentSubscriptionAPI(),
+"Distribution": aCurrentSubscriptionAPI(),
+},
+  next: { 
+"MasteringAndDistribution": aNextSubscriptionAPI(),
+"Video": aNextSubscriptionAPI(),
+"Samples": aNextSubscriptionAPI(),
+"Mastering": aNextSubscriptionAPI(),
+"Distribution": aNextSubscriptionAPI(),
 },
   ...overrides,
   };

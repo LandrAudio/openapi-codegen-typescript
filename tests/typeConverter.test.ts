@@ -727,6 +727,16 @@ export interface AssetFileDto {
                                     $ref: '#/components/schemas/BillingProviderKind',
                                 },
                             },
+                            copy: {
+                                type: 'object',
+                                nullable: true,
+                                'x-dictionaryKey': {
+                                    $ref: '#/components/schemas/ServiceOfferKind',
+                                },
+                                additionalProperties: {
+                                    $ref: '#/components/schemas/BillingProviderKind',
+                                },
+                            },
                         },
                     },
                 },
@@ -740,10 +750,76 @@ export type ServiceOfferKind = 'MasteringAndDistribution' | 'Video' | 'Samples' 
 export interface UserMetadata {
     serviceOffers: {
 [key in ServiceOfferKind]: BillingProviderKind; 
- }
+ }; 
+    copy: {
+[key in ServiceOfferKind]: BillingProviderKind; 
+ }; 
 }
  
 `;
         expect(resultString).toEqual(expectedString);
     });
+});
+
+it('should return type for a multiple "dictionary" types', async () => {
+    const example = {
+        components: {
+            schemas: {
+                BillingProviderKind: {
+                    type: 'string',
+                    description: '',
+                    'x-enumNames': ['Legacy', 'Fusebill'],
+                    enum: ['Legacy', 'Fusebill'],
+                },
+                ServiceOfferKind: {
+                    type: 'string',
+                    description: '',
+                    'x-enumNames': ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution'],
+                    enum: ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution'],
+                },
+                UserSubscriptions: {
+                    type: 'object',
+                    additionalProperties: false,
+                    properties: {
+                        current: {
+                            type: 'object',
+                            nullable: true,
+                            'x-dictionaryKey': {
+                                $ref: '#/components/schemas/ServiceOfferKind',
+                            },
+                            additionalProperties: {
+                                $ref: '#/components/schemas/CurrentSubscription',
+                            },
+                        },
+                        next: {
+                            type: 'object',
+                            nullable: true,
+                            'x-dictionaryKey': {
+                                $ref: '#/components/schemas/ServiceOfferKind',
+                            },
+                            additionalProperties: {
+                                $ref: '#/components/schemas/NextSubscription',
+                            },
+                        },
+                    },
+                },
+            },
+        },
+    };
+
+    const resultString = parseSchemas({ json: example, swaggerVersion: 3 });
+
+    const expectedString = `export type BillingProviderKind = 'Legacy' | 'Fusebill';
+export type ServiceOfferKind = 'MasteringAndDistribution' | 'Video' | 'Samples' | 'Mastering' | 'Distribution';
+export interface UserSubscriptions {
+    current: {
+[key in ServiceOfferKind]: CurrentSubscription; 
+ }; 
+    next: {
+[key in ServiceOfferKind]: NextSubscription; 
+ }; 
+}
+ 
+`;
+    expect(resultString).toEqual(expectedString);
 });
