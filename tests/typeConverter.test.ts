@@ -823,3 +823,112 @@ export interface UserSubscriptions {
 `;
     expect(resultString).toEqual(expectedString);
 });
+
+it('should return type for a "dictionary" type boolean', async () => {
+    const example = {
+        components: {
+            schemas: {
+                ContentDtoOfCollectionDto: {
+                    type: 'object',
+                    additionalProperties: false,
+                    properties: {
+                        data: {
+                            type: 'array',
+                            nullable: true,
+                            items: {
+                                $ref: '#/components/schemas/CollectionDto',
+                            },
+                        },
+                        paging: {
+                            nullable: true,
+                            oneOf: [
+                                {
+                                    $ref: '#/components/schemas/PagingOptionsDto',
+                                },
+                            ],
+                        },
+                    },
+                },
+                CollectionDto: {
+                    type: 'object',
+                    additionalProperties: false,
+                    properties: {
+                        id: {
+                            type: 'string',
+                            format: 'guid',
+                        },
+                        ownerId: {
+                            type: 'string',
+                            format: 'guid',
+                        },
+                        name: {
+                            type: 'string',
+                            nullable: true,
+                        },
+                        type: {
+                            $ref: '#/components/schemas/CollectionType',
+                        },
+                        creationTime: {
+                            type: 'string',
+                            format: 'date-time',
+                        },
+                        lastModifiedTime: {
+                            type: 'string',
+                            format: 'date-time',
+                        },
+                        isSoftDeleted: {
+                            type: 'boolean',
+                        },
+                        collaborators: {
+                            type: 'array',
+                            nullable: true,
+                            items: {
+                                $ref: '#/components/schemas/CollaboratorDto',
+                            },
+                        },
+                        permissions: {
+                            type: 'object',
+                            nullable: true,
+                            'x-dictionaryKey': {
+                                $ref: '#/components/schemas/UserOperation',
+                            },
+                            additionalProperties: {
+                                type: 'boolean',
+                            },
+                        },
+                    },
+                },
+                UserOperation: {
+                    type: 'string',
+                    description: '',
+                    'x-enumNames': ['Read', 'Write'],
+                    enum: ['Read', 'Write'],
+                },
+            },
+        },
+    };
+
+    const resultString = parseSchemas({ json: example, swaggerVersion: 3 });
+
+    const expectedString = `export interface ContentDtoOfCollectionDto {
+    data?: CollectionDto[];
+    paging?: PagingOptionsDto;
+}
+export interface CollectionDto {
+    id: string; // format: "guid"
+    ownerId: string; // format: "guid"
+    name?: string;
+    type: CollectionType;
+    creationTime: string; // format: "date-time"
+    lastModifiedTime: string; // format: "date-time"
+    isSoftDeleted: boolean;
+    collaborators?: CollaboratorDto[];
+    permissions: {
+[key in UserOperation]: boolean; 
+ }; 
+}
+export type UserOperation = 'Read' | 'Write';
+ 
+`;
+    expect(resultString).toEqual(expectedString);
+});

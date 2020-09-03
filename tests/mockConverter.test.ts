@@ -1223,3 +1223,129 @@ export const anUserSubscriptionsAPI = (overrides?: Partial<UserSubscriptions>): 
 
     expect(result).toEqual(expected);
 });
+
+it('should generate mocks for a "dictionary" type boolean', async () => {
+    const json = {
+        paths: {},
+        servers: {},
+        info: {},
+        components: {
+            schemas: {
+                ContentDtoOfCollectionDto: {
+                    type: 'object',
+                    additionalProperties: false,
+                    properties: {
+                        data: {
+                            type: 'array',
+                            nullable: true,
+                            items: {
+                                $ref: '#/components/schemas/CollectionDto',
+                            },
+                        },
+                        paging: {
+                            nullable: true,
+                            oneOf: [
+                                {
+                                    $ref: '#/components/schemas/PagingOptionsDto',
+                                },
+                            ],
+                        },
+                    },
+                },
+                CollectionDto: {
+                    type: 'object',
+                    additionalProperties: false,
+                    properties: {
+                        id: {
+                            type: 'string',
+                            format: 'guid',
+                        },
+                        ownerId: {
+                            type: 'string',
+                            format: 'guid',
+                        },
+                        name: {
+                            type: 'string',
+                            nullable: true,
+                        },
+                        creationTime: {
+                            type: 'string',
+                            format: 'date-time',
+                        },
+                        lastModifiedTime: {
+                            type: 'string',
+                            format: 'date-time',
+                        },
+                        isSoftDeleted: {
+                            type: 'boolean',
+                        },
+                        collaborators: {
+                            type: 'array',
+                            nullable: true,
+                            items: {
+                                $ref: '#/components/schemas/CollaboratorDto',
+                            },
+                        },
+                        permissions: {
+                            type: 'object',
+                            nullable: true,
+                            'x-dictionaryKey': {
+                                $ref: '#/components/schemas/UserOperation',
+                            },
+                            additionalProperties: {
+                                type: 'boolean',
+                            },
+                        },
+                    },
+                },
+                UserOperation: {
+                    type: 'string',
+                    description: '',
+                    'x-enumNames': ['Read', 'Write'],
+                    enum: ['Read', 'Write'],
+                },
+            },
+
+        },
+    };
+
+    const expected = `/* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {ContentDtoOfCollectionDto, CollectionDto, UserOperation} from './pathToTypes';
+
+export const aContentDtoOfCollectionDtoAPI = (overrides?: Partial<ContentDtoOfCollectionDto>): ContentDtoOfCollectionDto => {
+  return {
+    data: overrides?.data || [aCollectionDtoAPI()],
+  paging: overrides?.paging || aPagingOptionsDtoAPI(),
+  ...overrides,
+  };
+};
+
+export const aCollectionDtoAPI = (overrides?: Partial<CollectionDto>): CollectionDto => {
+  return {
+    id: '1da66002-f19b-4da7-8651-9536fd6b9485',
+  ownerId: 'fe1413ec-e62e-4599-9b0a-d164323fe7b1',
+  name: 'name-collectiondto',
+  creationTime: '2019-06-10T06:20:01.389Z',
+  lastModifiedTime: '2019-06-10T06:20:01.389Z',
+  isSoftDeleted: true,
+  collaborators: overrides?.collaborators || [aCollaboratorDtoAPI()],
+  permissions: { 
+"Read": true,
+"Write": true,
+},
+  ...overrides,
+  };
+};
+ 
+`;
+    const result = await convertToMocks({
+        json,
+        fileName: "doesn't matter",
+        folderPath: './someFolder',
+        typesPath: './pathToTypes',
+        swaggerVersion: 3,
+    });
+
+    expect(result).toEqual(expected);
+});
