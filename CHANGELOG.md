@@ -1,3 +1,15 @@
+# v0.1.9 (Thu Sep 03 2020)
+
+#### 🐛 Bug Fix
+
+- fix(integer): fix "array of integers" types and mocks codegen [#12](https://github.com/LandrAudio/openapi-codegen-typescript/pull/12) ([@nemrosim](https://github.com/nemrosim))
+
+#### Authors: 1
+
+- Artem Diashkin ([@nemrosim](https://github.com/nemrosim))
+
+---
+
 # v0.1.8 (Thu Jul 30 2020)
 
 #### 🐛 Bug Fix
