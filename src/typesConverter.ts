@@ -240,8 +240,6 @@ const convertToTypesFromSchemaProperties = ({
                 if (xDictionaryKey && additionalProperties) {
                     const dictionaryRef = parseRefType(xDictionaryKey[SwaggerProps.$ref].split('/'));
                     const additionalRef = parseRefType(additionalProperties[SwaggerProps.$ref].split('/'));
-                    console.log('Schema', schema);
-                    console.log('SchemaKey', schemaKey);
 
                     result += `    ${propertyName}: {\n[key in ${dictionaryRef}]: ${additionalRef}; \n }\n`;
                 }
