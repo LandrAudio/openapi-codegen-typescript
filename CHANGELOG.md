@@ -1,3 +1,15 @@
+# v0.1.14 (Mon Sep 14 2020)
+
+#### 🐛 Bug Fix
+
+- build(deps): bump node-fetch from 2.6.0 to 2.6.1 [#17](https://github.com/LandrAudio/openapi-codegen-typescript/pull/17) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+
+#### Authors: 1
+
+- [@dependabot[bot]](https://github.com/dependabot[bot])
+
+---
+
 # v0.1.13 (Thu Sep 03 2020)
 
 #### 🐛 Bug Fix
