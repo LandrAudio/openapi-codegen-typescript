@@ -148,6 +148,7 @@ export interface GetArrayOfItemsMockProps extends PropertyNameProp {
 export interface GetArrayOfOneOfMockProps extends PropertyNameProp {
     oneOf: any;
     DTOs: any;
+    overrideSchemas?: Array<EnumSchema>;
 }
 
 export interface GetDictionaryMockProps extends PropertyNameProp {
@@ -161,6 +162,7 @@ export interface GetDictionaryMockProps extends PropertyNameProp {
 export interface GetRefTypeMockProps extends PropertyNameProp {
     $ref: string;
     DTOs: any;
+    overrideSchemas?: Array<EnumSchema>;
 }
 
 export interface ParseProps {

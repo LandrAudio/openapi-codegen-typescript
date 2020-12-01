@@ -1349,7 +1349,7 @@ export const aCollectionDtoAPI = (overrides?: Partial<CollectionDto>): Collectio
     expect(result).toEqual(expected);
 });
 
-it('should generate overrided mocks for enum type', async () => {
+it('should generate overrided mocks for dictionary enum type', async () => {
     const json = {
         paths: {},
         servers: {},
@@ -1409,6 +1409,141 @@ export const anUserMetadataAPI = (overrides?: Partial<UserMetadata>): UserMetada
 "distribution": "Legacy",
 "sessions": "Legacy",
 },
+  ...overrides,
+  };
+};
+ 
+`;
+    const result = await convertToMocks({
+        json,
+        fileName: "doesn't matter",
+        folderPath: './someFolder',
+        typesPath: './pathToTypes',
+        swaggerVersion: 3,
+        overrideSchemas: [
+            {
+                ServiceOfferKind: {
+                    type: 'string',
+                    description: 'Warning! This type is overrided',
+                    enum: ['masteringAndDistribution', 'video', 'samples', 'mastering', 'distribution', 'sessions'],
+                },
+            },
+        ],
+    });
+
+    expect(result).toEqual(expected);
+});
+
+it('should generate overrided mocks for oneOf enum type', async () => {
+    const json = {
+        paths: {},
+        servers: {},
+        info: {},
+        components: {
+            schemas: {
+                CurrentSubscription: {
+                    type: "object",
+                    additionalProperties: false,
+                    properties: {
+                        serviceOffer: {
+                            description: "the service offer of the subscription.",
+                            oneOf: [
+                                {
+                                    $ref: "#/components/schemas/ServiceOfferKind"
+                                }
+                            ]
+                        },
+                    }
+                },
+                ServiceOfferKind: {
+                    type: 'string',
+                    description: '',
+                    'x-enumNames': [
+                        'MasteringAndDistribution',
+                        'Video',
+                        'Samples',
+                        'Mastering',
+                        'Distribution',
+                        'Sessions',
+                    ],
+                    enum: ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution', 'Sessions'],
+                },
+            },
+        },
+    };
+
+    const expected = `/* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {CurrentSubscription, ServiceOfferKind} from './pathToTypes';
+
+export const aCurrentSubscriptionAPI = (overrides?: Partial<CurrentSubscription>): CurrentSubscription => {
+  return {
+    serviceOffer: 'masteringAndDistribution',
+  ...overrides,
+  };
+};
+ 
+`;
+    const result = await convertToMocks({
+        json,
+        fileName: "doesn't matter",
+        folderPath: './someFolder',
+        typesPath: './pathToTypes',
+        swaggerVersion: 3,
+        overrideSchemas: [
+            {
+                ServiceOfferKind: {
+                    type: 'string',
+                    description: 'Warning! This type is overrided',
+                    enum: ['masteringAndDistribution', 'video', 'samples', 'mastering', 'distribution', 'sessions'],
+                },
+            },
+        ],
+    });
+
+    expect(result).toEqual(expected);
+});
+
+it('should generate overrided mocks for $ref enum type', async () => {
+    const json = {
+        paths: {},
+        servers: {},
+        info: {},
+        components: {
+            schemas: {
+                NextSubscription: {
+                    type: "object",
+                    additionalProperties: false,
+                    properties: {
+                        serviceOffer: {
+                            $ref: "#/components/schemas/ServiceOfferKind"
+                        },
+                    }
+                },
+                ServiceOfferKind: {
+                    type: 'string',
+                    description: '',
+                    'x-enumNames': [
+                        'MasteringAndDistribution',
+                        'Video',
+                        'Samples',
+                        'Mastering',
+                        'Distribution',
+                        'Sessions',
+                    ],
+                    enum: ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution', 'Sessions'],
+                },
+            },
+        },
+    };
+
+    const expected = `/* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {NextSubscription, ServiceOfferKind} from './pathToTypes';
+
+export const aNextSubscriptionAPI = (overrides?: Partial<NextSubscription>): NextSubscription => {
+  return {
+    serviceOffer: 'masteringAndDistribution',
   ...overrides,
   };
 };

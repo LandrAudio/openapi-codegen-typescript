@@ -4,6 +4,7 @@ import { hashedString } from './shared';
 import {
     ConvertRefType,
     DataTypes,
+    EnumProps,
     EnumSchema,
     GetArrayOfItemsMockProps,
     GetArrayOfOneOfMockProps,
@@ -133,17 +134,19 @@ export class MockGenerateHelper {
      * @param propertyName
      * @param oneOf
      * @param DTOs
+     * @param overrideSchemas
      */
-    getDtoMock({ propertyName, oneOf, DTOs }: GetArrayOfOneOfMockProps): MockArrayProps {
+    getDtoMock({ propertyName, oneOf, DTOs, overrideSchemas }: GetArrayOfOneOfMockProps): MockArrayProps {
         const refType = oneOf[0][SwaggerProps.$ref].split('/');
 
-        const ref = MockGenerateHelper.parseRefType(refType);
+        const schemaName = MockGenerateHelper.parseRefType(refType);
 
-        const schema = DTOs[ref];
+        const schema = MockGenerateHelper.getOverridedSchema(schemaName, overrideSchemas) || DTOs[schemaName];
+
         if (schema && schema.enum) {
             return { propertyName, value: `'${schema.enum[0]}'` };
         } else {
-            return MockGenerateHelper.convertRefType({ propertyName, ref });
+            return MockGenerateHelper.convertRefType({ propertyName, ref: schemaName });
         }
     }
 
@@ -232,7 +235,7 @@ export class MockGenerateHelper {
         };
     }
 
-    getRefTypeMock = ({ $ref, propertyName, DTOs }: GetRefTypeMockProps): MockArrayProps => {
+    getRefTypeMock = ({ $ref, propertyName, DTOs, overrideSchemas }: GetRefTypeMockProps): MockArrayProps => {
         let result = {
             propertyName: `TODO: FIX ERROR in ${propertyName} ref:${$ref}`,
             value: 'NULL',
@@ -240,19 +243,30 @@ export class MockGenerateHelper {
 
         const refType = $ref.split('/');
 
-        const ref = MockGenerateHelper.parseRefType(refType);
+        const schemaName = MockGenerateHelper.parseRefType(refType);
 
-        const schema = DTOs[ref];
+        let schema = MockGenerateHelper.getOverridedSchema(schemaName, overrideSchemas) || DTOs[schemaName];
+
         if (schema && schema.enum) {
             result = { propertyName, value: `'${schema.enum[0]}'` };
         } else if (schema) {
-            result = MockGenerateHelper.convertRefType({ propertyName, ref });
+            result = MockGenerateHelper.convertRefType({ propertyName, ref: schemaName });
         }
 
         return result;
     };
 
     static parseRefType = (refType: string[]): string => refType[refType.length - 1];
+
+    static getOverridedSchema = (schemaName: string, overrideSchemas?: Array<EnumSchema>): EnumProps | undefined => {
+        if (overrideSchemas?.length && overrideSchemas.find(e => e[schemaName])) {
+            // for TS happiness
+            const overrideSchema = overrideSchemas.find(e => e[schemaName]);
+            if (overrideSchema) {
+                return overrideSchema[schemaName];
+            }
+        }
+    };
 
     static joinVariableNamesAndValues = (varNamesAndValues: Array<MockArrayProps>): string =>
         varNamesAndValues.map((mock: MockArrayProps) => `  ${mock.propertyName}: ${mock.value},`).join('\n');

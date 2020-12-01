@@ -168,12 +168,13 @@ export const parseSchema = ({ schema, name, DTOs, overrideSchemas }: ParseSchema
                         propertyName,
                         oneOf,
                         DTOs,
+                        overrideSchemas,
                     });
                     mocks.push(arrayOneOf);
                 }
 
                 if ($ref) {
-                    const ref = mockGenerator.getRefTypeMock({ $ref, propertyName, DTOs });
+                    const ref = mockGenerator.getRefTypeMock({ $ref, propertyName, DTOs, overrideSchemas });
                     mocks.push(ref);
                 }
 
