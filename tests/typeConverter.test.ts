@@ -934,7 +934,6 @@ export type UserOperation = 'Read' | 'Write';
 });
 
 it('should return overrided enum schema', async () => {
-
     // What will be fetched from Swagger Json
     const example = {
         components: {
@@ -1081,6 +1080,41 @@ export interface PlanFrequencyIdentifier {
  * Boolean description 
  */
     isDefault: boolean;
+}
+ 
+`;
+    expect(resultString).toEqual(expectedString);
+});
+
+it('should return CollectionResponseDto', async () => {
+    const example = {
+        definitions: {
+            'CollectionResponseDto[StoredCreditCardDto]': {
+                title: 'CollectionResponse`1',
+                type: 'object',
+                properties: {
+                    data: {
+                        type: 'array',
+                        items: {
+                            $ref: '#/definitions/StoredCreditCardDto',
+                        },
+                    },
+                    paging: {
+                        $ref: '#/definitions/PagingDto',
+                    },
+                },
+            },
+        },
+    };
+
+    const resultString = parseSchemas({
+        json: example,
+        swaggerVersion: 2,
+    });
+
+    const expectedString = `export interface CollectionResponseDto {
+    data: StoredCreditCardDto[];
+    paging: PagingDto;
 }
  
 `;

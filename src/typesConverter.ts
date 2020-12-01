@@ -262,14 +262,18 @@ const convertToTypesFromSchemaProperties = ({
                         const dictionaryRef = parseRefType(xDictionaryKey[SwaggerProps.$ref].split('/'));
                         const additionalRef = parseRefType(additionalProperties[SwaggerProps.$ref].split('/'));
 
-                        result += `${getDescription(description)}    ${propertyName}: {\n[key in ${dictionaryRef}]: ${additionalRef}; \n }; \n`;
+                        result += `${getDescription(
+                            description,
+                        )}    ${propertyName}: {\n[key in ${dictionaryRef}]: ${additionalRef}; \n }; \n`;
 
                         // Enum keys and Boolean values
                     } else if (xDictionaryKey[SwaggerProps.$ref]) {
                         if (additionalProperties.type && additionalProperties.type === DataTypes.Boolean) {
                             const dictionaryRef = parseRefType(xDictionaryKey[SwaggerProps.$ref].split('/'));
 
-                            result += `${getDescription(description)}    ${propertyName}: {\n[key in ${dictionaryRef}]: boolean; \n }; \n`;
+                            result += `${getDescription(
+                                description,
+                            )}    ${propertyName}: {\n[key in ${dictionaryRef}]: boolean; \n }; \n`;
                         }
                     } else {
                         result += ' "// TODO: Something in wrong" ';
@@ -334,7 +338,15 @@ export const parseSchemas = ({ json, swaggerVersion, overrideSchemas }: GetSchem
                  * Is schema is a simple object or is it extends from another schema
                  */
                 if (schema[SwaggerProps.Type] === DataTypes.Object || schema[SwaggerProps.AllOf]) {
-                    result += parseObject({ schema, schemaKey });
+                    /**
+                     * Sometimes in swagger v2 schema key could be named as SomeDto[AnotherDto]
+                     */
+                    if (swaggerVersion === 2 && schemaKey.includes('[') && schemaKey.includes(']')) {
+                        const strings = schemaKey.split('[');
+                        result += parseObject({ schema, schemaKey: strings[0] });
+                    } else {
+                        result += parseObject({ schema, schemaKey });
+                    }
                 } else if (schema.type === DataTypes.String) {
                     /**
                      * Check if current schema is override
