@@ -1,4 +1,4 @@
-import { ConvertToMocksProps, DataTypes, GetSchemasProps, MockArrayProps, SwaggerProps } from './types';
+import { ConvertToMocksProps, DataTypes, EnumSchema, GetSchemasProps, MockArrayProps, SwaggerProps } from './types';
 import { getSchemaProperties, getSchemas, hashedString, writeToFile } from './shared';
 import casual from 'casual';
 import { MockGenerateHelper } from './MockGenerateHelper';
@@ -99,9 +99,10 @@ interface ParseSchemaProps {
      * All parsed DTOs from swagger json file
      */
     DTOs?: any;
+    overrideSchemas?: Array<EnumSchema>;
 }
 
-export const parseSchema = ({ schema, name, DTOs }: ParseSchemaProps) => {
+export const parseSchema = ({ schema, name, DTOs, overrideSchemas }: ParseSchemaProps) => {
     const parseSwaggerJsonObject = (obj: any, interfaces?: Array<string>): string => {
         if (interfaces) {
             obj = combineProperties({ schema: obj, schemas: DTOs, interfaces });
@@ -167,18 +168,25 @@ export const parseSchema = ({ schema, name, DTOs }: ParseSchemaProps) => {
                         propertyName,
                         oneOf,
                         DTOs,
+                        overrideSchemas,
                     });
                     mocks.push(arrayOneOf);
                 }
 
                 if ($ref) {
-                    const ref = mockGenerator.getRefTypeMock({ $ref, propertyName, DTOs });
+                    const ref = mockGenerator.getRefTypeMock({ $ref, propertyName, DTOs, overrideSchemas });
                     mocks.push(ref);
                 }
 
                 if (xDictionaryKey && additionalProperties) {
                     mocks.push(
-                        mockGenerator.getDictionaryMock({ propertyName, xDictionaryKey, additionalProperties, DTOs }),
+                        mockGenerator.getDictionaryMock({
+                            propertyName,
+                            xDictionaryKey,
+                            additionalProperties,
+                            DTOs,
+                            overrideSchemas,
+                        }),
                     );
                 }
 
@@ -201,7 +209,7 @@ export const parseSchema = ({ schema, name, DTOs }: ParseSchemaProps) => {
     }
 };
 
-export const parseSchemas = ({ json, swaggerVersion }: GetSchemasProps) => {
+export const parseSchemas = ({ json, swaggerVersion, overrideSchemas }: GetSchemasProps) => {
     const schemas = getSchemas({ json, swaggerVersion });
     const DTOs = Object.keys(schemas);
 
@@ -214,6 +222,7 @@ export const parseSchemas = ({ json, swaggerVersion }: GetSchemasProps) => {
                     schema: schema,
                     name: dtoName,
                     DTOs: schemas,
+                    overrideSchemas,
                 });
                 resultString += result;
             }
@@ -232,6 +241,7 @@ export const convertToMocks = ({
     folderPath,
     typesPath,
     swaggerVersion = 3,
+    overrideSchemas,
 }: ConvertToMocksProps): string => {
     const schemas = getSchemas({ json, swaggerVersion });
 
@@ -241,7 +251,7 @@ export const convertToMocks = ({
     const disableNoUsedVars = '/* eslint-disable @typescript-eslint/no-unused-vars */\n';
     const importsDescription = `import {${imports}} from '${typesPath}';\n`;
 
-    const result = parseSchemas({ json, swaggerVersion });
+    const result = parseSchemas({ json, swaggerVersion, overrideSchemas });
 
     const resultString = `${disableNoUse}${disableNoUsedVars}${importsDescription}${result}`;
 

@@ -4,6 +4,8 @@ import { hashedString } from './shared';
 import {
     ConvertRefType,
     DataTypes,
+    EnumProps,
+    EnumSchema,
     GetArrayOfItemsMockProps,
     GetArrayOfOneOfMockProps,
     GetDictionaryMockProps,
@@ -15,6 +17,7 @@ import {
     StringFormats,
     SwaggerProps,
 } from './types';
+import { parseEnum } from './typesConverter';
 
 export class MockGenerateHelper {
     private casual: any;
@@ -131,17 +134,19 @@ export class MockGenerateHelper {
      * @param propertyName
      * @param oneOf
      * @param DTOs
+     * @param overrideSchemas
      */
-    getDtoMock({ propertyName, oneOf, DTOs }: GetArrayOfOneOfMockProps): MockArrayProps {
+    getDtoMock({ propertyName, oneOf, DTOs, overrideSchemas }: GetArrayOfOneOfMockProps): MockArrayProps {
         const refType = oneOf[0][SwaggerProps.$ref].split('/');
 
-        const ref = MockGenerateHelper.parseRefType(refType);
+        const schemaName = MockGenerateHelper.parseRefType(refType);
 
-        const schema = DTOs[ref];
+        const schema = MockGenerateHelper.getOverridedSchema(schemaName, overrideSchemas) || DTOs[schemaName];
+
         if (schema && schema.enum) {
             return { propertyName, value: `'${schema.enum[0]}'` };
         } else {
-            return MockGenerateHelper.convertRefType({ propertyName, ref });
+            return MockGenerateHelper.convertRefType({ propertyName, ref: schemaName });
         }
     }
 
@@ -150,16 +155,31 @@ export class MockGenerateHelper {
         xDictionaryKey,
         additionalProperties,
         DTOs,
+        overrideSchemas,
     }: GetDictionaryMockProps): MockArrayProps {
-
-        if(xDictionaryKey[SwaggerProps.$ref]) {
-
+        if (xDictionaryKey[SwaggerProps.$ref]) {
             const dictionaryRef = MockGenerateHelper.parseRefType(xDictionaryKey[SwaggerProps.$ref].split('/'));
-            const dicSchema = DTOs[dictionaryRef];
+
+            let dicSchema;
+
+            /**
+             * Check if current schema is override
+             */
+            if (overrideSchemas?.length && overrideSchemas.find(e => e[dictionaryRef])) {
+                // for TS happiness
+                const overrideSchema = overrideSchemas.find(e => e[dictionaryRef]);
+                if (overrideSchema) {
+                    dicSchema = overrideSchema[dictionaryRef];
+                }
+            } else {
+                dicSchema = DTOs[dictionaryRef];
+            }
 
             // Enum keys and Enum values
-            if(additionalProperties[SwaggerProps.$ref]){
-                const additionalRef = MockGenerateHelper.parseRefType(additionalProperties[SwaggerProps.$ref].split('/'));
+            if (additionalProperties[SwaggerProps.$ref]) {
+                const additionalRef = MockGenerateHelper.parseRefType(
+                    additionalProperties[SwaggerProps.$ref].split('/'),
+                );
 
                 const additionalSchema = DTOs[additionalRef];
 
@@ -170,13 +190,15 @@ export class MockGenerateHelper {
                     });
                     value += `\n}`;
 
-                    return {propertyName, value};
+                    return { propertyName, value };
                 }
             }
 
             // Enum key and Object value
             if (dicSchema && dicSchema.enum && additionalProperties[SwaggerProps.$ref]) {
-                const additionalRef = MockGenerateHelper.parseRefType(additionalProperties[SwaggerProps.$ref].split('/'));
+                const additionalRef = MockGenerateHelper.parseRefType(
+                    additionalProperties[SwaggerProps.$ref].split('/'),
+                );
 
                 const aOrAn = indefinite(additionalRef, { articleOnly: true });
 
@@ -190,8 +212,7 @@ export class MockGenerateHelper {
             }
 
             // Enum keys and Boolean values
-            if(dicSchema && dicSchema.enum && additionalProperties.type === DataTypes.Boolean){
-
+            if (dicSchema && dicSchema.enum && additionalProperties.type === DataTypes.Boolean) {
                 let value = `{ `;
                 dicSchema.enum.forEach((el: string) => {
                     value += `\n"${el}": true,`;
@@ -202,7 +223,6 @@ export class MockGenerateHelper {
             } else {
                 return { propertyName, value: ' // TODO: Wrong dictionary type' };
             }
-
         } else {
             return { propertyName, value: ' // TODO: Wrong dictionary type' };
         }
@@ -215,7 +235,7 @@ export class MockGenerateHelper {
         };
     }
 
-    getRefTypeMock = ({ $ref, propertyName, DTOs }: GetRefTypeMockProps): MockArrayProps => {
+    getRefTypeMock = ({ $ref, propertyName, DTOs, overrideSchemas }: GetRefTypeMockProps): MockArrayProps => {
         let result = {
             propertyName: `TODO: FIX ERROR in ${propertyName} ref:${$ref}`,
             value: 'NULL',
@@ -223,19 +243,30 @@ export class MockGenerateHelper {
 
         const refType = $ref.split('/');
 
-        const ref = MockGenerateHelper.parseRefType(refType);
+        const schemaName = MockGenerateHelper.parseRefType(refType);
 
-        const schema = DTOs[ref];
+        let schema = MockGenerateHelper.getOverridedSchema(schemaName, overrideSchemas) || DTOs[schemaName];
+
         if (schema && schema.enum) {
             result = { propertyName, value: `'${schema.enum[0]}'` };
         } else if (schema) {
-            result = MockGenerateHelper.convertRefType({ propertyName, ref });
+            result = MockGenerateHelper.convertRefType({ propertyName, ref: schemaName });
         }
 
         return result;
     };
 
     static parseRefType = (refType: string[]): string => refType[refType.length - 1];
+
+    static getOverridedSchema = (schemaName: string, overrideSchemas?: Array<EnumSchema>): EnumProps | undefined => {
+        if (overrideSchemas?.length && overrideSchemas.find(e => e[schemaName])) {
+            // for TS happiness
+            const overrideSchema = overrideSchemas.find(e => e[schemaName]);
+            if (overrideSchema) {
+                return overrideSchema[schemaName];
+            }
+        }
+    };
 
     static joinVariableNamesAndValues = (varNamesAndValues: Array<MockArrayProps>): string =>
         varNamesAndValues.map((mock: MockArrayProps) => `  ${mock.propertyName}: ${mock.value},`).join('\n');
