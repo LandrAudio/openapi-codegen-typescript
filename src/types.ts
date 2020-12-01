@@ -61,6 +61,18 @@ export interface PropertyNameProp {
 
 export interface ResultStringProps extends PropertyNameProp {
     nullable?: boolean;
+    description?: string;
+}
+
+export interface EnumProps {
+    type: string;
+    description: string;
+    enum: Array<string>;
+    'x-enumNames'?: Array<string>;
+}
+
+export interface EnumSchema {
+    [key: string]: EnumProps;
 }
 
 export interface ConvertToTypesProps {
@@ -68,6 +80,7 @@ export interface ConvertToTypesProps {
     fileName: string;
     folderPath: string;
     swaggerVersion: number;
+    overrideSchemas?: Array<EnumSchema>;
 }
 
 export interface ConvertToMocksProps {
@@ -81,10 +94,12 @@ export interface ConvertToMocksProps {
 export interface GetSchemasProps {
     json: { components?: { schemas?: any }; definitions?: any };
     swaggerVersion?: number;
+    overrideSchemas?: Array<EnumSchema>;
 }
 
 export interface ResultStringPropsForNumberType extends ResultStringProps {
     format?: string;
+    description?: string;
     minimum?: number;
     maximum?: number;
     exclusiveMinimum?: boolean;
@@ -93,6 +108,7 @@ export interface ResultStringPropsForNumberType extends ResultStringProps {
 
 export interface ResultStringPropsForArrayType extends ResultStringProps {
     format?: string;
+    description?: string;
     refType: string[];
     minItems?: number;
     maxItems?: number;
@@ -101,6 +117,7 @@ export interface ResultStringPropsForArrayType extends ResultStringProps {
 
 export interface ResultStringPropsForStringType extends ResultStringProps {
     format?: string;
+    description?: string;
     minLength?: number;
     maxLength?: number;
 }
@@ -145,7 +162,7 @@ export interface GetRefTypeMockProps extends PropertyNameProp {
 }
 
 export interface ParseProps {
-    schema: any;
+    schema: EnumProps;
     schemaKey: string;
 }
 

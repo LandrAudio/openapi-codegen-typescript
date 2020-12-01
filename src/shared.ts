@@ -7,6 +7,7 @@ export const getSchemaProperties = (objectProps: any) =>
     Object.keys(objectProps).map(property => {
         const {
             type,
+            description,
             $ref,
             oneOf,
             format,
@@ -28,6 +29,7 @@ export const getSchemaProperties = (objectProps: any) =>
 
         return {
             propertyName: property,
+            description,
             type,
             $ref,
             oneOf,
