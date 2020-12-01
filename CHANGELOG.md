@@ -1,3 +1,15 @@
+# v0.1.15 (Tue Dec 01 2020)
+
+#### 🐛 Bug Fix
+
+- feat(override): add enum schema override and add property descriptions (part 1) [#18](https://github.com/LandrAudio/openapi-codegen-typescript/pull/18) ([@nemrosim](https://github.com/nemrosim))
+
+#### Authors: 1
+
+- Artem Diashkin ([@nemrosim](https://github.com/nemrosim))
+
+---
+
 # v0.1.14 (Mon Sep 14 2020)
 
 #### 🐛 Bug Fix
