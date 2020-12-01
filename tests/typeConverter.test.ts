@@ -107,7 +107,7 @@ describe('TS types generation', () => {
         const result = parseObject({ schema: swaggerJson, schemaKey: 'AssetDto' });
 
         const expectedString = `/**
- * DESCRIPTION
+ * DESCRIPTION 
  */
 export interface AssetDto {
     id: string; // format: "guid"
@@ -928,6 +928,194 @@ export interface CollectionDto {
  }; 
 }
 export type UserOperation = 'Read' | 'Write';
+ 
+`;
+    expect(resultString).toEqual(expectedString);
+});
+
+it('should return overrided enum schema', async () => {
+    // What will be fetched from Swagger Json
+    const example = {
+        components: {
+            schemas: {
+                ServiceOfferKind: {
+                    type: 'string',
+                    description: '',
+                    'x-enumNames': [
+                        'MasteringAndDistribution',
+                        'Video',
+                        'Samples',
+                        'Mastering',
+                        'Distribution',
+                        'Sessions',
+                    ],
+                    enum: ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution', 'Sessions'],
+                },
+            },
+        },
+    };
+
+    const resultString = parseSchemas({
+        json: example,
+        swaggerVersion: 3,
+        // Overrided value "ServiceOfferKind" enum
+        overrideSchemas: [
+            {
+                ServiceOfferKind: {
+                    type: 'string',
+                    description: 'Warning! This type is overrided',
+                    enum: ['masteringAndDistribution', 'video', 'samples', 'mastering', 'distribution', 'sessions'],
+                },
+            },
+        ],
+    });
+
+    const expectedString = `/**
+ * Warning! This type is overrided 
+ */
+export type ServiceOfferKind = 'masteringAndDistribution' | 'video' | 'samples' | 'mastering' | 'distribution' | 'sessions';
+ 
+`;
+    expect(resultString).toEqual(expectedString);
+});
+
+it('should return description', async () => {
+    const example = {
+        components: {
+            schemas: {
+                PlanFrequencyIdentifier: {
+                    type: 'object',
+                    description: 'PlanFrequencyIdentifier description',
+                    additionalProperties: false,
+                    properties: {
+                        code: {
+                            type: 'string',
+                            description: 'The Fusebill plan code.',
+                            nullable: true,
+                        },
+                        currentQuantity: {
+                            type: 'number',
+                            description: 'The current quantity of the product within the subscription.',
+                            format: 'decimal',
+                        },
+                        numberOfCredits: {
+                            type: 'integer',
+                            description: 'The number of credits associated to this subscription product.',
+                            format: 'int32',
+                            nullable: true,
+                        },
+                        frequency: {
+                            description: 'The interval of the plan (monthly/yearly).',
+                            oneOf: [
+                                {
+                                    $ref: '#/components/schemas/Interval',
+                                },
+                            ],
+                        },
+                        hasOverduePayment: {
+                            type: 'object',
+                            description: 'Says if the user has overdue payments by service offer.',
+                            nullable: true,
+                            'x-dictionaryKey': {
+                                $ref: '#/components/schemas/ServiceOfferKind',
+                            },
+                            additionalProperties: {
+                                type: 'boolean',
+                            },
+                        },
+                        userIds: {
+                            type: 'array',
+                            description: 'The user IDs.',
+                            items: {
+                                type: 'string',
+                                format: 'guid',
+                            },
+                        },
+                        isDefault: {
+                            type: 'boolean',
+                            description: 'Boolean description',
+                        },
+                    },
+                },
+            },
+        },
+    };
+
+    const resultString = parseSchemas({
+        json: example,
+        swaggerVersion: 3,
+    });
+
+    const expectedString = `/**
+ * PlanFrequencyIdentifier description 
+ */
+export interface PlanFrequencyIdentifier {
+/**
+ * The Fusebill plan code. 
+ */
+    code?: string;
+/**
+ * The current quantity of the product within the subscription. 
+ */
+    currentQuantity: number; // format: "decimal"
+/**
+ * The number of credits associated to this subscription product. 
+ */
+    numberOfCredits?: number; // format: "int32"
+/**
+ * The interval of the plan (monthly/yearly). 
+ */
+    frequency: Interval;
+/**
+ * Says if the user has overdue payments by service offer. 
+ */
+    hasOverduePayment: {
+[key in ServiceOfferKind]: boolean; 
+ }; 
+/**
+ * The user IDs. 
+ */
+    userIds: string[];
+/**
+ * Boolean description 
+ */
+    isDefault: boolean;
+}
+ 
+`;
+    expect(resultString).toEqual(expectedString);
+});
+
+it('should return CollectionResponseDto', async () => {
+    const example = {
+        definitions: {
+            'CollectionResponseDto[StoredCreditCardDto]': {
+                title: 'CollectionResponse`1',
+                type: 'object',
+                properties: {
+                    data: {
+                        type: 'array',
+                        items: {
+                            $ref: '#/definitions/StoredCreditCardDto',
+                        },
+                    },
+                    paging: {
+                        $ref: '#/definitions/PagingDto',
+                    },
+                },
+            },
+        },
+    };
+
+    const resultString = parseSchemas({
+        json: example,
+        swaggerVersion: 2,
+    });
+
+    const expectedString = `export interface CollectionResponseDto {
+    data: StoredCreditCardDto[];
+    paging: PagingDto;
+}
  
 `;
     expect(resultString).toEqual(expectedString);

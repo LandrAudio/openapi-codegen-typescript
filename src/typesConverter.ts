@@ -20,12 +20,21 @@ const parseRefType = (refType: string[]): string => refType[refType.length - 1];
 const parsePropertyName = ({ propertyName, nullable, type }: any): string =>
     `    ${propertyName}${nullable ? '?' : ''}: ${type};`;
 
-const parseProperty = ({ propertyName, nullable }: { propertyName: string; nullable: boolean }): string => {
-    return `    ${propertyName}${nullable ? '?' : ''}: `;
+const parseProperty = ({
+    propertyName,
+    description,
+    nullable,
+}: {
+    propertyName: string;
+    description?: string;
+    nullable: boolean;
+}): string => {
+    return `${getDescription(description)}    ${propertyName}${nullable ? '?' : ''}: `;
 };
 
 const getResultStringForNumberType = ({
     propertyName,
+    description,
     nullable,
     format,
     minimum,
@@ -50,17 +59,20 @@ const getResultStringForNumberType = ({
 
     const documentation = `${formatString}${minimumString}${maximumString}${exclusiveMinimumString}${exclusiveMaximumString}`;
 
-    return `${nameAndValue}${shouldShowDocs ? ` // ${documentation}` : ''}\n`;
+    return `${getDescription(description)}${nameAndValue}${shouldShowDocs ? ` // ${documentation}` : ''}\n`;
 };
 
-const getResultStringForBooleanType = ({ propertyName, nullable }: ResultStringProps): string => {
+const getResultStringForBooleanType = ({ propertyName, description, nullable }: ResultStringProps): string => {
     const nameAndValue = `    ${propertyName}${nullable ? '?' : ''}: boolean;`;
 
-    return `${nameAndValue}\n`;
+    return `${getDescription(description)}${nameAndValue}\n`;
 };
+
+const getDescription = (description?: string) => `${description ? `/**\n * ${description} \n */\n` : ''}`;
 
 const getResultStringForStringType = ({
     propertyName,
+    description,
     nullable,
     format,
     minLength,
@@ -77,11 +89,12 @@ const getResultStringForStringType = ({
 
     const documentation = `${formatString}${minString}${maxString}`;
 
-    return `${nameAndValue}${shouldShowDocs ? ` // ${documentation}` : ''}\n`;
+    return `${getDescription(description)}${nameAndValue}${shouldShowDocs ? ` // ${documentation}` : ''}\n`;
 };
 
 const getResultStringForArrayType = ({
     propertyName,
+    description,
     nullable,
     refType,
     format,
@@ -102,7 +115,7 @@ const getResultStringForArrayType = ({
     const shouldShowDocs = format || minItems || maxItems || uniqueItems;
     const documentation = `${formatString}${minItemsString}${maxItemsString}${uniqueItemsString}`;
 
-    return `${nameAndValue}${shouldShowDocs ? ` // ${documentation}` : ''}\n`;
+    return `${getDescription(description)}${nameAndValue}${shouldShowDocs ? ` // ${documentation}` : ''}\n`;
 };
 
 const convertToTypesFromSchemaProperties = ({
@@ -114,19 +127,13 @@ const convertToTypesFromSchemaProperties = ({
     schemaKey?: string;
     interfaces?: Array<string>;
 }): string => {
-    let documentation = '';
-
-    if (schema.description) {
-        documentation = `/**\n * ${schema['description']}\n */\n`;
-    }
-
-    const getStandardString = ({ propertyName, nullable, refType, format, isArray }: any) => {
-        return `${parseProperty({ propertyName, nullable })}${parseRefType(refType)}${
+    const getStandardString = ({ propertyName, description, nullable, refType, format, isArray }: any) => {
+        return `${parseProperty({ propertyName, description, nullable })}${parseRefType(refType)}${
             isArray ? '[]' : ''
         };${parseFormat(format)}\n`;
     };
 
-    let result = `${documentation}export interface ${schemaKey}${
+    let result = `${getDescription(schema.description)}export interface ${schemaKey}${
         interfaces ? ` extends ${interfaces.join(', ')} ` : ' '
     }{\n`;
 
@@ -134,6 +141,7 @@ const convertToTypesFromSchemaProperties = ({
         getSchemaProperties(schema.properties).map(
             ({
                 propertyName,
+                description,
                 $ref,
                 items,
                 type,
@@ -155,6 +163,7 @@ const convertToTypesFromSchemaProperties = ({
                 if (type === DataTypes.String) {
                     result += getResultStringForStringType({
                         propertyName,
+                        description,
                         nullable,
                         format,
                         minLength,
@@ -165,6 +174,7 @@ const convertToTypesFromSchemaProperties = ({
                 if (type === DataTypes.Integer || type === DataTypes.Number) {
                     result += getResultStringForNumberType({
                         propertyName,
+                        description,
                         nullable,
                         format,
                         minimum,
@@ -175,7 +185,7 @@ const convertToTypesFromSchemaProperties = ({
                 }
 
                 if (type === DataTypes.Boolean) {
-                    result += getResultStringForBooleanType({ propertyName, nullable });
+                    result += getResultStringForBooleanType({ propertyName, description, nullable });
                 }
 
                 if (type === DataTypes.Array && items) {
@@ -184,6 +194,7 @@ const convertToTypesFromSchemaProperties = ({
 
                         result += getResultStringForArrayType({
                             propertyName,
+                            description,
                             nullable,
                             refType,
                             format,
@@ -209,6 +220,7 @@ const convertToTypesFromSchemaProperties = ({
 
                         result += `${parseProperty({
                             propertyName,
+                            description,
                             nullable,
                         })}${type}${shouldShowBrackets};${parseFormat(format)}${
                             maxItems ? ` // maxItems: ${maxItems}` : ''
@@ -218,7 +230,14 @@ const convertToTypesFromSchemaProperties = ({
 
                 if (oneOf && Array.isArray(oneOf) && oneOf[0][SwaggerProps.$ref]) {
                     const refType = oneOf[0][SwaggerProps.$ref].split('/');
-                    result += getStandardString({ propertyName, nullable, refType, format, isArray: false });
+                    result += getStandardString({
+                        propertyName,
+                        description,
+                        nullable,
+                        refType,
+                        format,
+                        isArray: false,
+                    });
                 }
 
                 if ($ref) {
@@ -243,14 +262,18 @@ const convertToTypesFromSchemaProperties = ({
                         const dictionaryRef = parseRefType(xDictionaryKey[SwaggerProps.$ref].split('/'));
                         const additionalRef = parseRefType(additionalProperties[SwaggerProps.$ref].split('/'));
 
-                        result += `    ${propertyName}: {\n[key in ${dictionaryRef}]: ${additionalRef}; \n }; \n`;
+                        result += `${getDescription(
+                            description,
+                        )}    ${propertyName}: {\n[key in ${dictionaryRef}]: ${additionalRef}; \n }; \n`;
 
                         // Enum keys and Boolean values
                     } else if (xDictionaryKey[SwaggerProps.$ref]) {
                         if (additionalProperties.type && additionalProperties.type === DataTypes.Boolean) {
                             const dictionaryRef = parseRefType(xDictionaryKey[SwaggerProps.$ref].split('/'));
 
-                            result += `    ${propertyName}: {\n[key in ${dictionaryRef}]: boolean; \n }; \n`;
+                            result += `${getDescription(
+                                description,
+                            )}    ${propertyName}: {\n[key in ${dictionaryRef}]: boolean; \n }; \n`;
                         }
                     } else {
                         result += ' "// TODO: Something in wrong" ';
@@ -265,7 +288,7 @@ const convertToTypesFromSchemaProperties = ({
     return result;
 };
 
-export const parseObject = ({ schema, schemaKey }: { schema: any; schemaKey: any }) => {
+export const parseObject = ({ schema, schemaKey }: { schema: any; schemaKey: string }) => {
     if (schema[SwaggerProps.AllOf] && Array.isArray(schema[SwaggerProps.AllOf])) {
         const interfacesNames = schema[SwaggerProps.AllOf]
             .filter((e: { $ref?: string }) => e[SwaggerProps.$ref])
@@ -287,7 +310,9 @@ export const parseObject = ({ schema, schemaKey }: { schema: any; schemaKey: any
  * to "export type ${name} = 'one' | 'two' | 'three';"
  */
 export const parseEnum = ({ schema, schemaKey }: ParseProps): string => {
-    let result = `export type ${schemaKey} = `;
+    const description = schema.description;
+
+    let result = `${description ? `/**\n * ${description} \n */\n` : ''}export type ${schemaKey} = `;
 
     const enums = schema.enum;
     const len = enums.length;
@@ -299,7 +324,7 @@ export const parseEnum = ({ schema, schemaKey }: ParseProps): string => {
     return result;
 };
 
-export const parseSchemas = ({ json, swaggerVersion }: GetSchemasProps) => {
+export const parseSchemas = ({ json, swaggerVersion, overrideSchemas }: GetSchemasProps) => {
     const schemas = getSchemas({ json, swaggerVersion });
 
     if (schemas) {
@@ -313,9 +338,28 @@ export const parseSchemas = ({ json, swaggerVersion }: GetSchemasProps) => {
                  * Is schema is a simple object or is it extends from another schema
                  */
                 if (schema[SwaggerProps.Type] === DataTypes.Object || schema[SwaggerProps.AllOf]) {
-                    result += parseObject({ schema, schemaKey });
+                    /**
+                     * Sometimes in swagger v2 schema key could be named as SomeDto[AnotherDto]
+                     */
+                    if (swaggerVersion === 2 && schemaKey.includes('[') && schemaKey.includes(']')) {
+                        const strings = schemaKey.split('[');
+                        result += parseObject({ schema, schemaKey: strings[0] });
+                    } else {
+                        result += parseObject({ schema, schemaKey });
+                    }
                 } else if (schema.type === DataTypes.String) {
-                    result += parseEnum({ schema, schemaKey });
+                    /**
+                     * Check if current schema is override
+                     */
+                    if (overrideSchemas?.length && overrideSchemas.find(e => e[schemaKey])) {
+                        // for TS happiness
+                        const overrideSchema = overrideSchemas.find(e => e[schemaKey]);
+                        if (overrideSchema) {
+                            result += parseEnum({ schema: overrideSchema[schemaKey], schemaKey });
+                        }
+                    } else {
+                        result += parseEnum({ schema, schemaKey });
+                    }
                 } else {
                     result += `// TODO: ERROR! Something wrong with ${schemaKey} \n`;
                 }
@@ -331,8 +375,14 @@ export const parseSchemas = ({ json, swaggerVersion }: GetSchemasProps) => {
     }
 };
 
-export const convertToTypes = ({ json, fileName, folderPath, swaggerVersion }: ConvertToTypesProps) => {
-    const resultString = parseSchemas({ json, swaggerVersion });
+export const convertToTypes = ({
+    json,
+    fileName,
+    folderPath,
+    swaggerVersion,
+    overrideSchemas,
+}: ConvertToTypesProps) => {
+    const resultString = parseSchemas({ json, swaggerVersion, overrideSchemas });
     writeToFile({
         folderPath,
         fileName,
