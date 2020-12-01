@@ -4,6 +4,7 @@ import { hashedString } from './shared';
 import {
     ConvertRefType,
     DataTypes,
+    EnumSchema,
     GetArrayOfItemsMockProps,
     GetArrayOfOneOfMockProps,
     GetDictionaryMockProps,
@@ -15,6 +16,7 @@ import {
     StringFormats,
     SwaggerProps,
 } from './types';
+import { parseEnum } from './typesConverter';
 
 export class MockGenerateHelper {
     private casual: any;
@@ -150,16 +152,31 @@ export class MockGenerateHelper {
         xDictionaryKey,
         additionalProperties,
         DTOs,
+        overrideSchemas,
     }: GetDictionaryMockProps): MockArrayProps {
-
-        if(xDictionaryKey[SwaggerProps.$ref]) {
-
+        if (xDictionaryKey[SwaggerProps.$ref]) {
             const dictionaryRef = MockGenerateHelper.parseRefType(xDictionaryKey[SwaggerProps.$ref].split('/'));
-            const dicSchema = DTOs[dictionaryRef];
+
+            let dicSchema;
+
+            /**
+             * Check if current schema is override
+             */
+            if (overrideSchemas?.length && overrideSchemas.find(e => e[dictionaryRef])) {
+                // for TS happiness
+                const overrideSchema = overrideSchemas.find(e => e[dictionaryRef]);
+                if (overrideSchema) {
+                    dicSchema = overrideSchema[dictionaryRef];
+                }
+            } else {
+                dicSchema = DTOs[dictionaryRef];
+            }
 
             // Enum keys and Enum values
-            if(additionalProperties[SwaggerProps.$ref]){
-                const additionalRef = MockGenerateHelper.parseRefType(additionalProperties[SwaggerProps.$ref].split('/'));
+            if (additionalProperties[SwaggerProps.$ref]) {
+                const additionalRef = MockGenerateHelper.parseRefType(
+                    additionalProperties[SwaggerProps.$ref].split('/'),
+                );
 
                 const additionalSchema = DTOs[additionalRef];
 
@@ -170,13 +187,15 @@ export class MockGenerateHelper {
                     });
                     value += `\n}`;
 
-                    return {propertyName, value};
+                    return { propertyName, value };
                 }
             }
 
             // Enum key and Object value
             if (dicSchema && dicSchema.enum && additionalProperties[SwaggerProps.$ref]) {
-                const additionalRef = MockGenerateHelper.parseRefType(additionalProperties[SwaggerProps.$ref].split('/'));
+                const additionalRef = MockGenerateHelper.parseRefType(
+                    additionalProperties[SwaggerProps.$ref].split('/'),
+                );
 
                 const aOrAn = indefinite(additionalRef, { articleOnly: true });
 
@@ -190,8 +209,7 @@ export class MockGenerateHelper {
             }
 
             // Enum keys and Boolean values
-            if(dicSchema && dicSchema.enum && additionalProperties.type === DataTypes.Boolean){
-
+            if (dicSchema && dicSchema.enum && additionalProperties.type === DataTypes.Boolean) {
                 let value = `{ `;
                 dicSchema.enum.forEach((el: string) => {
                     value += `\n"${el}": true,`;
@@ -202,7 +220,6 @@ export class MockGenerateHelper {
             } else {
                 return { propertyName, value: ' // TODO: Wrong dictionary type' };
             }
-
         } else {
             return { propertyName, value: ' // TODO: Wrong dictionary type' };
         }

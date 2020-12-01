@@ -1305,7 +1305,6 @@ it('should generate mocks for a "dictionary" type boolean', async () => {
                     enum: ['Read', 'Write'],
                 },
             },
-
         },
     };
 
@@ -1345,6 +1344,91 @@ export const aCollectionDtoAPI = (overrides?: Partial<CollectionDto>): Collectio
         folderPath: './someFolder',
         typesPath: './pathToTypes',
         swaggerVersion: 3,
+    });
+
+    expect(result).toEqual(expected);
+});
+
+it('should generate overrided mocks for enum type', async () => {
+    const json = {
+        paths: {},
+        servers: {},
+        info: {},
+        components: {
+            schemas: {
+                UserMetadata: {
+                    type: 'object',
+                    additionalProperties: false,
+                    properties: {
+                        serviceOffers: {
+                            type: 'object',
+                            nullable: true,
+                            'x-dictionaryKey': {
+                                $ref: '#/components/schemas/ServiceOfferKind',
+                            },
+                            additionalProperties: {
+                                $ref: '#/components/schemas/BillingProviderKind',
+                            },
+                        },
+                    },
+                },
+                ServiceOfferKind: {
+                    type: 'string',
+                    description: '',
+                    'x-enumNames': [
+                        'MasteringAndDistribution',
+                        'Video',
+                        'Samples',
+                        'Mastering',
+                        'Distribution',
+                        'Sessions',
+                    ],
+                    enum: ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution', 'Sessions'],
+                },
+                BillingProviderKind: {
+                    type: 'string',
+                    description: '',
+                    'x-enumNames': ['Legacy', 'Fusebill'],
+                    enum: ['Legacy', 'Fusebill'],
+                },
+            },
+        },
+    };
+
+    const expected = `/* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {UserMetadata, ServiceOfferKind, BillingProviderKind} from './pathToTypes';
+
+export const anUserMetadataAPI = (overrides?: Partial<UserMetadata>): UserMetadata => {
+  return {
+    serviceOffers: { 
+"masteringAndDistribution": "Legacy",
+"video": "Legacy",
+"samples": "Legacy",
+"mastering": "Legacy",
+"distribution": "Legacy",
+"sessions": "Legacy",
+},
+  ...overrides,
+  };
+};
+ 
+`;
+    const result = await convertToMocks({
+        json,
+        fileName: "doesn't matter",
+        folderPath: './someFolder',
+        typesPath: './pathToTypes',
+        swaggerVersion: 3,
+        overrideSchemas: [
+            {
+                ServiceOfferKind: {
+                    type: 'string',
+                    description: 'Warning! This type is overrided',
+                    enum: ['masteringAndDistribution', 'video', 'samples', 'mastering', 'distribution', 'sessions'],
+                },
+            },
+        ],
     });
 
     expect(result).toEqual(expected);

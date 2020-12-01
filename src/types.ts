@@ -89,6 +89,7 @@ export interface ConvertToMocksProps {
     folderPath: string;
     typesPath: string;
     swaggerVersion: number;
+    overrideSchemas?: Array<EnumSchema>;
 }
 
 export interface GetSchemasProps {
@@ -154,6 +155,7 @@ export interface GetDictionaryMockProps extends PropertyNameProp {
     xDictionaryKey: any;
     additionalProperties: any;
     DTOs: any;
+    overrideSchemas?: Array<EnumSchema>;
 }
 
 export interface GetRefTypeMockProps extends PropertyNameProp {
