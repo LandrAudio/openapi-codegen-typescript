@@ -17,9 +17,9 @@ import {
 } from './types';
 
 export class MockGenerateHelper {
-    private casual: any;
+    private casual: Casual.Generators & Casual.Casual;
 
-    constructor(casual: any) {
+    constructor(casual: Casual.Generators & Casual.Casual) {
         this.casual = casual;
     }
 
@@ -38,6 +38,8 @@ export class MockGenerateHelper {
             value = `'2019-06-10'`;
         } else if (format === StringFormats.Email) {
             value = `'${this.casual.email}'`;
+        } else if (format === StringFormats.Uri) {
+            value = `'${this.casual.url}'`;
         }
 
         if (!value) {
