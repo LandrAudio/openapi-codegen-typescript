@@ -1568,3 +1568,49 @@ export const aNextSubscriptionAPI = (overrides?: Partial<NextSubscription>): Nex
 
     expect(result).toEqual(expected);
 });
+
+it('should generate mocks for a URI type', async () => {
+    const json = {
+        paths: {},
+        servers: {},
+        info: {},
+        components: {
+            schemas: {
+                DownloadDto: {
+                    type: "object",
+                    additionalProperties: false,
+                    properties: {
+                        url: {
+                            type: "string",
+                            format: "uri",
+                            nullable: true
+                        }
+                    }
+                },
+            },
+
+        },
+    };
+
+    const expected = `/* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {DownloadDto} from './pathToTypes';
+
+export const aDownloadDtoAPI = (overrides?: Partial<DownloadDto>): DownloadDto => {
+  return {
+    url: 'http://www.Wisozk.us/',
+  ...overrides,
+  };
+};
+ 
+`;
+    const result = await convertToMocks({
+        json,
+        fileName: "doesn't matter",
+        folderPath: './someFolder',
+        typesPath: './pathToTypes',
+        swaggerVersion: 3,
+    });
+
+    expect(result).toEqual(expected);
+});
