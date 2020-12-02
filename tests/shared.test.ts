@@ -1,4 +1,4 @@
-import { SwaggerV2, SwaggerV3 } from '../src/types';
+import { swaggerV2Mock, swaggerV3Mock } from '../src/utils/test-utils';
 
 jest.mock('node-fetch');
 jest.mock('fs');
@@ -45,27 +45,25 @@ describe('TS types generation', () => {
     });
 
     it('should parse v2 schemas', async () => {
-        const json: SwaggerV2 = {
-            swagger: '2.0',
-            definitions: {
-                One: {
-                    type: 'object',
-                    properties: {
-                        name: {
-                            type: 'string',
-                        },
-                    },
-                },
-                Two: {
-                    type: 'object',
-                    properties: {
-                        name: {
-                            type: 'number',
-                        },
+        const json = swaggerV2Mock({
+            One: {
+                type: 'object',
+                properties: {
+                    name: {
+                        type: 'string',
                     },
                 },
             },
-        };
+            Two: {
+                type: 'object',
+                properties: {
+                    name: {
+                        type: 'number',
+                    },
+                },
+            },
+        });
+
         const parsedData = getSchemas({ json });
 
         const expected = {
@@ -90,29 +88,68 @@ describe('TS types generation', () => {
     });
 
     it('should parse v3 schemas', async () => {
-        const json: SwaggerV3 = {
-            openapi: '3.0.0',
-            components: {
-                schemas: {
-                    One: {
-                        type: 'object',
-                        properties: {
-                            name: {
-                                type: 'string',
-                            },
-                        },
-                    },
-                    Two: {
-                        type: 'object',
-                        properties: {
-                            name: {
-                                type: 'number',
-                            },
-                        },
+        const json = swaggerV3Mock({
+            One: {
+                type: 'object',
+                properties: {
+                    name: {
+                        type: 'string',
                     },
                 },
             },
+            Two: {
+                type: 'object',
+                properties: {
+                    name: {
+                        type: 'number',
+                    },
+                },
+            },
+        });
+
+        const parsedData = getSchemas({ json });
+
+        const expected = {
+            One: {
+                properties: {
+                    name: {
+                        type: 'string',
+                    },
+                },
+                type: 'object',
+            },
+            Two: {
+                properties: {
+                    name: {
+                        type: 'number',
+                    },
+                },
+                type: 'object',
+            },
         };
+        expect(parsedData).toEqual(expected);
+    });
+
+    it('should parse v3 schemas by default', async () => {
+        const json = swaggerV3Mock({
+            One: {
+                type: 'object',
+                properties: {
+                    name: {
+                        type: 'string',
+                    },
+                },
+            },
+            Two: {
+                type: 'object',
+                properties: {
+                    name: {
+                        type: 'number',
+                    },
+                },
+            },
+        });
+
         const parsedData = getSchemas({ json });
 
         const expected = {
@@ -137,10 +174,7 @@ describe('TS types generation', () => {
     });
 
     it('should return "undefined" json object in not valid', async () => {
-        const json: SwaggerV3 = {
-            openapi: '3.0.0',
-            components: {},
-        };
+        const json = swaggerV3Mock(undefined);
         const parsedData = getSchemas({ json });
         expect(parsedData).toEqual(undefined);
     });

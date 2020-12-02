@@ -5,7 +5,7 @@ import {
     parseSchema,
     parseSchemas,
 } from '../src/mockConverter';
-import { SwaggerV2, SwaggerV3 } from '../src/types';
+import { swaggerV2Mock, swaggerV3Mock } from '../src/utils/test-utils';
 
 jest.mock('fs');
 
@@ -588,29 +588,24 @@ it('should properly parse schemas', async () => {
     fs.existsSync.mockReturnValue(false);
     fs.mkdirSync.mockReturnValue(false);
 
-    const json: SwaggerV3 = {
-        openapi: '3.0.0',
-        components: {
-            schemas: {
-                One: {
-                    type: 'object',
-                    properties: {
-                        name: {
-                            type: 'string',
-                        },
-                    },
-                },
-                Two: {
-                    type: 'object',
-                    properties: {
-                        name: {
-                            type: 'number',
-                        },
-                    },
+    const json = swaggerV3Mock({
+        One: {
+            type: 'object',
+            properties: {
+                name: {
+                    type: 'string',
                 },
             },
         },
-    };
+        Two: {
+            type: 'object',
+            properties: {
+                name: {
+                    type: 'number',
+                },
+            },
+        },
+    });
 
     const result = parseSchemas({ json });
 
@@ -634,29 +629,24 @@ export const aTwoAPI = (overrides?: Partial<Two>): Two => {
 });
 
 it('should convert to mocks hole json object', async () => {
-    const json: SwaggerV3 = {
-        openapi: '3.0.0',
-        components: {
-            schemas: {
-                One: {
-                    type: 'object',
-                    properties: {
-                        name: {
-                            type: 'string',
-                        },
-                    },
-                },
-                Two: {
-                    type: 'object',
-                    properties: {
-                        name: {
-                            type: 'number',
-                        },
-                    },
+    const json = swaggerV3Mock({
+        One: {
+            type: 'object',
+            properties: {
+                name: {
+                    type: 'string',
                 },
             },
         },
-    };
+        Two: {
+            type: 'object',
+            properties: {
+                name: {
+                    type: 'number',
+                },
+            },
+        },
+    });
 
     const result = await convertToMocks({
         json,
@@ -688,75 +678,70 @@ export const aTwoAPI = (overrides?: Partial<Two>): Two => {
 });
 
 it('should generate mocks for "InviteAssetsMembersRequestDto" (multiple extends)', async () => {
-    const json: SwaggerV3 = {
-        openapi: '3.0.0',
-        components: {
-            schemas: {
-                MembersEmailDto: {
+    const json = swaggerV3Mock({
+        MembersEmailDto: {
+            type: 'object',
+            additionalProperties: false,
+            required: ['members'],
+            properties: {
+                members: {
+                    type: 'array',
+                    items: {
+                        $ref: '#/components/schemas/MemberEmailDto',
+                    },
+                },
+            },
+        },
+        UserRole: {
+            type: 'string',
+            description: '',
+            'x-enumNames': ['Owner', 'Collaborator', 'Viewer'],
+            enum: ['Owner', 'Collaborator', 'Viewer'],
+        },
+        InviteMembersRequestDto: {
+            allOf: [
+                {
+                    $ref: '#/components/schemas/MembersEmailDto',
+                },
+                {
                     type: 'object',
                     additionalProperties: false,
-                    required: ['members'],
+                    required: ['role'],
                     properties: {
-                        members: {
+                        message: {
+                            type: 'string',
+                            maxLength: 5000,
+                            nullable: true,
+                        },
+                        role: {
+                            $ref: '#/components/schemas/UserRole',
+                        },
+                    },
+                },
+            ],
+        },
+        InviteAssetsMembersRequestDto: {
+            allOf: [
+                {
+                    $ref: '#/components/schemas/InviteMembersRequestDto',
+                },
+                {
+                    type: 'object',
+                    additionalProperties: false,
+                    required: ['assetIds'],
+                    properties: {
+                        assetIds: {
                             type: 'array',
                             items: {
-                                $ref: '#/components/schemas/MemberEmailDto',
+                                type: 'string',
+                                format: 'guid',
                             },
                         },
                     },
                 },
-                UserRole: {
-                    type: 'string',
-                    description: '',
-                    'x-enumNames': ['Owner', 'Collaborator', 'Viewer'],
-                    enum: ['Owner', 'Collaborator', 'Viewer'],
-                },
-                InviteMembersRequestDto: {
-                    allOf: [
-                        {
-                            $ref: '#/components/schemas/MembersEmailDto',
-                        },
-                        {
-                            type: 'object',
-                            additionalProperties: false,
-                            required: ['role'],
-                            properties: {
-                                message: {
-                                    type: 'string',
-                                    maxLength: 5000,
-                                    nullable: true,
-                                },
-                                role: {
-                                    $ref: '#/components/schemas/UserRole',
-                                },
-                            },
-                        },
-                    ],
-                },
-                InviteAssetsMembersRequestDto: {
-                    allOf: [
-                        {
-                            $ref: '#/components/schemas/InviteMembersRequestDto',
-                        },
-                        {
-                            type: 'object',
-                            additionalProperties: false,
-                            required: ['assetIds'],
-                            properties: {
-                                assetIds: {
-                                    type: 'array',
-                                    items: {
-                                        type: 'string',
-                                        format: 'guid',
-                                    },
-                                },
-                            },
-                        },
-                    ],
-                },
-            },
+            ],
         },
-    };
+    });
 
     const expected = `/* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -801,24 +786,20 @@ export const anInviteAssetsMembersRequestDtoAPI = (overrides?: Partial<InviteAss
 });
 
 it('should generate mocks for "MemberEmailDto" (email property)', async () => {
-    const json: SwaggerV3 = {
-        openapi: '3.0.0',
-        components: {
-            schemas: {
-                MemberEmailDto: {
-                    type: 'object',
-                    additionalProperties: false,
-                    properties: {
-                        email: {
-                            type: 'string',
-                            format: 'email',
-                            nullable: true,
-                        },
-                    },
+    const json = swaggerV3Mock({
+        MemberEmailDto: {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+                email: {
+                    type: 'string',
+                    format: 'email',
+                    nullable: true,
                 },
             },
         },
-    };
+    });
+
     const expected = `/* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {MemberEmailDto} from './pathToTypes';
@@ -843,49 +824,44 @@ export const aMemberEmailDtoAPI = (overrides?: Partial<MemberEmailDto>): MemberE
 });
 
 it('should generate mocks for "Comment" (duration property)', async () => {
-    const json: SwaggerV3 = {
-        openapi: '3.0.0',
-        components: {
-            schemas: {
-                Comment: {
-                    type: 'object',
-                    additionalProperties: false,
-                    properties: {
-                        id: {
-                            type: 'string',
-                            format: 'guid',
-                        },
-                        message: {
-                            type: 'string',
-                            nullable: true,
-                        },
-                        userId: {
-                            type: 'string',
-                            format: 'guid',
-                        },
-                        annotationTime: {
-                            type: 'string',
-                            format: 'time-span',
-                            nullable: true,
-                        },
-                        annotationDuration: {
-                            type: 'string',
-                            format: 'time-span',
-                            nullable: true,
-                        },
-                        creationTime: {
-                            type: 'string',
-                            format: 'date-time',
-                        },
-                        lastModifiedTime: {
-                            type: 'string',
-                            format: 'date-time',
-                        },
-                    },
+    const json = swaggerV3Mock({
+        Comment: {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+                id: {
+                    type: 'string',
+                    format: 'guid',
+                },
+                message: {
+                    type: 'string',
+                    nullable: true,
+                },
+                userId: {
+                    type: 'string',
+                    format: 'guid',
+                },
+                annotationTime: {
+                    type: 'string',
+                    format: 'time-span',
+                    nullable: true,
+                },
+                annotationDuration: {
+                    type: 'string',
+                    format: 'time-span',
+                    nullable: true,
+                },
+                creationTime: {
+                    type: 'string',
+                    format: 'date-time',
+                },
+                lastModifiedTime: {
+                    type: 'string',
+                    format: 'date-time',
                 },
             },
         },
-    };
+    });
 
     const expected = `/* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -917,27 +893,22 @@ export const aCommentAPI = (overrides?: Partial<Comment>): Comment => {
 });
 
 it('should generate mocks for array of integers', async () => {
-    const json: SwaggerV3 = {
-        openapi: '3.0.0',
-        components: {
-            schemas: {
-                ArrayOfIntegers: {
-                    type: 'object',
-                    additionalProperties: false,
-                    properties: {
-                        invoiceNumbers: {
-                            type: 'array',
-                            nullable: true,
-                            items: {
-                                type: 'integer',
-                                format: 'int64',
-                            },
-                        },
+    const json = swaggerV3Mock({
+        ArrayOfIntegers: {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+                invoiceNumbers: {
+                    type: 'array',
+                    nullable: true,
+                    items: {
+                        type: 'integer',
+                        format: 'int64',
                     },
                 },
             },
         },
-    };
+    });
 
     const expected = `/* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -962,22 +933,17 @@ export const anArrayOfIntegersAPI = (overrides?: Partial<ArrayOfIntegers>): Arra
 });
 
 it('should generate mocks for a property without a "type"', async () => {
-    const json: SwaggerV3 = {
-        openapi: '3.0.0',
-        components: {
-            schemas: {
-                Notification: {
-                    type: 'object',
-                    additionalProperties: false,
-                    properties: {
-                        payload: {
-                            nullable: true,
-                        },
-                    },
+    const json = swaggerV3Mock({
+        Notification: {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+                payload: {
+                    nullable: true,
                 },
             },
         },
-    };
+    });
 
     const expected = `/* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -1002,51 +968,46 @@ export const aNotificationAPI = (overrides?: Partial<Notification>): Notificatio
 });
 
 it('should generate mocks for a enum "dictionary" type', async () => {
-    const json: SwaggerV3 = {
-        openapi: '3.0.0',
-        components: {
-            schemas: {
-                BillingProviderKind: {
-                    type: 'string',
-                    description: '',
-                    'x-enumNames': ['Legacy', 'Fusebill'],
-                    enum: ['Legacy', 'Fusebill'],
-                },
-                ServiceOfferKind: {
-                    type: 'string',
-                    description: '',
-                    'x-enumNames': ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution'],
-                    enum: ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution'],
-                },
-                UserMetadata: {
+    const json = swaggerV3Mock({
+        BillingProviderKind: {
+            type: 'string',
+            description: '',
+            'x-enumNames': ['Legacy', 'Fusebill'],
+            enum: ['Legacy', 'Fusebill'],
+        },
+        ServiceOfferKind: {
+            type: 'string',
+            description: '',
+            'x-enumNames': ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution'],
+            enum: ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution'],
+        },
+        UserMetadata: {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+                serviceOffers: {
                     type: 'object',
-                    additionalProperties: false,
-                    properties: {
-                        serviceOffers: {
-                            type: 'object',
-                            nullable: true,
-                            'x-dictionaryKey': {
-                                $ref: '#/components/schemas/ServiceOfferKind',
-                            },
-                            additionalProperties: {
-                                $ref: '#/components/schemas/BillingProviderKind',
-                            },
-                        },
-                        copy: {
-                            type: 'object',
-                            nullable: true,
-                            'x-dictionaryKey': {
-                                $ref: '#/components/schemas/ServiceOfferKind',
-                            },
-                            additionalProperties: {
-                                $ref: '#/components/schemas/BillingProviderKind',
-                            },
-                        },
+                    nullable: true,
+                    'x-dictionaryKey': {
+                        $ref: '#/components/schemas/ServiceOfferKind',
+                    },
+                    additionalProperties: {
+                        $ref: '#/components/schemas/BillingProviderKind',
+                    },
+                },
+                copy: {
+                    type: 'object',
+                    nullable: true,
+                    'x-dictionaryKey': {
+                        $ref: '#/components/schemas/ServiceOfferKind',
+                    },
+                    additionalProperties: {
+                        $ref: '#/components/schemas/BillingProviderKind',
                     },
                 },
             },
         },
-    };
+    });
 
     const expected = `/* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -1084,70 +1045,65 @@ export const anUserMetadataAPI = (overrides?: Partial<UserMetadata>): UserMetada
 });
 
 it('should generate mocks for an object "dictionary" type', async () => {
-    const json: SwaggerV3 = {
-        openapi: '3.0.0',
-        components: {
-            schemas: {
-                ServiceOfferKind: {
+    const json = swaggerV3Mock({
+        ServiceOfferKind: {
+            type: 'string',
+            description: '',
+            'x-enumNames': ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution'],
+            enum: ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution'],
+        },
+        CurrentSubscription: {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+                creationDate: {
                     type: 'string',
-                    description: '',
-                    'x-enumNames': ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution'],
-                    enum: ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution'],
+                    format: 'date-time',
                 },
-                CurrentSubscription: {
+                activationDate: {
+                    type: 'string',
+                    format: 'date-time',
+                    nullable: true,
+                },
+            },
+        },
+        NextSubscription: {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+                startDate: {
+                    type: 'string',
+                    format: 'date-time',
+                },
+            },
+        },
+        UserSubscriptions: {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+                current: {
                     type: 'object',
-                    additionalProperties: false,
-                    properties: {
-                        creationDate: {
-                            type: 'string',
-                            format: 'date-time',
-                        },
-                        activationDate: {
-                            type: 'string',
-                            format: 'date-time',
-                            nullable: true,
-                        },
+                    nullable: true,
+                    'x-dictionaryKey': {
+                        $ref: '#/components/schemas/ServiceOfferKind',
+                    },
+                    additionalProperties: {
+                        $ref: '#/components/schemas/CurrentSubscription',
                     },
                 },
-                NextSubscription: {
+                next: {
                     type: 'object',
-                    additionalProperties: false,
-                    properties: {
-                        startDate: {
-                            type: 'string',
-                            format: 'date-time',
-                        },
+                    nullable: true,
+                    'x-dictionaryKey': {
+                        $ref: '#/components/schemas/ServiceOfferKind',
                     },
-                },
-                UserSubscriptions: {
-                    type: 'object',
-                    additionalProperties: false,
-                    properties: {
-                        current: {
-                            type: 'object',
-                            nullable: true,
-                            'x-dictionaryKey': {
-                                $ref: '#/components/schemas/ServiceOfferKind',
-                            },
-                            additionalProperties: {
-                                $ref: '#/components/schemas/CurrentSubscription',
-                            },
-                        },
-                        next: {
-                            type: 'object',
-                            nullable: true,
-                            'x-dictionaryKey': {
-                                $ref: '#/components/schemas/ServiceOfferKind',
-                            },
-                            additionalProperties: {
-                                $ref: '#/components/schemas/NextSubscription',
-                            },
-                        },
+                    additionalProperties: {
+                        $ref: '#/components/schemas/NextSubscription',
                     },
                 },
             },
         },
-    };
+    });
 
     const expected = `/* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -1200,86 +1156,81 @@ export const anUserSubscriptionsAPI = (overrides?: Partial<UserSubscriptions>): 
 });
 
 it('should generate mocks for a "dictionary" type boolean', async () => {
-    const json: SwaggerV3 = {
-        openapi: '3.0.0',
-        components: {
-            schemas: {
-                ContentDtoOfCollectionDto: {
-                    type: 'object',
-                    additionalProperties: false,
-                    properties: {
-                        data: {
-                            type: 'array',
-                            nullable: true,
-                            items: {
-                                $ref: '#/components/schemas/CollectionDto',
-                            },
-                        },
-                        paging: {
-                            nullable: true,
-                            oneOf: [
-                                {
-                                    $ref: '#/components/schemas/PagingOptionsDto',
-                                },
-                            ],
-                        },
+    const json = swaggerV3Mock({
+        ContentDtoOfCollectionDto: {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+                data: {
+                    type: 'array',
+                    nullable: true,
+                    items: {
+                        $ref: '#/components/schemas/CollectionDto',
                     },
                 },
-                CollectionDto: {
-                    type: 'object',
-                    additionalProperties: false,
-                    properties: {
-                        id: {
-                            type: 'string',
-                            format: 'guid',
+                paging: {
+                    nullable: true,
+                    oneOf: [
+                        {
+                            $ref: '#/components/schemas/PagingOptionsDto',
                         },
-                        ownerId: {
-                            type: 'string',
-                            format: 'guid',
-                        },
-                        name: {
-                            type: 'string',
-                            nullable: true,
-                        },
-                        creationTime: {
-                            type: 'string',
-                            format: 'date-time',
-                        },
-                        lastModifiedTime: {
-                            type: 'string',
-                            format: 'date-time',
-                        },
-                        isSoftDeleted: {
-                            type: 'boolean',
-                        },
-                        collaborators: {
-                            type: 'array',
-                            nullable: true,
-                            items: {
-                                $ref: '#/components/schemas/CollaboratorDto',
-                            },
-                        },
-                        permissions: {
-                            type: 'object',
-                            nullable: true,
-                            'x-dictionaryKey': {
-                                $ref: '#/components/schemas/UserOperation',
-                            },
-                            additionalProperties: {
-                                type: 'boolean',
-                            },
-                        },
-                    },
-                },
-                UserOperation: {
-                    type: 'string',
-                    description: '',
-                    'x-enumNames': ['Read', 'Write'],
-                    enum: ['Read', 'Write'],
+                    ],
                 },
             },
         },
-    };
+        CollectionDto: {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+                id: {
+                    type: 'string',
+                    format: 'guid',
+                },
+                ownerId: {
+                    type: 'string',
+                    format: 'guid',
+                },
+                name: {
+                    type: 'string',
+                    nullable: true,
+                },
+                creationTime: {
+                    type: 'string',
+                    format: 'date-time',
+                },
+                lastModifiedTime: {
+                    type: 'string',
+                    format: 'date-time',
+                },
+                isSoftDeleted: {
+                    type: 'boolean',
+                },
+                collaborators: {
+                    type: 'array',
+                    nullable: true,
+                    items: {
+                        $ref: '#/components/schemas/CollaboratorDto',
+                    },
+                },
+                permissions: {
+                    type: 'object',
+                    nullable: true,
+                    'x-dictionaryKey': {
+                        $ref: '#/components/schemas/UserOperation',
+                    },
+                    additionalProperties: {
+                        type: 'boolean',
+                    },
+                },
+            },
+        },
+        UserOperation: {
+            type: 'string',
+            description: '',
+            'x-enumNames': ['Read', 'Write'],
+            enum: ['Read', 'Write'],
+        },
+    });
 
     const expected = `/* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -1322,48 +1273,36 @@ export const aCollectionDtoAPI = (overrides?: Partial<CollectionDto>): Collectio
 });
 
 it('should generate overrided mocks for dictionary enum type', async () => {
-    const json: SwaggerV3 = {
-        openapi: '3.0.0',
-        components: {
-            schemas: {
-                UserMetadata: {
+    const json = swaggerV3Mock({
+        UserMetadata: {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+                serviceOffers: {
                     type: 'object',
-                    additionalProperties: false,
-                    properties: {
-                        serviceOffers: {
-                            type: 'object',
-                            nullable: true,
-                            'x-dictionaryKey': {
-                                $ref: '#/components/schemas/ServiceOfferKind',
-                            },
-                            additionalProperties: {
-                                $ref: '#/components/schemas/BillingProviderKind',
-                            },
-                        },
+                    nullable: true,
+                    'x-dictionaryKey': {
+                        $ref: '#/components/schemas/ServiceOfferKind',
                     },
-                },
-                ServiceOfferKind: {
-                    type: 'string',
-                    description: '',
-                    'x-enumNames': [
-                        'MasteringAndDistribution',
-                        'Video',
-                        'Samples',
-                        'Mastering',
-                        'Distribution',
-                        'Sessions',
-                    ],
-                    enum: ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution', 'Sessions'],
-                },
-                BillingProviderKind: {
-                    type: 'string',
-                    description: '',
-                    'x-enumNames': ['Legacy', 'Fusebill'],
-                    enum: ['Legacy', 'Fusebill'],
+                    additionalProperties: {
+                        $ref: '#/components/schemas/BillingProviderKind',
+                    },
                 },
             },
         },
-    };
+        ServiceOfferKind: {
+            type: 'string',
+            description: '',
+            'x-enumNames': ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution', 'Sessions'],
+            enum: ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution', 'Sessions'],
+        },
+        BillingProviderKind: {
+            type: 'string',
+            description: '',
+            'x-enumNames': ['Legacy', 'Fusebill'],
+            enum: ['Legacy', 'Fusebill'],
+        },
+    });
 
     const expected = `/* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -1404,40 +1343,28 @@ export const anUserMetadataAPI = (overrides?: Partial<UserMetadata>): UserMetada
 });
 
 it('should generate overrided mocks for oneOf enum type', async () => {
-    const json: SwaggerV3 = {
-        openapi: '3.0.0',
-        components: {
-            schemas: {
-                CurrentSubscription: {
-                    type: 'object',
-                    additionalProperties: false,
-                    properties: {
-                        serviceOffer: {
-                            description: 'the service offer of the subscription.',
-                            oneOf: [
-                                {
-                                    $ref: '#/components/schemas/ServiceOfferKind',
-                                },
-                            ],
+    const json = swaggerV3Mock({
+        CurrentSubscription: {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+                serviceOffer: {
+                    description: 'the service offer of the subscription.',
+                    oneOf: [
+                        {
+                            $ref: '#/components/schemas/ServiceOfferKind',
                         },
-                    },
-                },
-                ServiceOfferKind: {
-                    type: 'string',
-                    description: '',
-                    'x-enumNames': [
-                        'MasteringAndDistribution',
-                        'Video',
-                        'Samples',
-                        'Mastering',
-                        'Distribution',
-                        'Sessions',
                     ],
-                    enum: ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution', 'Sessions'],
                 },
             },
         },
-    };
+        ServiceOfferKind: {
+            type: 'string',
+            description: '',
+            'x-enumNames': ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution', 'Sessions'],
+            enum: ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution', 'Sessions'],
+        },
+    });
 
     const expected = `/* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -1471,35 +1398,23 @@ export const aCurrentSubscriptionAPI = (overrides?: Partial<CurrentSubscription>
 });
 
 it('should generate overrided mocks for $ref enum type', async () => {
-    const json: SwaggerV3 = {
-        openapi: '3.0.0',
-        components: {
-            schemas: {
-                NextSubscription: {
-                    type: 'object',
-                    additionalProperties: false,
-                    properties: {
-                        serviceOffer: {
-                            $ref: '#/components/schemas/ServiceOfferKind',
-                        },
-                    },
-                },
-                ServiceOfferKind: {
-                    type: 'string',
-                    description: '',
-                    'x-enumNames': [
-                        'MasteringAndDistribution',
-                        'Video',
-                        'Samples',
-                        'Mastering',
-                        'Distribution',
-                        'Sessions',
-                    ],
-                    enum: ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution', 'Sessions'],
+    const json = swaggerV3Mock({
+        NextSubscription: {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+                serviceOffer: {
+                    $ref: '#/components/schemas/ServiceOfferKind',
                 },
             },
         },
-    };
+        ServiceOfferKind: {
+            type: 'string',
+            description: '',
+            'x-enumNames': ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution', 'Sessions'],
+            enum: ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution', 'Sessions'],
+        },
+    });
 
     const expected = `/* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -1533,24 +1448,19 @@ export const aNextSubscriptionAPI = (overrides?: Partial<NextSubscription>): Nex
 });
 
 it('should generate mocks for a URI type', async () => {
-    const json: SwaggerV3 = {
-        openapi: '3.0.0',
-        components: {
-            schemas: {
-                DownloadDto: {
-                    type: 'object',
-                    additionalProperties: false,
-                    properties: {
-                        url: {
-                            type: 'string',
-                            format: 'uri',
-                            nullable: true,
-                        },
-                    },
+    const json = swaggerV3Mock({
+        DownloadDto: {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+                url: {
+                    type: 'string',
+                    format: 'uri',
+                    nullable: true,
                 },
             },
         },
-    };
+    });
 
     const expected = `/* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -1575,32 +1485,29 @@ export const aDownloadDtoAPI = (overrides?: Partial<DownloadDto>): DownloadDto =
 });
 
 it('should return CollectionResponseDto mocks', async () => {
-    const json: SwaggerV2 = {
-        swagger: '2.0',
-        definitions: {
-            'CollectionResponseDto[StoredCreditCardDto]': {
-                title: 'CollectionResponse`1',
-                type: 'object',
-                properties: {
-                    data: {
-                        type: 'array',
-                        items: {
-                            $ref: '#/definitions/StoredCreditCardDto',
-                        },
-                    },
-                },
-            },
-            StoredCreditCardDto: {
-                title: 'StoredCreditCard',
-                type: 'object',
-                properties: {
-                    creditCardId: {
-                        type: 'string',
+    const json = swaggerV2Mock({
+        'CollectionResponseDto[StoredCreditCardDto]': {
+            title: 'CollectionResponse`1',
+            type: 'object',
+            properties: {
+                data: {
+                    type: 'array',
+                    items: {
+                        $ref: '#/definitions/StoredCreditCardDto',
                     },
                 },
             },
         },
-    };
+        StoredCreditCardDto: {
+            title: 'StoredCreditCard',
+            type: 'object',
+            properties: {
+                creditCardId: {
+                    type: 'string',
+                },
+            },
+        },
+    });
 
     const result = await convertToMocks({
         json,
