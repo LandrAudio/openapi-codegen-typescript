@@ -5,6 +5,7 @@ import {
     parseSchema,
     parseSchemas,
 } from '../src/mockConverter';
+import { SwaggerV2, SwaggerV3 } from '../src/types';
 
 jest.mock('fs');
 
@@ -587,10 +588,8 @@ it('should properly parse schemas', async () => {
     fs.existsSync.mockReturnValue(false);
     fs.mkdirSync.mockReturnValue(false);
 
-    const json = {
-        paths: {},
-        servers: {},
-        info: {},
+    const json: SwaggerV3 = {
+        openapi: '3.0.0',
         components: {
             schemas: {
                 One: {
@@ -613,7 +612,7 @@ it('should properly parse schemas', async () => {
         },
     };
 
-    const result = parseSchemas({ json, swaggerVersion: 3 });
+    const result = parseSchemas({ json });
 
     const expectedString = `
 export const aOneAPI = (overrides?: Partial<One>): One => {
@@ -635,10 +634,8 @@ export const aTwoAPI = (overrides?: Partial<Two>): Two => {
 });
 
 it('should convert to mocks hole json object', async () => {
-    const json = {
-        paths: {},
-        servers: {},
-        info: {},
+    const json: SwaggerV3 = {
+        openapi: '3.0.0',
         components: {
             schemas: {
                 One: {
@@ -666,7 +663,6 @@ it('should convert to mocks hole json object', async () => {
         fileName: 'doesnt matter',
         folderPath: './someFolder',
         typesPath: './pathToTypes',
-        swaggerVersion: 3,
     });
 
     const expectedString = `/* eslint-disable @typescript-eslint/no-use-before-define */
@@ -692,10 +688,8 @@ export const aTwoAPI = (overrides?: Partial<Two>): Two => {
 });
 
 it('should generate mocks for "InviteAssetsMembersRequestDto" (multiple extends)', async () => {
-    const json = {
-        paths: {},
-        servers: {},
-        info: {},
+    const json: SwaggerV3 = {
+        openapi: '3.0.0',
         components: {
             schemas: {
                 MembersEmailDto: {
@@ -801,17 +795,14 @@ export const anInviteAssetsMembersRequestDtoAPI = (overrides?: Partial<InviteAss
         fileName: "doesn't matter",
         folderPath: './someFolder',
         typesPath: './pathToTypes',
-        swaggerVersion: 3,
     });
 
     expect(result).toEqual(expected);
 });
 
 it('should generate mocks for "MemberEmailDto" (email property)', async () => {
-    const json = {
-        paths: {},
-        servers: {},
-        info: {},
+    const json: SwaggerV3 = {
+        openapi: '3.0.0',
         components: {
             schemas: {
                 MemberEmailDto: {
@@ -846,17 +837,14 @@ export const aMemberEmailDtoAPI = (overrides?: Partial<MemberEmailDto>): MemberE
         fileName: "doesn't matter",
         folderPath: './someFolder',
         typesPath: './pathToTypes',
-        swaggerVersion: 3,
     });
 
     expect(result).toEqual(expected);
 });
 
 it('should generate mocks for "Comment" (duration property)', async () => {
-    const json = {
-        paths: {},
-        servers: {},
-        info: {},
+    const json: SwaggerV3 = {
+        openapi: '3.0.0',
         components: {
             schemas: {
                 Comment: {
@@ -923,17 +911,14 @@ export const aCommentAPI = (overrides?: Partial<Comment>): Comment => {
         fileName: "doesn't matter",
         folderPath: './someFolder',
         typesPath: './pathToTypes',
-        swaggerVersion: 3,
     });
 
     expect(result).toEqual(expected);
 });
 
 it('should generate mocks for array of integers', async () => {
-    const json = {
-        paths: {},
-        servers: {},
-        info: {},
+    const json: SwaggerV3 = {
+        openapi: '3.0.0',
         components: {
             schemas: {
                 ArrayOfIntegers: {
@@ -971,17 +956,14 @@ export const anArrayOfIntegersAPI = (overrides?: Partial<ArrayOfIntegers>): Arra
         fileName: "doesn't matter",
         folderPath: './someFolder',
         typesPath: './pathToTypes',
-        swaggerVersion: 3,
     });
 
     expect(result).toEqual(expected);
 });
 
 it('should generate mocks for a property without a "type"', async () => {
-    const json = {
-        paths: {},
-        servers: {},
-        info: {},
+    const json: SwaggerV3 = {
+        openapi: '3.0.0',
         components: {
             schemas: {
                 Notification: {
@@ -1014,17 +996,14 @@ export const aNotificationAPI = (overrides?: Partial<Notification>): Notificatio
         fileName: "doesn't matter",
         folderPath: './someFolder',
         typesPath: './pathToTypes',
-        swaggerVersion: 3,
     });
 
     expect(result).toEqual(expected);
 });
 
 it('should generate mocks for a enum "dictionary" type', async () => {
-    const json = {
-        paths: {},
-        servers: {},
-        info: {},
+    const json: SwaggerV3 = {
+        openapi: '3.0.0',
         components: {
             schemas: {
                 BillingProviderKind: {
@@ -1099,17 +1078,14 @@ export const anUserMetadataAPI = (overrides?: Partial<UserMetadata>): UserMetada
         fileName: "doesn't matter",
         folderPath: './someFolder',
         typesPath: './pathToTypes',
-        swaggerVersion: 3,
     });
 
     expect(result).toEqual(expected);
 });
 
 it('should generate mocks for an object "dictionary" type', async () => {
-    const json = {
-        paths: {},
-        servers: {},
-        info: {},
+    const json: SwaggerV3 = {
+        openapi: '3.0.0',
         components: {
             schemas: {
                 ServiceOfferKind: {
@@ -1218,17 +1194,14 @@ export const anUserSubscriptionsAPI = (overrides?: Partial<UserSubscriptions>): 
         fileName: "doesn't matter",
         folderPath: './someFolder',
         typesPath: './pathToTypes',
-        swaggerVersion: 3,
     });
 
     expect(result).toEqual(expected);
 });
 
 it('should generate mocks for a "dictionary" type boolean', async () => {
-    const json = {
-        paths: {},
-        servers: {},
-        info: {},
+    const json: SwaggerV3 = {
+        openapi: '3.0.0',
         components: {
             schemas: {
                 ContentDtoOfCollectionDto: {
@@ -1343,17 +1316,14 @@ export const aCollectionDtoAPI = (overrides?: Partial<CollectionDto>): Collectio
         fileName: "doesn't matter",
         folderPath: './someFolder',
         typesPath: './pathToTypes',
-        swaggerVersion: 3,
     });
 
     expect(result).toEqual(expected);
 });
 
 it('should generate overrided mocks for dictionary enum type', async () => {
-    const json = {
-        paths: {},
-        servers: {},
-        info: {},
+    const json: SwaggerV3 = {
+        openapi: '3.0.0',
         components: {
             schemas: {
                 UserMetadata: {
@@ -1419,7 +1389,6 @@ export const anUserMetadataAPI = (overrides?: Partial<UserMetadata>): UserMetada
         fileName: "doesn't matter",
         folderPath: './someFolder',
         typesPath: './pathToTypes',
-        swaggerVersion: 3,
         overrideSchemas: [
             {
                 ServiceOfferKind: {
@@ -1435,25 +1404,23 @@ export const anUserMetadataAPI = (overrides?: Partial<UserMetadata>): UserMetada
 });
 
 it('should generate overrided mocks for oneOf enum type', async () => {
-    const json = {
-        paths: {},
-        servers: {},
-        info: {},
+    const json: SwaggerV3 = {
+        openapi: '3.0.0',
         components: {
             schemas: {
                 CurrentSubscription: {
-                    type: "object",
+                    type: 'object',
                     additionalProperties: false,
                     properties: {
                         serviceOffer: {
-                            description: "the service offer of the subscription.",
+                            description: 'the service offer of the subscription.',
                             oneOf: [
                                 {
-                                    $ref: "#/components/schemas/ServiceOfferKind"
-                                }
-                            ]
+                                    $ref: '#/components/schemas/ServiceOfferKind',
+                                },
+                            ],
                         },
-                    }
+                    },
                 },
                 ServiceOfferKind: {
                     type: 'string',
@@ -1489,7 +1456,6 @@ export const aCurrentSubscriptionAPI = (overrides?: Partial<CurrentSubscription>
         fileName: "doesn't matter",
         folderPath: './someFolder',
         typesPath: './pathToTypes',
-        swaggerVersion: 3,
         overrideSchemas: [
             {
                 ServiceOfferKind: {
@@ -1505,20 +1471,18 @@ export const aCurrentSubscriptionAPI = (overrides?: Partial<CurrentSubscription>
 });
 
 it('should generate overrided mocks for $ref enum type', async () => {
-    const json = {
-        paths: {},
-        servers: {},
-        info: {},
+    const json: SwaggerV3 = {
+        openapi: '3.0.0',
         components: {
             schemas: {
                 NextSubscription: {
-                    type: "object",
+                    type: 'object',
                     additionalProperties: false,
                     properties: {
                         serviceOffer: {
-                            $ref: "#/components/schemas/ServiceOfferKind"
+                            $ref: '#/components/schemas/ServiceOfferKind',
                         },
-                    }
+                    },
                 },
                 ServiceOfferKind: {
                     type: 'string',
@@ -1554,7 +1518,6 @@ export const aNextSubscriptionAPI = (overrides?: Partial<NextSubscription>): Nex
         fileName: "doesn't matter",
         folderPath: './someFolder',
         typesPath: './pathToTypes',
-        swaggerVersion: 3,
         overrideSchemas: [
             {
                 ServiceOfferKind: {
@@ -1570,25 +1533,22 @@ export const aNextSubscriptionAPI = (overrides?: Partial<NextSubscription>): Nex
 });
 
 it('should generate mocks for a URI type', async () => {
-    const json = {
-        paths: {},
-        servers: {},
-        info: {},
+    const json: SwaggerV3 = {
+        openapi: '3.0.0',
         components: {
             schemas: {
                 DownloadDto: {
-                    type: "object",
+                    type: 'object',
                     additionalProperties: false,
                     properties: {
                         url: {
-                            type: "string",
-                            format: "uri",
-                            nullable: true
-                        }
-                    }
+                            type: 'string',
+                            format: 'uri',
+                            nullable: true,
+                        },
+                    },
                 },
             },
-
         },
     };
 
@@ -1609,14 +1569,14 @@ export const aDownloadDtoAPI = (overrides?: Partial<DownloadDto>): DownloadDto =
         fileName: "doesn't matter",
         folderPath: './someFolder',
         typesPath: './pathToTypes',
-        swaggerVersion: 3,
     });
 
     expect(result).toEqual(expected);
 });
 
 it('should return CollectionResponseDto mocks', async () => {
-    const json = {
+    const json: SwaggerV2 = {
+        swagger: '2.0',
         definitions: {
             'CollectionResponseDto[StoredCreditCardDto]': {
                 title: 'CollectionResponse`1',
@@ -1639,7 +1599,7 @@ it('should return CollectionResponseDto mocks', async () => {
                     },
                 },
             },
-        }
+        },
     };
 
     const result = await convertToMocks({
@@ -1647,7 +1607,6 @@ it('should return CollectionResponseDto mocks', async () => {
         fileName: "doesn't matter",
         folderPath: './someFolder',
         typesPath: './pathToTypes',
-        swaggerVersion: 2
     });
 
     const expectedString = `/* eslint-disable @typescript-eslint/no-use-before-define */

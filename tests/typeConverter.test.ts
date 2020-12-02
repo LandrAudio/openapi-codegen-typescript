@@ -1,4 +1,5 @@
 import { parseEnum, parseObject, parseSchemas } from '../src/typesConverter';
+import { SwaggerV2, SwaggerV3 } from '../src/types';
 
 describe('TS types generation', () => {
     it('should convert id guid property', async () => {
@@ -451,7 +452,8 @@ export interface AssetDto {
     });
 
     it('should properly combine in one file', async () => {
-        const example = {
+        const json: SwaggerV3 = {
+            openapi: '3.0.0',
             components: {
                 schemas: {
                     AssetDto: {
@@ -541,7 +543,7 @@ export interface AssetDto {
             },
         };
 
-        const resultString = parseSchemas({ json: example, swaggerVersion: 3 });
+        const resultString = parseSchemas({ json });
 
         const expectedString = `export interface AssetDto {
     id: string; // format: "guid"
@@ -569,7 +571,8 @@ export type FileKind = 'Original' | 'Stream' | 'Waveform';
     });
 
     it('should return TODO text if data type is wrong (catch block)', async () => {
-        const example = {
+        const json: SwaggerV3 = {
+            openapi: '3.0.0',
             components: {
                 schemas: {
                     FileState: {
@@ -581,7 +584,7 @@ export type FileKind = 'Original' | 'Stream' | 'Waveform';
             },
         };
 
-        const resultString = parseSchemas({ json: example, swaggerVersion: 3 });
+        const resultString = parseSchemas({ json });
 
         const expectedString = '// TODO: ERROR! Something wrong with FileState \n \n';
 
@@ -589,7 +592,8 @@ export type FileKind = 'Original' | 'Stream' | 'Waveform';
     });
 
     it('should return TODO text if type was not converted', async () => {
-        const example = {
+        const json: SwaggerV3 = {
+            openapi: '3.0.0',
             components: {
                 schemas: {
                     AssetDto: {
@@ -623,7 +627,7 @@ export type FileKind = 'Original' | 'Stream' | 'Waveform';
             },
         };
 
-        const resultString = parseSchemas({ json: example, swaggerVersion: 3 });
+        const resultString = parseSchemas({ json });
 
         const expectedString = `export interface AssetDto {
     id: string; // format: "guid"
@@ -639,7 +643,8 @@ export interface AssetFileDto {
     });
 
     it('should return correct type for array of integers', async () => {
-        const example = {
+        const json: SwaggerV3 = {
+            openapi: '3.0.0',
             components: {
                 schemas: {
                     ArrayOfIntegers: {
@@ -660,7 +665,7 @@ export interface AssetFileDto {
             },
         };
 
-        const resultString = parseSchemas({ json: example, swaggerVersion: 3 });
+        const resultString = parseSchemas({ json });
 
         const expectedString = `export interface ArrayOfIntegers {
     invoiceNumbers?: number[];
@@ -671,7 +676,8 @@ export interface AssetFileDto {
     });
 
     it('should return "any" type for property without a type', async () => {
-        const example = {
+        const json: SwaggerV3 = {
+            openapi: '3.0.0',
             components: {
                 schemas: {
                     Notification: {
@@ -687,7 +693,7 @@ export interface AssetFileDto {
             },
         };
 
-        const resultString = parseSchemas({ json: example, swaggerVersion: 3 });
+        const resultString = parseSchemas({ json });
 
         const expectedString = `export interface Notification {
     payload?: any;
@@ -698,7 +704,8 @@ export interface AssetFileDto {
     });
 
     it('should return type for a "dictionary"', async () => {
-        const example = {
+        const json: SwaggerV3 = {
+            openapi: '3.0.0',
             components: {
                 schemas: {
                     BillingProviderKind: {
@@ -743,7 +750,7 @@ export interface AssetFileDto {
             },
         };
 
-        const resultString = parseSchemas({ json: example, swaggerVersion: 3 });
+        const resultString = parseSchemas({ json });
 
         const expectedString = `export type BillingProviderKind = 'Legacy' | 'Fusebill';
 export type ServiceOfferKind = 'MasteringAndDistribution' | 'Video' | 'Samples' | 'Mastering' | 'Distribution';
@@ -762,7 +769,8 @@ export interface UserMetadata {
 });
 
 it('should return type for a multiple "dictionary" types', async () => {
-    const example = {
+    const json: SwaggerV3 = {
+        openapi: '3.0.0',
         components: {
             schemas: {
                 BillingProviderKind: {
@@ -807,7 +815,7 @@ it('should return type for a multiple "dictionary" types', async () => {
         },
     };
 
-    const resultString = parseSchemas({ json: example, swaggerVersion: 3 });
+    const resultString = parseSchemas({ json });
 
     const expectedString = `export type BillingProviderKind = 'Legacy' | 'Fusebill';
 export type ServiceOfferKind = 'MasteringAndDistribution' | 'Video' | 'Samples' | 'Mastering' | 'Distribution';
@@ -825,7 +833,8 @@ export interface UserSubscriptions {
 });
 
 it('should return type for a "dictionary" type boolean', async () => {
-    const example = {
+    const json: SwaggerV3 = {
+        openapi: '3.0.0',
         components: {
             schemas: {
                 ContentDtoOfCollectionDto: {
@@ -908,7 +917,7 @@ it('should return type for a "dictionary" type boolean', async () => {
         },
     };
 
-    const resultString = parseSchemas({ json: example, swaggerVersion: 3 });
+    const resultString = parseSchemas({ json });
 
     const expectedString = `export interface ContentDtoOfCollectionDto {
     data?: CollectionDto[];
@@ -935,7 +944,8 @@ export type UserOperation = 'Read' | 'Write';
 
 it('should return overrided enum schema', async () => {
     // What will be fetched from Swagger Json
-    const example = {
+    const json: SwaggerV3 = {
+        openapi: '3.0.0',
         components: {
             schemas: {
                 ServiceOfferKind: {
@@ -956,8 +966,7 @@ it('should return overrided enum schema', async () => {
     };
 
     const resultString = parseSchemas({
-        json: example,
-        swaggerVersion: 3,
+        json,
         // Overrided value "ServiceOfferKind" enum
         overrideSchemas: [
             {
@@ -980,7 +989,8 @@ export type ServiceOfferKind = 'masteringAndDistribution' | 'video' | 'samples' 
 });
 
 it('should return description', async () => {
-    const example = {
+    const json: SwaggerV3 = {
+        openapi: '3.0.0',
         components: {
             schemas: {
                 PlanFrequencyIdentifier: {
@@ -1041,10 +1051,7 @@ it('should return description', async () => {
         },
     };
 
-    const resultString = parseSchemas({
-        json: example,
-        swaggerVersion: 3,
-    });
+    const resultString = parseSchemas({ json });
 
     const expectedString = `/**
  * PlanFrequencyIdentifier description 
@@ -1087,7 +1094,8 @@ export interface PlanFrequencyIdentifier {
 });
 
 it('should return CollectionResponseDto', async () => {
-    const example = {
+    const json: SwaggerV2 = {
+        swagger: '2.0',
         definitions: {
             'CollectionResponseDto[StoredCreditCardDto]': {
                 title: 'CollectionResponse`1',
@@ -1107,10 +1115,7 @@ it('should return CollectionResponseDto', async () => {
         },
     };
 
-    const resultString = parseSchemas({
-        json: example,
-        swaggerVersion: 2,
-    });
+    const resultString = parseSchemas({ json });
 
     const expectedString = `export interface CollectionResponseDto {
     data: StoredCreditCardDto[];

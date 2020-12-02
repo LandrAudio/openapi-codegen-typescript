@@ -1,3 +1,5 @@
+import { SwaggerV2, SwaggerV3 } from '../src/types';
+
 jest.mock('node-fetch');
 jest.mock('fs');
 
@@ -43,10 +45,8 @@ describe('TS types generation', () => {
     });
 
     it('should parse v2 schemas', async () => {
-        const json = {
-            paths: {},
-            securityDefinitions: {},
-            tags: {},
+        const json: SwaggerV2 = {
+            swagger: '2.0',
             definitions: {
                 One: {
                     type: 'object',
@@ -66,7 +66,7 @@ describe('TS types generation', () => {
                 },
             },
         };
-        const parsedData = getSchemas({ json, swaggerVersion: 2 });
+        const parsedData = getSchemas({ json });
 
         const expected = {
             One: {
@@ -90,10 +90,8 @@ describe('TS types generation', () => {
     });
 
     it('should parse v3 schemas', async () => {
-        const json = {
-            paths: {},
-            servers: {},
-            info: {},
+        const json: SwaggerV3 = {
+            openapi: '3.0.0',
             components: {
                 schemas: {
                     One: {
@@ -115,56 +113,7 @@ describe('TS types generation', () => {
                 },
             },
         };
-        const parsedData = getSchemas({ json, swaggerVersion: 3 });
-
-        const expected = {
-            One: {
-                properties: {
-                    name: {
-                        type: 'string',
-                    },
-                },
-                type: 'object',
-            },
-            Two: {
-                properties: {
-                    name: {
-                        type: 'number',
-                    },
-                },
-                type: 'object',
-            },
-        };
-        expect(parsedData).toEqual(expected);
-    });
-
-    it('should parse v3 schemas by default', async () => {
-        const json = {
-            paths: {},
-            servers: {},
-            info: {},
-            components: {
-                schemas: {
-                    One: {
-                        type: 'object',
-                        properties: {
-                            name: {
-                                type: 'string',
-                            },
-                        },
-                    },
-                    Two: {
-                        type: 'object',
-                        properties: {
-                            name: {
-                                type: 'number',
-                            },
-                        },
-                    },
-                },
-            },
-        };
-        const parsedData = getSchemas({ json, swaggerVersion: undefined });
+        const parsedData = getSchemas({ json });
 
         const expected = {
             One: {
@@ -188,13 +137,11 @@ describe('TS types generation', () => {
     });
 
     it('should return "undefined" json object in not valid', async () => {
-        const json = {
-            paths: {},
-            servers: {},
-            info: {},
+        const json: SwaggerV3 = {
+            openapi: '3.0.0',
             components: {},
         };
-        const parsedData = getSchemas({ json, swaggerVersion: undefined });
+        const parsedData = getSchemas({ json });
         expect(parsedData).toEqual(undefined);
     });
 
