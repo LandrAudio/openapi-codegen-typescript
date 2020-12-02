@@ -94,7 +94,7 @@ interface ParseSchemaProps {
      * DTO name
      * Examples: MembersEmailDto, InviteMembersRequestDto, InviteAssetsMembersRequestDto
      */
-    name: any;
+    name: string;
     /**
      * All parsed DTOs from swagger json file
      */
@@ -129,6 +129,11 @@ export const parseSchema = ({ schema, name, DTOs, overrideSchemas }: ParseSchema
                     xDictionaryKey,
                     additionalProperties,
                 } = props;
+
+                if (name.includes('[') && name.includes(']')) {
+                    name = name.split('[')[0];
+                }
+
                 casual.seed(hashedString(name + propertyName));
 
                 const mockGenerator = new MockGenerateHelper(casual);
@@ -245,7 +250,16 @@ export const convertToMocks = ({
 }: ConvertToMocksProps): string => {
     const schemas = getSchemas({ json, swaggerVersion });
 
-    const imports = Object.keys(schemas).join(', ');
+    const imports = Object.keys(schemas)
+        .map(dtoName => {
+            // Sometimes in swagger 2.0 version could be such name as SomeDto[AnotherDto]
+            if (swaggerVersion === 2 && dtoName.includes('[') && dtoName.includes(']')) {
+                return dtoName.split('[')[0];
+            } else {
+                return dtoName;
+            }
+        })
+        .join(', ');
 
     const disableNoUse = '/* eslint-disable @typescript-eslint/no-use-before-define */\n';
     const disableNoUsedVars = '/* eslint-disable @typescript-eslint/no-unused-vars */\n';

@@ -1614,3 +1614,60 @@ export const aDownloadDtoAPI = (overrides?: Partial<DownloadDto>): DownloadDto =
 
     expect(result).toEqual(expected);
 });
+
+it('should return CollectionResponseDto mocks', async () => {
+    const json = {
+        definitions: {
+            'CollectionResponseDto[StoredCreditCardDto]': {
+                title: 'CollectionResponse`1',
+                type: 'object',
+                properties: {
+                    data: {
+                        type: 'array',
+                        items: {
+                            $ref: '#/definitions/StoredCreditCardDto',
+                        },
+                    },
+                },
+            },
+            StoredCreditCardDto: {
+                title: 'StoredCreditCard',
+                type: 'object',
+                properties: {
+                    creditCardId: {
+                        type: 'string',
+                    },
+                },
+            },
+        }
+    };
+
+    const result = await convertToMocks({
+        json,
+        fileName: "doesn't matter",
+        folderPath: './someFolder',
+        typesPath: './pathToTypes',
+        swaggerVersion: 2
+    });
+
+    const expectedString = `/* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {CollectionResponseDto, StoredCreditCardDto} from './pathToTypes';
+
+export const aCollectionResponseDtoAPI = (overrides?: Partial<CollectionResponseDto>): CollectionResponseDto => {
+  return {
+    data: overrides?.data || [aStoredCreditCardDtoAPI()],
+  ...overrides,
+  };
+};
+
+export const aStoredCreditCardDtoAPI = (overrides?: Partial<StoredCreditCardDto>): StoredCreditCardDto => {
+  return {
+    creditCardId: 'creditCardId-storedcreditcarddto',
+  ...overrides,
+  };
+};
+ 
+`;
+    expect(result).toEqual(expectedString);
+});
