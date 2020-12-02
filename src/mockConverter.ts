@@ -1,5 +1,5 @@
 import { ConvertToMocksProps, DataTypes, EnumSchema, GetSchemasProps, MockArrayProps, SwaggerProps } from './types';
-import { getSchemaProperties, getSchemas, hashedString, writeToFile } from './shared';
+import { getSchemaProperties, getSchemas, hashedString, isSwaggerV2, writeToFile } from './shared';
 import casual from 'casual';
 import { MockGenerateHelper } from './MockGenerateHelper';
 
@@ -94,7 +94,7 @@ interface ParseSchemaProps {
      * DTO name
      * Examples: MembersEmailDto, InviteMembersRequestDto, InviteAssetsMembersRequestDto
      */
-    name: any;
+    name: string;
     /**
      * All parsed DTOs from swagger json file
      */
@@ -129,6 +129,11 @@ export const parseSchema = ({ schema, name, DTOs, overrideSchemas }: ParseSchema
                     xDictionaryKey,
                     additionalProperties,
                 } = props;
+
+                if (name.includes('[') && name.includes(']')) {
+                    name = name.split('[')[0];
+                }
+
                 casual.seed(hashedString(name + propertyName));
 
                 const mockGenerator = new MockGenerateHelper(casual);
@@ -209,8 +214,8 @@ export const parseSchema = ({ schema, name, DTOs, overrideSchemas }: ParseSchema
     }
 };
 
-export const parseSchemas = ({ json, swaggerVersion, overrideSchemas }: GetSchemasProps) => {
-    const schemas = getSchemas({ json, swaggerVersion });
+export const parseSchemas = ({ json, overrideSchemas }: GetSchemasProps) => {
+    const schemas = getSchemas({ json });
     const DTOs = Object.keys(schemas);
 
     let resultString = '';
@@ -240,18 +245,26 @@ export const convertToMocks = ({
     fileName,
     folderPath,
     typesPath,
-    swaggerVersion = 3,
     overrideSchemas,
 }: ConvertToMocksProps): string => {
-    const schemas = getSchemas({ json, swaggerVersion });
+    const schemas = getSchemas({ json });
 
-    const imports = Object.keys(schemas).join(', ');
+    const imports = Object.keys(schemas)
+        .map(dtoName => {
+            // Sometimes in swagger 2.0 version could be such name as SomeDto[AnotherDto]
+            if (isSwaggerV2(json) && dtoName.includes('[') && dtoName.includes(']')) {
+                return dtoName.split('[')[0];
+            } else {
+                return dtoName;
+            }
+        })
+        .join(', ');
 
     const disableNoUse = '/* eslint-disable @typescript-eslint/no-use-before-define */\n';
     const disableNoUsedVars = '/* eslint-disable @typescript-eslint/no-unused-vars */\n';
     const importsDescription = `import {${imports}} from '${typesPath}';\n`;
 
-    const result = parseSchemas({ json, swaggerVersion, overrideSchemas });
+    const result = parseSchemas({ json, overrideSchemas });
 
     const resultString = `${disableNoUse}${disableNoUsedVars}${importsDescription}${result}`;
 

@@ -1,4 +1,4 @@
-import { GetSchemasProps } from './types';
+import { GetSchemasProps, SwaggerV2, SwaggerV3 } from './types';
 
 const fs = require('fs');
 const fetch = require('node-fetch');
@@ -72,14 +72,21 @@ export const hashedString = (string: string) => {
     return hash;
 };
 
-export const getSchemas = ({ json, swaggerVersion = 3 }: GetSchemasProps) => {
-    switch (swaggerVersion) {
-        case 3:
-            return json?.components?.schemas;
-        case 2:
-            return json?.definitions;
-        default:
-            return json?.components?.schemas;
+export function isSwaggerV3(json: SwaggerV2 | SwaggerV3): json is SwaggerV3 {
+    return Boolean((json as SwaggerV3).components) && (json as SwaggerV3).openapi === '3.0.0';
+}
+
+export function isSwaggerV2(json: SwaggerV2 | SwaggerV3): json is SwaggerV2 {
+    return (json as SwaggerV2).swagger === '2.0' && Boolean((json as SwaggerV2).definitions);
+}
+
+export const getSchemas = ({ json }: GetSchemasProps): any => {
+    if (isSwaggerV3(json)) {
+        return json?.components?.schemas;
+    } else if (isSwaggerV2(json)) {
+        return json?.definitions;
+    } else {
+        throw Error('Schema parse exception. Unsupported version');
     }
 };
 
