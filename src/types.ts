@@ -79,22 +79,29 @@ export interface ConvertToTypesProps {
     json: any;
     fileName: string;
     folderPath: string;
-    swaggerVersion: number;
     overrideSchemas?: Array<EnumSchema>;
 }
 
 export interface ConvertToMocksProps {
-    json: any;
+    json: SwaggerV2 | SwaggerV3;
     fileName: string;
     folderPath: string;
     typesPath: string;
-    swaggerVersion: number;
     overrideSchemas?: Array<EnumSchema>;
 }
 
+export interface SwaggerV2 {
+    swagger: '2.0'; // "2.0"
+    definitions?: any;
+}
+
+export interface SwaggerV3 {
+    openapi: '3.0.0'; // "3.0.0",
+    components?: { schemas?: any };
+}
+
 export interface GetSchemasProps {
-    json: { components?: { schemas?: any }; definitions?: any };
-    swaggerVersion?: number;
+    json: SwaggerV2 | SwaggerV3;
     overrideSchemas?: Array<EnumSchema>;
 }
 

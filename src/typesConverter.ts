@@ -13,7 +13,7 @@ import {
     ConvertToTypesProps,
     GetSchemasProps,
 } from './types';
-import { getSchemaProperties, getSchemas, writeToFile } from './shared';
+import { getSchemaProperties, getSchemas, isSwaggerV2, writeToFile } from './shared';
 
 const parseFormat = (format?: string): string => (format ? `format: "${format}"` : '');
 const parseRefType = (refType: string[]): string => refType[refType.length - 1];
@@ -324,8 +324,8 @@ export const parseEnum = ({ schema, schemaKey }: ParseProps): string => {
     return result;
 };
 
-export const parseSchemas = ({ json, swaggerVersion, overrideSchemas }: GetSchemasProps) => {
-    const schemas = getSchemas({ json, swaggerVersion });
+export const parseSchemas = ({ json, overrideSchemas }: GetSchemasProps) => {
+    const schemas = getSchemas({ json });
 
     if (schemas) {
         const schemasKeys = Object.keys(schemas);
@@ -341,7 +341,7 @@ export const parseSchemas = ({ json, swaggerVersion, overrideSchemas }: GetSchem
                     /**
                      * Sometimes in swagger v2 schema key could be named as SomeDto[AnotherDto]
                      */
-                    if (swaggerVersion === 2 && schemaKey.includes('[') && schemaKey.includes(']')) {
+                    if (isSwaggerV2(json) && schemaKey.includes('[') && schemaKey.includes(']')) {
                         const strings = schemaKey.split('[');
                         result += parseObject({ schema, schemaKey: strings[0] });
                     } else {
@@ -375,14 +375,8 @@ export const parseSchemas = ({ json, swaggerVersion, overrideSchemas }: GetSchem
     }
 };
 
-export const convertToTypes = ({
-    json,
-    fileName,
-    folderPath,
-    swaggerVersion,
-    overrideSchemas,
-}: ConvertToTypesProps) => {
-    const resultString = parseSchemas({ json, swaggerVersion, overrideSchemas });
+export const convertToTypes = ({ json, fileName, folderPath, overrideSchemas }: ConvertToTypesProps) => {
+    const resultString = parseSchemas({ json, overrideSchemas });
     writeToFile({
         folderPath,
         fileName,

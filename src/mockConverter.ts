@@ -1,5 +1,5 @@
 import { ConvertToMocksProps, DataTypes, EnumSchema, GetSchemasProps, MockArrayProps, SwaggerProps } from './types';
-import { getSchemaProperties, getSchemas, hashedString, writeToFile } from './shared';
+import { getSchemaProperties, getSchemas, hashedString, isSwaggerV2, writeToFile } from './shared';
 import casual from 'casual';
 import { MockGenerateHelper } from './MockGenerateHelper';
 
@@ -214,8 +214,8 @@ export const parseSchema = ({ schema, name, DTOs, overrideSchemas }: ParseSchema
     }
 };
 
-export const parseSchemas = ({ json, swaggerVersion, overrideSchemas }: GetSchemasProps) => {
-    const schemas = getSchemas({ json, swaggerVersion });
+export const parseSchemas = ({ json, overrideSchemas }: GetSchemasProps) => {
+    const schemas = getSchemas({ json });
     const DTOs = Object.keys(schemas);
 
     let resultString = '';
@@ -245,15 +245,14 @@ export const convertToMocks = ({
     fileName,
     folderPath,
     typesPath,
-    swaggerVersion = 3,
     overrideSchemas,
 }: ConvertToMocksProps): string => {
-    const schemas = getSchemas({ json, swaggerVersion });
+    const schemas = getSchemas({ json });
 
     const imports = Object.keys(schemas)
         .map(dtoName => {
             // Sometimes in swagger 2.0 version could be such name as SomeDto[AnotherDto]
-            if (swaggerVersion === 2 && dtoName.includes('[') && dtoName.includes(']')) {
+            if (isSwaggerV2(json) && dtoName.includes('[') && dtoName.includes(']')) {
                 return dtoName.split('[')[0];
             } else {
                 return dtoName;
@@ -265,7 +264,7 @@ export const convertToMocks = ({
     const disableNoUsedVars = '/* eslint-disable @typescript-eslint/no-unused-vars */\n';
     const importsDescription = `import {${imports}} from '${typesPath}';\n`;
 
-    const result = parseSchemas({ json, swaggerVersion, overrideSchemas });
+    const result = parseSchemas({ json, overrideSchemas });
 
     const resultString = `${disableNoUse}${disableNoUsedVars}${importsDescription}${result}`;
 
