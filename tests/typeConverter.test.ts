@@ -1,5 +1,5 @@
 import { parseEnum, parseObject, parseSchemas } from '../src/typesConverter';
-import { swaggerV2Mock, swaggerV3Mock } from '../src/utils/test-utils';
+import { aSwaggerV2Mock, aSwaggerV3Mock } from '../src/utils/test-utils';
 
 describe('TS types generation', () => {
     it('should convert id guid property', async () => {
@@ -452,7 +452,7 @@ export interface AssetDto {
     });
 
     it('should properly combine in one file', async () => {
-        const json = swaggerV3Mock({
+        const json = aSwaggerV3Mock({
                     AssetDto: {
                         type: 'object',
                         additionalProperties: false,
@@ -566,7 +566,7 @@ export type FileKind = 'Original' | 'Stream' | 'Waveform';
     });
 
     it('should return TODO text if data type is wrong (catch block)', async () => {
-        const json = swaggerV3Mock({
+        const json = aSwaggerV3Mock({
                     FileState: {
                         type: 'string',
                         description: '',
@@ -582,7 +582,7 @@ export type FileKind = 'Original' | 'Stream' | 'Waveform';
     });
 
     it('should return TODO text if type was not converted', async () => {
-        const json = swaggerV3Mock({
+        const json = aSwaggerV3Mock({
                     AssetDto: {
                         type: 'object',
                         additionalProperties: false,
@@ -628,7 +628,7 @@ export interface AssetFileDto {
     });
 
     it('should return correct type for array of integers', async () => {
-        const json = swaggerV3Mock({
+        const json = aSwaggerV3Mock({
                     ArrayOfIntegers: {
                         type: 'object',
                         additionalProperties: false,
@@ -656,7 +656,7 @@ export interface AssetFileDto {
     });
 
     it('should return "any" type for property without a type', async () => {
-        const json = swaggerV3Mock({
+        const json = aSwaggerV3Mock({
                     Notification: {
                         type: 'object',
                         additionalProperties: false,
@@ -679,7 +679,7 @@ export interface AssetFileDto {
     });
 
     it('should return type for a "dictionary"', async () => {
-        const json = swaggerV3Mock({
+        const json = aSwaggerV3Mock({
                     BillingProviderKind: {
                         type: 'string',
                         description: '',
@@ -739,7 +739,7 @@ export interface UserMetadata {
 });
 
 it('should return type for a multiple "dictionary" types', async () => {
-    const json = swaggerV3Mock({
+    const json = aSwaggerV3Mock({
                 BillingProviderKind: {
                     type: 'string',
                     description: '',
@@ -798,7 +798,7 @@ export interface UserSubscriptions {
 });
 
 it('should return type for a "dictionary" type boolean', async () => {
-    const json = swaggerV3Mock({
+    const json = aSwaggerV3Mock({
                 ContentDtoOfCollectionDto: {
                     type: 'object',
                     additionalProperties: false,
@@ -904,7 +904,7 @@ export type UserOperation = 'Read' | 'Write';
 
 it('should return overrided enum schema', async () => {
     // What will be fetched from Swagger Json
-    const json = swaggerV3Mock({
+    const json = aSwaggerV3Mock({
                 ServiceOfferKind: {
                     type: 'string',
                     description: '',
@@ -944,7 +944,7 @@ export type ServiceOfferKind = 'masteringAndDistribution' | 'video' | 'samples' 
 });
 
 it('should return description', async () => {
-    const json = swaggerV3Mock({
+    const json = aSwaggerV3Mock({
                 PlanFrequencyIdentifier: {
                     type: 'object',
                     description: 'PlanFrequencyIdentifier description',
@@ -1044,7 +1044,7 @@ export interface PlanFrequencyIdentifier {
 });
 
 it('should return CollectionResponseDto', async () => {
-    const json = swaggerV2Mock({
+    const json = aSwaggerV2Mock({
             'CollectionResponseDto[StoredCreditCardDto]': {
                 title: 'CollectionResponse`1',
                 type: 'object',

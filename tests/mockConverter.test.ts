@@ -5,7 +5,7 @@ import {
     parseSchema,
     parseSchemas,
 } from '../src/mockConverter';
-import { swaggerV2Mock, swaggerV3Mock } from '../src/utils/test-utils';
+import { aSwaggerV2Mock, aSwaggerV3Mock } from '../src/utils/test-utils';
 
 jest.mock('fs');
 
@@ -588,7 +588,7 @@ it('should properly parse schemas', async () => {
     fs.existsSync.mockReturnValue(false);
     fs.mkdirSync.mockReturnValue(false);
 
-    const json = swaggerV3Mock({
+    const json = aSwaggerV3Mock({
                 One: {
                     type: 'object',
                     properties: {
@@ -629,7 +629,7 @@ export const aTwoAPI = (overrides?: Partial<Two>): Two => {
 });
 
 it('should convert to mocks hole json object', async () => {
-    const json = swaggerV3Mock({
+    const json = aSwaggerV3Mock({
                 One: {
                     type: 'object',
                     properties: {
@@ -678,7 +678,7 @@ export const aTwoAPI = (overrides?: Partial<Two>): Two => {
 });
 
 it('should generate mocks for "InviteAssetsMembersRequestDto" (multiple extends)', async () => {
-    const json = swaggerV3Mock({
+    const json = aSwaggerV3Mock({
                 MembersEmailDto: {
                     type: 'object',
                     additionalProperties: false,
@@ -786,7 +786,7 @@ export const anInviteAssetsMembersRequestDtoAPI = (overrides?: Partial<InviteAss
 });
 
 it('should generate mocks for "MemberEmailDto" (email property)', async () => {
-    const json = swaggerV3Mock({
+    const json = aSwaggerV3Mock({
                 MemberEmailDto: {
                     type: 'object',
                     additionalProperties: false,
@@ -824,7 +824,7 @@ export const aMemberEmailDtoAPI = (overrides?: Partial<MemberEmailDto>): MemberE
 });
 
 it('should generate mocks for "Comment" (duration property)', async () => {
-    const json = swaggerV3Mock({
+    const json = aSwaggerV3Mock({
                 Comment: {
                     type: 'object',
                     additionalProperties: false,
@@ -893,7 +893,7 @@ export const aCommentAPI = (overrides?: Partial<Comment>): Comment => {
 });
 
 it('should generate mocks for array of integers', async () => {
-    const json = swaggerV3Mock({
+    const json = aSwaggerV3Mock({
                 ArrayOfIntegers: {
                     type: 'object',
                     additionalProperties: false,
@@ -933,7 +933,7 @@ export const anArrayOfIntegersAPI = (overrides?: Partial<ArrayOfIntegers>): Arra
 });
 
 it('should generate mocks for a property without a "type"', async () => {
-    const json = swaggerV3Mock({
+    const json = aSwaggerV3Mock({
                 Notification: {
                     type: 'object',
                     additionalProperties: false,
@@ -968,7 +968,7 @@ export const aNotificationAPI = (overrides?: Partial<Notification>): Notificatio
 });
 
 it('should generate mocks for a enum "dictionary" type', async () => {
-    const json = swaggerV3Mock({
+    const json = aSwaggerV3Mock({
                 BillingProviderKind: {
                     type: 'string',
                     description: '',
@@ -1045,7 +1045,7 @@ export const anUserMetadataAPI = (overrides?: Partial<UserMetadata>): UserMetada
 });
 
 it('should generate mocks for an object "dictionary" type', async () => {
-    const json = swaggerV3Mock({
+    const json = aSwaggerV3Mock({
                 ServiceOfferKind: {
                     type: 'string',
                     description: '',
@@ -1156,7 +1156,7 @@ export const anUserSubscriptionsAPI = (overrides?: Partial<UserSubscriptions>): 
 });
 
 it('should generate mocks for a "dictionary" type boolean', async () => {
-    const json = swaggerV3Mock({
+    const json = aSwaggerV3Mock({
                 ContentDtoOfCollectionDto: {
                     type: 'object',
                     additionalProperties: false,
@@ -1273,7 +1273,7 @@ export const aCollectionDtoAPI = (overrides?: Partial<CollectionDto>): Collectio
 });
 
 it('should generate overrided mocks for dictionary enum type', async () => {
-    const json = swaggerV3Mock({
+    const json = aSwaggerV3Mock({
                 UserMetadata: {
                     type: 'object',
                     additionalProperties: false,
@@ -1350,7 +1350,7 @@ export const anUserMetadataAPI = (overrides?: Partial<UserMetadata>): UserMetada
 });
 
 it('should generate overrided mocks for oneOf enum type', async () => {
-    const json = swaggerV3Mock({
+    const json = aSwaggerV3Mock({
                 CurrentSubscription: {
                     type: "object",
                     additionalProperties: false,
@@ -1412,7 +1412,7 @@ export const aCurrentSubscriptionAPI = (overrides?: Partial<CurrentSubscription>
 });
 
 it('should generate overrided mocks for $ref enum type', async () => {
-    const json = swaggerV3Mock({
+    const json = aSwaggerV3Mock({
                 NextSubscription: {
                     type: "object",
                     additionalProperties: false,
@@ -1469,7 +1469,7 @@ export const aNextSubscriptionAPI = (overrides?: Partial<NextSubscription>): Nex
 });
 
 it('should generate mocks for a URI type', async () => {
-    const json = swaggerV3Mock({
+    const json = aSwaggerV3Mock({
                 DownloadDto: {
                     type: "object",
                     additionalProperties: false,
@@ -1506,7 +1506,7 @@ export const aDownloadDtoAPI = (overrides?: Partial<DownloadDto>): DownloadDto =
 });
 
 it('should return CollectionResponseDto mocks', async () => {
-    const json = swaggerV2Mock({
+    const json = aSwaggerV2Mock({
         'CollectionResponseDto[StoredCreditCardDto]': {
             title: 'CollectionResponse`1',
             type: 'object',

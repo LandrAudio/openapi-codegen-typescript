@@ -1,4 +1,4 @@
-import { swaggerV2Mock, swaggerV3Mock } from '../src/utils/test-utils';
+import { aSwaggerV2Mock, aSwaggerV3Mock } from '../src/utils/test-utils';
 
 jest.mock('node-fetch');
 jest.mock('fs');
@@ -45,7 +45,7 @@ describe('TS types generation', () => {
     });
 
     it('should parse v2 schemas', async () => {
-        const json = swaggerV2Mock({
+        const json = aSwaggerV2Mock({
                 One: {
                     type: 'object',
                     properties: {
@@ -88,7 +88,7 @@ describe('TS types generation', () => {
     });
 
     it('should parse v3 schemas', async () => {
-        const json = swaggerV3Mock({
+        const json = aSwaggerV3Mock({
                     One: {
                         type: 'object',
                         properties: {
@@ -131,7 +131,7 @@ describe('TS types generation', () => {
     });
 
     it('should parse v3 schemas by default', async () => {
-        const json = swaggerV3Mock({
+        const json = aSwaggerV3Mock({
                     One: {
                         type: 'object',
                         properties: {
@@ -174,7 +174,7 @@ describe('TS types generation', () => {
     });
 
     it('should return "undefined" json object in not valid', async () => {
-        const json = swaggerV3Mock(undefined);
+        const json = aSwaggerV3Mock(undefined);
         const parsedData = getSchemas({ json });
         expect(parsedData).toEqual(undefined);
     });
