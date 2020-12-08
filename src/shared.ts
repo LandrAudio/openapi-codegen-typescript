@@ -73,11 +73,11 @@ export const hashedString = (string: string) => {
 };
 
 export function isSwaggerV3(json: SwaggerV2 | SwaggerV3): json is SwaggerV3 {
-    return Boolean((json as SwaggerV3).components) && (json as SwaggerV3).openapi === '3.0.0';
+    return Boolean((json as SwaggerV3).openapi?.match(/^3.*/)) && Boolean((json as SwaggerV3).components);
 }
 
 export function isSwaggerV2(json: SwaggerV2 | SwaggerV3): json is SwaggerV2 {
-    return (json as SwaggerV2).swagger === '2.0' && Boolean((json as SwaggerV2).definitions);
+    return Boolean((json as SwaggerV2).swagger?.match(/^2.*/)) && Boolean((json as SwaggerV2).definitions);
 }
 
 export const getSchemas = ({ json }: GetSchemasProps): any => {
