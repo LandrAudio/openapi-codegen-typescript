@@ -1,5 +1,5 @@
 import { parseEnum, parseObject, parseSchemas } from '../src/typesConverter';
-import { SwaggerV2, SwaggerV3 } from '../src/types';
+import { aSwaggerV2Mock, aSwaggerV3Mock } from '../src/utils/test-utils';
 
 describe('TS types generation', () => {
     it('should convert id guid property', async () => {
@@ -452,96 +452,91 @@ export interface AssetDto {
     });
 
     it('should properly combine in one file', async () => {
-        const json: SwaggerV3 = {
-            openapi: '3.0.0',
-            components: {
-                schemas: {
-                    AssetDto: {
-                        type: 'object',
-                        additionalProperties: false,
-                        properties: {
-                            id: {
-                                type: 'string',
-                                format: 'guid',
-                            },
-                            name: {
-                                type: 'string',
-                                nullable: true,
-                            },
-                            type: {
-                                $ref: '#/components/schemas/AssetType',
-                            },
-                            files: {
-                                type: 'array',
-                                nullable: true,
-                                items: {
-                                    $ref: '#/components/schemas/AssetFileDto',
-                                },
-                            },
+        const json = aSwaggerV3Mock({
+            AssetDto: {
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                    id: {
+                        type: 'string',
+                        format: 'guid',
+                    },
+                    name: {
+                        type: 'string',
+                        nullable: true,
+                    },
+                    type: {
+                        $ref: '#/components/schemas/AssetType',
+                    },
+                    files: {
+                        type: 'array',
+                        nullable: true,
+                        items: {
+                            $ref: '#/components/schemas/AssetFileDto',
                         },
-                    },
-                    AssetType: {
-                        type: 'string',
-                        description: '',
-                        'x-enumNames': ['Audio', 'Video', 'Image'],
-                        enum: ['Audio', 'Video', 'Image'],
-                    },
-                    AssetFileDto: {
-                        type: 'object',
-                        additionalProperties: false,
-                        properties: {
-                            state: {
-                                $ref: '#/components/schemas/FileState',
-                            },
-                            kind: {
-                                $ref: '#/components/schemas/FileKind',
-                            },
-                            creationTime: {
-                                type: 'string',
-                                format: 'date-time',
-                            },
-                            contentType: {
-                                type: 'string',
-                                nullable: true,
-                            },
-                            hash: {
-                                type: 'string',
-                                nullable: true,
-                            },
-                            location: {
-                                type: 'string',
-                                nullable: true,
-                            },
-                            sizeBytes: {
-                                type: 'integer',
-                                format: 'int64',
-                            },
-                            duration: {
-                                type: 'number',
-                                format: 'double',
-                                nullable: true,
-                            },
-                            url: {
-                                type: 'string',
-                                nullable: true,
-                            },
-                        },
-                    },
-                    FileState: {
-                        type: 'string',
-                        description: '',
-                        'x-enumNames': ['Created', 'Uploading', 'Processing', 'Failed', 'Available', 'Deleted'],
-                        enum: ['Created', 'Uploading', 'Processing', 'Failed', 'Available', 'Deleted'],
-                    },
-                    FileKind: {
-                        type: 'string',
-                        description: '',
-                        'x-enumNames': ['Original', 'Stream', 'Waveform'],
-                        enum: ['Original', 'Stream', 'Waveform'],
                     },
                 },
             },
-        };
+            AssetType: {
+                type: 'string',
+                description: '',
+                'x-enumNames': ['Audio', 'Video', 'Image'],
+                enum: ['Audio', 'Video', 'Image'],
+            },
+            AssetFileDto: {
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                    state: {
+                        $ref: '#/components/schemas/FileState',
+                    },
+                    kind: {
+                        $ref: '#/components/schemas/FileKind',
+                    },
+                    creationTime: {
+                        type: 'string',
+                        format: 'date-time',
+                    },
+                    contentType: {
+                        type: 'string',
+                        nullable: true,
+                    },
+                    hash: {
+                        type: 'string',
+                        nullable: true,
+                    },
+                    location: {
+                        type: 'string',
+                        nullable: true,
+                    },
+                    sizeBytes: {
+                        type: 'integer',
+                        format: 'int64',
+                    },
+                    duration: {
+                        type: 'number',
+                        format: 'double',
+                        nullable: true,
+                    },
+                    url: {
+                        type: 'string',
+                        nullable: true,
+                    },
+                },
+            },
+            FileState: {
+                type: 'string',
+                description: '',
+                'x-enumNames': ['Created', 'Uploading', 'Processing', 'Failed', 'Available', 'Deleted'],
+                enum: ['Created', 'Uploading', 'Processing', 'Failed', 'Available', 'Deleted'],
+            },
+            FileKind: {
+                type: 'string',
+                description: '',
+                'x-enumNames': ['Original', 'Stream', 'Waveform'],
+                enum: ['Original', 'Stream', 'Waveform'],
+            },
+        });
 
         const resultString = parseSchemas({ json });
 
@@ -571,18 +566,13 @@ export type FileKind = 'Original' | 'Stream' | 'Waveform';
     });
 
     it('should return TODO text if data type is wrong (catch block)', async () => {
-        const json: SwaggerV3 = {
-            openapi: '3.0.0',
-            components: {
-                schemas: {
-                    FileState: {
-                        type: 'string',
-                        description: '',
-                        $ref: { wrongData: 'wrongData' },
-                    },
-                },
+        const json = aSwaggerV3Mock({
+            FileState: {
+                type: 'string',
+                description: '',
+                $ref: { wrongData: 'wrongData' },
             },
-        };
+        });
 
         const resultString = parseSchemas({ json });
 
@@ -592,40 +582,35 @@ export type FileKind = 'Original' | 'Stream' | 'Waveform';
     });
 
     it('should return TODO text if type was not converted', async () => {
-        const json: SwaggerV3 = {
-            openapi: '3.0.0',
-            components: {
-                schemas: {
-                    AssetDto: {
-                        type: 'object',
-                        additionalProperties: false,
-                        properties: {
-                            id: {
-                                type: 'string',
-                                format: 'guid',
-                            },
-                            name: {
-                                type: 'string',
-                                nullable: true,
-                            },
-                        },
+        const json = aSwaggerV3Mock({
+            AssetDto: {
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                    id: {
+                        type: 'string',
+                        format: 'guid',
                     },
-                    WrongData: {
-                        type: 'foo',
-                    },
-                    AssetFileDto: {
-                        type: 'object',
-                        additionalProperties: false,
-                        properties: {
-                            creationTime: {
-                                type: 'string',
-                                format: 'date-time',
-                            },
-                        },
+                    name: {
+                        type: 'string',
+                        nullable: true,
                     },
                 },
             },
-        };
+            WrongData: {
+                type: 'foo',
+            },
+            AssetFileDto: {
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                    creationTime: {
+                        type: 'string',
+                        format: 'date-time',
+                    },
+                },
+            },
+        });
 
         const resultString = parseSchemas({ json });
 
@@ -643,27 +628,22 @@ export interface AssetFileDto {
     });
 
     it('should return correct type for array of integers', async () => {
-        const json: SwaggerV3 = {
-            openapi: '3.0.0',
-            components: {
-                schemas: {
-                    ArrayOfIntegers: {
-                        type: 'object',
-                        additionalProperties: false,
-                        properties: {
-                            invoiceNumbers: {
-                                type: 'array',
-                                nullable: true,
-                                items: {
-                                    type: 'integer',
-                                    format: 'int64',
-                                },
-                            },
+        const json = aSwaggerV3Mock({
+            ArrayOfIntegers: {
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                    invoiceNumbers: {
+                        type: 'array',
+                        nullable: true,
+                        items: {
+                            type: 'integer',
+                            format: 'int64',
                         },
                     },
                 },
             },
-        };
+        });
 
         const resultString = parseSchemas({ json });
 
@@ -676,22 +656,17 @@ export interface AssetFileDto {
     });
 
     it('should return "any" type for property without a type', async () => {
-        const json: SwaggerV3 = {
-            openapi: '3.0.0',
-            components: {
-                schemas: {
-                    Notification: {
-                        type: 'object',
-                        additionalProperties: false,
-                        properties: {
-                            payload: {
-                                nullable: true,
-                            },
-                        },
+        const json = aSwaggerV3Mock({
+            Notification: {
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                    payload: {
+                        nullable: true,
                     },
                 },
             },
-        };
+        });
 
         const resultString = parseSchemas({ json });
 
@@ -704,51 +679,46 @@ export interface AssetFileDto {
     });
 
     it('should return type for a "dictionary"', async () => {
-        const json: SwaggerV3 = {
-            openapi: '3.0.0',
-            components: {
-                schemas: {
-                    BillingProviderKind: {
-                        type: 'string',
-                        description: '',
-                        'x-enumNames': ['Legacy', 'Fusebill'],
-                        enum: ['Legacy', 'Fusebill'],
-                    },
-                    ServiceOfferKind: {
-                        type: 'string',
-                        description: '',
-                        'x-enumNames': ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution'],
-                        enum: ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution'],
-                    },
-                    UserMetadata: {
+        const json = aSwaggerV3Mock({
+            BillingProviderKind: {
+                type: 'string',
+                description: '',
+                'x-enumNames': ['Legacy', 'Fusebill'],
+                enum: ['Legacy', 'Fusebill'],
+            },
+            ServiceOfferKind: {
+                type: 'string',
+                description: '',
+                'x-enumNames': ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution'],
+                enum: ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution'],
+            },
+            UserMetadata: {
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                    serviceOffers: {
                         type: 'object',
-                        additionalProperties: false,
-                        properties: {
-                            serviceOffers: {
-                                type: 'object',
-                                nullable: true,
-                                'x-dictionaryKey': {
-                                    $ref: '#/components/schemas/ServiceOfferKind',
-                                },
-                                additionalProperties: {
-                                    $ref: '#/components/schemas/BillingProviderKind',
-                                },
-                            },
-                            copy: {
-                                type: 'object',
-                                nullable: true,
-                                'x-dictionaryKey': {
-                                    $ref: '#/components/schemas/ServiceOfferKind',
-                                },
-                                additionalProperties: {
-                                    $ref: '#/components/schemas/BillingProviderKind',
-                                },
-                            },
+                        nullable: true,
+                        'x-dictionaryKey': {
+                            $ref: '#/components/schemas/ServiceOfferKind',
+                        },
+                        additionalProperties: {
+                            $ref: '#/components/schemas/BillingProviderKind',
+                        },
+                    },
+                    copy: {
+                        type: 'object',
+                        nullable: true,
+                        'x-dictionaryKey': {
+                            $ref: '#/components/schemas/ServiceOfferKind',
+                        },
+                        additionalProperties: {
+                            $ref: '#/components/schemas/BillingProviderKind',
                         },
                     },
                 },
             },
-        };
+        });
 
         const resultString = parseSchemas({ json });
 
@@ -769,51 +739,46 @@ export interface UserMetadata {
 });
 
 it('should return type for a multiple "dictionary" types', async () => {
-    const json: SwaggerV3 = {
-        openapi: '3.0.0',
-        components: {
-            schemas: {
-                BillingProviderKind: {
-                    type: 'string',
-                    description: '',
-                    'x-enumNames': ['Legacy', 'Fusebill'],
-                    enum: ['Legacy', 'Fusebill'],
-                },
-                ServiceOfferKind: {
-                    type: 'string',
-                    description: '',
-                    'x-enumNames': ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution'],
-                    enum: ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution'],
-                },
-                UserSubscriptions: {
+    const json = aSwaggerV3Mock({
+        BillingProviderKind: {
+            type: 'string',
+            description: '',
+            'x-enumNames': ['Legacy', 'Fusebill'],
+            enum: ['Legacy', 'Fusebill'],
+        },
+        ServiceOfferKind: {
+            type: 'string',
+            description: '',
+            'x-enumNames': ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution'],
+            enum: ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution'],
+        },
+        UserSubscriptions: {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+                current: {
                     type: 'object',
-                    additionalProperties: false,
-                    properties: {
-                        current: {
-                            type: 'object',
-                            nullable: true,
-                            'x-dictionaryKey': {
-                                $ref: '#/components/schemas/ServiceOfferKind',
-                            },
-                            additionalProperties: {
-                                $ref: '#/components/schemas/CurrentSubscription',
-                            },
-                        },
-                        next: {
-                            type: 'object',
-                            nullable: true,
-                            'x-dictionaryKey': {
-                                $ref: '#/components/schemas/ServiceOfferKind',
-                            },
-                            additionalProperties: {
-                                $ref: '#/components/schemas/NextSubscription',
-                            },
-                        },
+                    nullable: true,
+                    'x-dictionaryKey': {
+                        $ref: '#/components/schemas/ServiceOfferKind',
+                    },
+                    additionalProperties: {
+                        $ref: '#/components/schemas/CurrentSubscription',
+                    },
+                },
+                next: {
+                    type: 'object',
+                    nullable: true,
+                    'x-dictionaryKey': {
+                        $ref: '#/components/schemas/ServiceOfferKind',
+                    },
+                    additionalProperties: {
+                        $ref: '#/components/schemas/NextSubscription',
                     },
                 },
             },
         },
-    };
+    });
 
     const resultString = parseSchemas({ json });
 
@@ -833,89 +798,84 @@ export interface UserSubscriptions {
 });
 
 it('should return type for a "dictionary" type boolean', async () => {
-    const json: SwaggerV3 = {
-        openapi: '3.0.0',
-        components: {
-            schemas: {
-                ContentDtoOfCollectionDto: {
-                    type: 'object',
-                    additionalProperties: false,
-                    properties: {
-                        data: {
-                            type: 'array',
-                            nullable: true,
-                            items: {
-                                $ref: '#/components/schemas/CollectionDto',
-                            },
-                        },
-                        paging: {
-                            nullable: true,
-                            oneOf: [
-                                {
-                                    $ref: '#/components/schemas/PagingOptionsDto',
-                                },
-                            ],
-                        },
+    const json = aSwaggerV3Mock({
+        ContentDtoOfCollectionDto: {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+                data: {
+                    type: 'array',
+                    nullable: true,
+                    items: {
+                        $ref: '#/components/schemas/CollectionDto',
                     },
                 },
-                CollectionDto: {
-                    type: 'object',
-                    additionalProperties: false,
-                    properties: {
-                        id: {
-                            type: 'string',
-                            format: 'guid',
+                paging: {
+                    nullable: true,
+                    oneOf: [
+                        {
+                            $ref: '#/components/schemas/PagingOptionsDto',
                         },
-                        ownerId: {
-                            type: 'string',
-                            format: 'guid',
-                        },
-                        name: {
-                            type: 'string',
-                            nullable: true,
-                        },
-                        type: {
-                            $ref: '#/components/schemas/CollectionType',
-                        },
-                        creationTime: {
-                            type: 'string',
-                            format: 'date-time',
-                        },
-                        lastModifiedTime: {
-                            type: 'string',
-                            format: 'date-time',
-                        },
-                        isSoftDeleted: {
-                            type: 'boolean',
-                        },
-                        collaborators: {
-                            type: 'array',
-                            nullable: true,
-                            items: {
-                                $ref: '#/components/schemas/CollaboratorDto',
-                            },
-                        },
-                        permissions: {
-                            type: 'object',
-                            nullable: true,
-                            'x-dictionaryKey': {
-                                $ref: '#/components/schemas/UserOperation',
-                            },
-                            additionalProperties: {
-                                type: 'boolean',
-                            },
-                        },
-                    },
-                },
-                UserOperation: {
-                    type: 'string',
-                    description: '',
-                    'x-enumNames': ['Read', 'Write'],
-                    enum: ['Read', 'Write'],
+                    ],
                 },
             },
         },
-    };
+        CollectionDto: {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+                id: {
+                    type: 'string',
+                    format: 'guid',
+                },
+                ownerId: {
+                    type: 'string',
+                    format: 'guid',
+                },
+                name: {
+                    type: 'string',
+                    nullable: true,
+                },
+                type: {
+                    $ref: '#/components/schemas/CollectionType',
+                },
+                creationTime: {
+                    type: 'string',
+                    format: 'date-time',
+                },
+                lastModifiedTime: {
+                    type: 'string',
+                    format: 'date-time',
+                },
+                isSoftDeleted: {
+                    type: 'boolean',
+                },
+                collaborators: {
+                    type: 'array',
+                    nullable: true,
+                    items: {
+                        $ref: '#/components/schemas/CollaboratorDto',
+                    },
+                },
+                permissions: {
+                    type: 'object',
+                    nullable: true,
+                    'x-dictionaryKey': {
+                        $ref: '#/components/schemas/UserOperation',
+                    },
+                    additionalProperties: {
+                        type: 'boolean',
+                    },
+                },
+            },
+        },
+        UserOperation: {
+            type: 'string',
+            description: '',
+            'x-enumNames': ['Read', 'Write'],
+            enum: ['Read', 'Write'],
+        },
+    });
 
     const resultString = parseSchemas({ json });
 
@@ -944,26 +904,14 @@ export type UserOperation = 'Read' | 'Write';
 
 it('should return overrided enum schema', async () => {
     // What will be fetched from Swagger Json
-    const json: SwaggerV3 = {
-        openapi: '3.0.0',
-        components: {
-            schemas: {
-                ServiceOfferKind: {
-                    type: 'string',
-                    description: '',
-                    'x-enumNames': [
-                        'MasteringAndDistribution',
-                        'Video',
-                        'Samples',
-                        'Mastering',
-                        'Distribution',
-                        'Sessions',
-                    ],
-                    enum: ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution', 'Sessions'],
-                },
-            },
+    const json = aSwaggerV3Mock({
+        ServiceOfferKind: {
+            type: 'string',
+            description: '',
+            'x-enumNames': ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution', 'Sessions'],
+            enum: ['MasteringAndDistribution', 'Video', 'Samples', 'Mastering', 'Distribution', 'Sessions'],
         },
-    };
+    });
 
     const resultString = parseSchemas({
         json,
@@ -989,67 +937,62 @@ export type ServiceOfferKind = 'masteringAndDistribution' | 'video' | 'samples' 
 });
 
 it('should return description', async () => {
-    const json: SwaggerV3 = {
-        openapi: '3.0.0',
-        components: {
-            schemas: {
-                PlanFrequencyIdentifier: {
+    const json = aSwaggerV3Mock({
+        PlanFrequencyIdentifier: {
+            type: 'object',
+            description: 'PlanFrequencyIdentifier description',
+            additionalProperties: false,
+            properties: {
+                code: {
+                    type: 'string',
+                    description: 'The Fusebill plan code.',
+                    nullable: true,
+                },
+                currentQuantity: {
+                    type: 'number',
+                    description: 'The current quantity of the product within the subscription.',
+                    format: 'decimal',
+                },
+                numberOfCredits: {
+                    type: 'integer',
+                    description: 'The number of credits associated to this subscription product.',
+                    format: 'int32',
+                    nullable: true,
+                },
+                frequency: {
+                    description: 'The interval of the plan (monthly/yearly).',
+                    oneOf: [
+                        {
+                            $ref: '#/components/schemas/Interval',
+                        },
+                    ],
+                },
+                hasOverduePayment: {
                     type: 'object',
-                    description: 'PlanFrequencyIdentifier description',
-                    additionalProperties: false,
-                    properties: {
-                        code: {
-                            type: 'string',
-                            description: 'The Fusebill plan code.',
-                            nullable: true,
-                        },
-                        currentQuantity: {
-                            type: 'number',
-                            description: 'The current quantity of the product within the subscription.',
-                            format: 'decimal',
-                        },
-                        numberOfCredits: {
-                            type: 'integer',
-                            description: 'The number of credits associated to this subscription product.',
-                            format: 'int32',
-                            nullable: true,
-                        },
-                        frequency: {
-                            description: 'The interval of the plan (monthly/yearly).',
-                            oneOf: [
-                                {
-                                    $ref: '#/components/schemas/Interval',
-                                },
-                            ],
-                        },
-                        hasOverduePayment: {
-                            type: 'object',
-                            description: 'Says if the user has overdue payments by service offer.',
-                            nullable: true,
-                            'x-dictionaryKey': {
-                                $ref: '#/components/schemas/ServiceOfferKind',
-                            },
-                            additionalProperties: {
-                                type: 'boolean',
-                            },
-                        },
-                        userIds: {
-                            type: 'array',
-                            description: 'The user IDs.',
-                            items: {
-                                type: 'string',
-                                format: 'guid',
-                            },
-                        },
-                        isDefault: {
-                            type: 'boolean',
-                            description: 'Boolean description',
-                        },
+                    description: 'Says if the user has overdue payments by service offer.',
+                    nullable: true,
+                    'x-dictionaryKey': {
+                        $ref: '#/components/schemas/ServiceOfferKind',
                     },
+                    additionalProperties: {
+                        type: 'boolean',
+                    },
+                },
+                userIds: {
+                    type: 'array',
+                    description: 'The user IDs.',
+                    items: {
+                        type: 'string',
+                        format: 'guid',
+                    },
+                },
+                isDefault: {
+                    type: 'boolean',
+                    description: 'Boolean description',
                 },
             },
         },
-    };
+    });
 
     const resultString = parseSchemas({ json });
 
@@ -1094,26 +1037,23 @@ export interface PlanFrequencyIdentifier {
 });
 
 it('should return CollectionResponseDto', async () => {
-    const json: SwaggerV2 = {
-        swagger: '2.0',
-        definitions: {
-            'CollectionResponseDto[StoredCreditCardDto]': {
-                title: 'CollectionResponse`1',
-                type: 'object',
-                properties: {
-                    data: {
-                        type: 'array',
-                        items: {
-                            $ref: '#/definitions/StoredCreditCardDto',
-                        },
+    const json = aSwaggerV2Mock({
+        'CollectionResponseDto[StoredCreditCardDto]': {
+            title: 'CollectionResponse`1',
+            type: 'object',
+            properties: {
+                data: {
+                    type: 'array',
+                    items: {
+                        $ref: '#/definitions/StoredCreditCardDto',
                     },
-                    paging: {
-                        $ref: '#/definitions/PagingDto',
-                    },
+                },
+                paging: {
+                    $ref: '#/definitions/PagingDto',
                 },
             },
         },
-    };
+    });
 
     const resultString = parseSchemas({ json });
 
