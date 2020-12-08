@@ -1,3 +1,15 @@
+# v0.1.16 (Tue Dec 08 2020)
+
+#### 🐛 Bug Fix
+
+- fix(type): fix mocks codegen for the Swagger v2 version `Type[AnotherType]` annotation (part 1) [#22](https://github.com/LandrAudio/openapi-codegen-typescript/pull/22) ([@nemrosim](https://github.com/nemrosim))
+
+#### Authors: 1
+
+- Artem Diashkin ([@nemrosim](https://github.com/nemrosim))
+
+---
+
 # v0.1.15 (Tue Dec 01 2020)
 
 #### 🐛 Bug Fix
