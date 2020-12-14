@@ -1,3 +1,15 @@
+# (Mon Dec 14 2020)
+
+#### 🔩 Dependency Updates
+
+- build(deps): bump ini from 1.3.5 to 1.3.8 [#26](https://github.com/LandrAudio/openapi-codegen-typescript/pull/26) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+
+#### Authors: 1
+
+- [@dependabot[bot]](https://github.com/dependabot[bot])
+
+---
+
 # v0.1.16 (Tue Dec 08 2020)
 
 #### 🐛 Bug Fix
