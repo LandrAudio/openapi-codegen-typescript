@@ -1,6 +1,6 @@
 {
     "name": "openapi-codegen-typescript",
-    "version": "0.1.16",
+    "version": "0.1.17",
     "description": "OpenApi codegen for generating types an mocks from swagger json file",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
