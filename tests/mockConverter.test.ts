@@ -1537,3 +1537,206 @@ export const aStoredCreditCardDtoAPI = (overrides?: Partial<StoredCreditCardDto>
 `;
     expect(result).toEqual(expectedString);
 });
+
+describe('Dictionary type', () => {
+    it('should generate mock for integer values', async () => {
+        const json = aSwaggerV3Mock({
+            GlobalStateCounters: {
+                type: 'object',
+                properties: {
+                    states: {
+                        type: 'object',
+                        nullable: true,
+                        'x-dictionaryKey': {
+                            $ref: '#/components/schemas/ProductState',
+                        },
+                        additionalProperties: {
+                            type: 'integer',
+                            format: 'int32',
+                        },
+                    },
+                },
+            },
+            ProductState: {
+                type: 'string',
+                description: '',
+                'x-enumNames': ['Draft', 'ConfirmDraft'],
+                enum: ['Draft', 'ConfirmDraft'],
+            },
+        });
+
+        const result = await convertToMocks({
+            json,
+            fileName: "doesn't matter",
+            folderPath: './someFolder',
+            typesPath: './pathToTypes',
+        });
+
+        const expectedString = `/* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {GlobalStateCounters, ProductState} from './pathToTypes';
+
+export const aGlobalStateCountersAPI = (overrides?: Partial<GlobalStateCounters>): GlobalStateCounters => {
+  return {
+    states: { 
+"Draft": 14,
+"ConfirmDraft": 56,
+},
+  ...overrides,
+  };
+};
+ 
+`;
+        expect(result).toEqual(expectedString);
+    });
+
+    it('should generate mock for number values', async () => {
+        const json = aSwaggerV3Mock({
+            GlobalStateCounters: {
+                type: 'object',
+                properties: {
+                    states: {
+                        type: 'object',
+                        nullable: true,
+                        'x-dictionaryKey': {
+                            $ref: '#/components/schemas/ProductState',
+                        },
+                        additionalProperties: {
+                            type: 'number',
+                        },
+                    },
+                },
+            },
+            ProductState: {
+                type: 'string',
+                description: '',
+                'x-enumNames': ['Draft', 'ConfirmDraft'],
+                enum: ['Draft', 'ConfirmDraft'],
+            },
+        });
+
+        const result = await convertToMocks({
+            json,
+            fileName: "doesn't matter",
+            folderPath: './someFolder',
+            typesPath: './pathToTypes',
+        });
+
+        const expectedString = `/* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {GlobalStateCounters, ProductState} from './pathToTypes';
+
+export const aGlobalStateCountersAPI = (overrides?: Partial<GlobalStateCounters>): GlobalStateCounters => {
+  return {
+    states: { 
+"Draft": 13.546639564447105,
+"ConfirmDraft": 55.710112932138145,
+},
+  ...overrides,
+  };
+};
+ 
+`;
+        expect(result).toEqual(expectedString);
+    });
+
+    it('should generate mock for string values', async () => {
+        const json = aSwaggerV3Mock({
+            GlobalStateCounters: {
+                type: 'object',
+                properties: {
+                    states: {
+                        type: 'object',
+                        nullable: true,
+                        'x-dictionaryKey': {
+                            $ref: '#/components/schemas/ProductState',
+                        },
+                        additionalProperties: {
+                            type: 'string',
+                        },
+                    },
+                },
+            },
+            ProductState: {
+                type: 'string',
+                description: '',
+                'x-enumNames': ['Draft', 'ConfirmDraft'],
+                enum: ['Draft', 'ConfirmDraft'],
+            },
+        });
+
+        const result = await convertToMocks({
+            json,
+            fileName: "doesn't matter",
+            folderPath: './someFolder',
+            typesPath: './pathToTypes',
+        });
+
+        const expectedString = `/* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {GlobalStateCounters, ProductState} from './pathToTypes';
+
+export const aGlobalStateCountersAPI = (overrides?: Partial<GlobalStateCounters>): GlobalStateCounters => {
+  return {
+    states: { 
+"Draft": eos iste consequatur delectus sit veniam in,
+"ConfirmDraft": laborum voluptas molestiae ad architecto praesentium rerum,
+},
+  ...overrides,
+  };
+};
+ 
+`;
+        expect(result).toEqual(expectedString);
+    });
+
+    it('should generate TODO error value if "additionalProperties" is wrong', async () => {
+        const json = aSwaggerV3Mock({
+            GlobalStateCounters: {
+                type: 'object',
+                properties: {
+                    states: {
+                        type: 'object',
+                        nullable: true,
+                        'x-dictionaryKey': {
+                            $ref: '#/components/schemas/ProductState',
+                        },
+                        additionalProperties: {
+                            somethingIsWrong: 'error',
+                        },
+                    },
+                },
+            },
+            ProductState: {
+                type: 'string',
+                description: '',
+                'x-enumNames': ['Draft', 'ConfirmDraft'],
+                enum: ['Draft', 'ConfirmDraft'],
+            },
+        });
+
+        const result = await convertToMocks({
+            json,
+            fileName: "doesn't matter",
+            folderPath: './someFolder',
+            typesPath: './pathToTypes',
+        });
+
+        const expectedString = `/* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {GlobalStateCounters, ProductState} from './pathToTypes';
+
+export const aGlobalStateCountersAPI = (overrides?: Partial<GlobalStateCounters>): GlobalStateCounters => {
+  return {
+    states: { 
+"Draft": " // TODO: Wrong dictionary value",
+"ConfirmDraft": " // TODO: Wrong dictionary value",
+},
+  ...overrides,
+  };
+};
+ 
+`;
+        expect(result).toEqual(expectedString);
+    });
+});
