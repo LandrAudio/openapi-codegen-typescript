@@ -51,7 +51,7 @@ async function doSomething() {
     json,
     fileName: 'dtoAPI',
     folderPath: 'src/mocks/generated',
-    typesPath: '../../types/generated/dtoAPI'
+    typesPath: '../../types/generated/dtoAPI',
   });
 }
 ```
@@ -99,13 +99,14 @@ async function main() {
     json,
     fileName: 'typesAPI',
     folderPath: 'src/types/generated',
-    overrideSchemas
+    overrideSchemas,
   });
   convertToMocks({
     json,
     fileName: 'mocksAPI',
     folderPath: 'src/mocks/generated',
-    typesPath: '../../types/generated/typesAPI'
+    typesPath: '../../types/generated/typesAPI',
+    overrideSchemas,
   });
 }
 
@@ -126,7 +127,7 @@ async function main() {
     json,
     fileName: 'mocksAPI',
     folderPath: 'src/mocks/generated',
-    typesPath: '../../types/generated/typesAPI'
+    typesPath: '../../types/generated/typesAPI',
   });
 }
 
