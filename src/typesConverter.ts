@@ -268,12 +268,37 @@ const convertToTypesFromSchemaProperties = ({
 
                         // Enum keys and Boolean values
                     } else if (xDictionaryKey[SwaggerProps.$ref]) {
-                        if (additionalProperties.type && additionalProperties.type === DataTypes.Boolean) {
+                        if (additionalProperties.type) {
                             const dictionaryRef = parseRefType(xDictionaryKey[SwaggerProps.$ref].split('/'));
 
-                            result += `${getDescription(
+                            let res;
+
+                            switch (additionalProperties.type) {
+                                case DataTypes.Boolean:
+                                    res = DataTypes.Boolean;
+                                    break;
+                                case DataTypes.Integer:
+                                    res = DataTypes.Number;
+                                    break;
+                                case DataTypes.Number:
+                                    res = DataTypes.Number;
+                                    break;
+                                case DataTypes.String:
+                                    res = DataTypes.String;
+                                    break;
+                                default:
+                                    res = ` "// TODO: Something in wrong" `;
+                                    break;
+                            }
+
+                            result += getDictionaryValueResultString({
                                 description,
-                            )}    ${propertyName}: {\n[key in ${dictionaryRef}]: boolean; \n }; \n`;
+                                dictionaryRef,
+                                propertyName,
+                                value: res,
+                            });
+                        } else {
+                            result += ` "// TODO: Something in wrong" `;
                         }
                     } else {
                         result += ' "// TODO: Something in wrong" ';
@@ -303,6 +328,20 @@ export const parseObject = ({ schema, schemaKey }: { schema: any; schemaKey: str
     } else {
         return convertToTypesFromSchemaProperties({ schemaKey, schema });
     }
+};
+
+export const getDictionaryValueResultString = ({
+    description,
+    propertyName,
+    dictionaryRef,
+    value,
+}: {
+    description: string;
+    propertyName: string;
+    dictionaryRef: string;
+    value: string;
+}): string => {
+    return `${getDescription(description)}    ${propertyName}: {\n[key in ${dictionaryRef}]: ${value}; \n }; \n`;
 };
 
 /**
