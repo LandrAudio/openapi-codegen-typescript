@@ -1,3 +1,15 @@
+# v0.1.18 (Tue Dec 15 2020)
+
+#### 🐛 Bug Fix
+
+- fix(types): fix mock values for simple dictionary types (integer, number, string) [#27](https://github.com/LandrAudio/openapi-codegen-typescript/pull/27) ([@nemrosim](https://github.com/nemrosim))
+
+#### Authors: 1
+
+- Artem Diashkin ([@nemrosim](https://github.com/nemrosim))
+
+---
+
 # (Mon Dec 14 2020)
 
 #### 🔩 Dependency Updates
