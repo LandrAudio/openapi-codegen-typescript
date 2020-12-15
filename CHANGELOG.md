@@ -1,3 +1,15 @@
+# v0.1.19 (Tue Dec 15 2020)
+
+#### 🐛 Bug Fix
+
+- fix(readme): fix readme file [#29](https://github.com/LandrAudio/openapi-codegen-typescript/pull/29) ([@nemrosim](https://github.com/nemrosim))
+
+#### Authors: 1
+
+- Artem Diashkin ([@nemrosim](https://github.com/nemrosim))
+
+---
+
 # v0.1.18 (Tue Dec 15 2020)
 
 #### 🐛 Bug Fix
