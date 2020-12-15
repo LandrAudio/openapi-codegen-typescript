@@ -152,6 +152,22 @@ export class MockGenerateHelper {
         }
     }
 
+    static getDictionaryResultValue({
+        enumValues,
+        value,
+    }: {
+        enumValues: Array<string>;
+        value: string | Function;
+    }): string {
+        let result = `{ `;
+        enumValues.forEach((el: string) => {
+            result += `\n"${el}": ${typeof value === 'function' ? value() : value},`;
+        });
+        result += `\n}`;
+
+        return result;
+    }
+
     getDictionaryMock({
         propertyName,
         xDictionaryKey,
@@ -159,75 +175,81 @@ export class MockGenerateHelper {
         DTOs,
         overrideSchemas,
     }: GetDictionaryMockProps): MockArrayProps {
-        if (xDictionaryKey[SwaggerProps.$ref]) {
-            const dictionaryRef = MockGenerateHelper.parseRefType(xDictionaryKey[SwaggerProps.$ref].split('/'));
+        if (!xDictionaryKey[SwaggerProps.$ref]) {
+            return { propertyName, value: ' // TODO: Wrong dictionary type' };
+        }
 
-            let dicSchema;
+        const dictionaryRef = MockGenerateHelper.parseRefType(xDictionaryKey[SwaggerProps.$ref].split('/'));
 
-            /**
-             * Check if current schema is override
-             */
-            if (overrideSchemas?.length && overrideSchemas.find(e => e[dictionaryRef])) {
-                // for TS happiness
-                const overrideSchema = overrideSchemas.find(e => e[dictionaryRef]);
-                if (overrideSchema) {
-                    dicSchema = overrideSchema[dictionaryRef];
-                }
-            } else {
-                dicSchema = DTOs[dictionaryRef];
+        let dicSchema;
+
+        /**
+         * Check if current schema is override
+         */
+        if (overrideSchemas?.length && overrideSchemas.find(e => e[dictionaryRef])) {
+            // for TS happiness
+            const overrideSchema = overrideSchemas.find(e => e[dictionaryRef]);
+            if (overrideSchema) {
+                dicSchema = overrideSchema[dictionaryRef];
             }
+        } else {
+            dicSchema = DTOs[dictionaryRef];
+        }
 
-            // Enum keys and Enum values
+        if (dicSchema && dicSchema.enum) {
+            let result: string | Function | undefined = undefined;
+
+            // Enum key with Object values or Enum Values
             if (additionalProperties[SwaggerProps.$ref]) {
-                const additionalRef = MockGenerateHelper.parseRefType(
-                    additionalProperties[SwaggerProps.$ref].split('/'),
-                );
-
-                const additionalSchema = DTOs[additionalRef];
-
-                if (dicSchema && dicSchema.enum && additionalSchema && additionalSchema.enum) {
-                    let value = `{ `;
-                    dicSchema.enum.forEach((el: string) => {
-                        value += `\n"${el}": "${additionalSchema.enum[0]}",`;
-                    });
-                    value += `\n}`;
-
-                    return { propertyName, value };
-                }
-            }
-
-            // Enum key and Object value
-            if (dicSchema && dicSchema.enum && additionalProperties[SwaggerProps.$ref]) {
                 const additionalRef = MockGenerateHelper.parseRefType(
                     additionalProperties[SwaggerProps.$ref].split('/'),
                 );
 
                 const aOrAn = indefinite(additionalRef, { articleOnly: true });
 
-                let value = `{ `;
-                dicSchema.enum.forEach((el: string) => {
-                    value += `\n"${el}": ${aOrAn}${additionalRef}API(),`;
-                });
-                value += `\n}`;
+                const additionalSchema = DTOs[additionalRef];
 
-                return { propertyName, value };
+                // Enum value
+                if (additionalSchema && additionalSchema.enum) {
+                    result = `"${additionalSchema.enum[0]}"`;
+                } else {
+                    // Object value
+                    result = `${aOrAn}${additionalRef}API()`;
+                }
             }
 
-            // Enum keys and Boolean values
-            if (dicSchema && dicSchema.enum && additionalProperties.type === DataTypes.Boolean) {
-                let value = `{ `;
-                dicSchema.enum.forEach((el: string) => {
-                    value += `\n"${el}": true,`;
-                });
-                value += `\n}`;
-
-                return { propertyName, value };
-            } else {
-                return { propertyName, value: ' // TODO: Wrong dictionary type' };
+            // Enum keys and simple types
+            if (additionalProperties.type) {
+                switch (additionalProperties.type) {
+                    case DataTypes.Integer:
+                        result = () => casual.integer(0, 100);
+                        break;
+                    case DataTypes.Number:
+                        result = () => casual.double(0, 100);
+                        break;
+                    case DataTypes.String:
+                        result = () => casual.string;
+                        break;
+                    case DataTypes.Boolean:
+                        result = 'true';
+                        break;
+                    default: {
+                        result = ' // TODO: Wrong dictionary value';
+                        break;
+                    }
+                }
             }
-        } else {
-            return { propertyName, value: ' // TODO: Wrong dictionary type' };
+
+            return {
+                propertyName,
+                value: MockGenerateHelper.getDictionaryResultValue({
+                    enumValues: dicSchema.enum,
+                    value: result || `" // TODO: Wrong dictionary value"`,
+                }),
+            };
         }
+
+        return { propertyName, value: `" // TODO: Wrong dictionary value",` };
     }
 
     getAnyMock({ propertyName }: { propertyName: string }): MockArrayProps {
