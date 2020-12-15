@@ -1065,3 +1065,123 @@ it('should return CollectionResponseDto', async () => {
 `;
     expect(resultString).toEqual(expectedString);
 });
+
+describe('Dictionary types', () => {
+    it('should return dictionary value type for integer', async () => {
+        const json = aSwaggerV3Mock({
+            GlobalStateCounters: {
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                    states: {
+                        type: 'object',
+                        nullable: true,
+                        'x-dictionaryKey': {
+                            $ref: '#/components/schemas/ProductState',
+                        },
+                        additionalProperties: {
+                            type: 'integer',
+                            format: 'int32',
+                        },
+                    },
+                },
+            },
+            ProductState: {
+                type: 'string',
+                description: '',
+                'x-enumNames': ['Draft', 'ConfirmDraft'],
+                enum: ['Draft', 'ConfirmDraft'],
+            },
+        });
+
+        const resultString = parseSchemas({ json });
+
+        const expectedString = `export interface GlobalStateCounters {
+    states: {
+[key in ProductState]: number; 
+ }; 
+}
+export type ProductState = 'Draft' | 'ConfirmDraft';
+ 
+`;
+        expect(resultString).toEqual(expectedString);
+    });
+
+    it('should return dictionary value type for number', async () => {
+        const json = aSwaggerV3Mock({
+            GlobalStateCounters: {
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                    states: {
+                        type: 'object',
+                        nullable: true,
+                        'x-dictionaryKey': {
+                            $ref: '#/components/schemas/ProductState',
+                        },
+                        additionalProperties: {
+                            type: 'number',
+                        },
+                    },
+                },
+            },
+            ProductState: {
+                type: 'string',
+                description: '',
+                'x-enumNames': ['Draft', 'ConfirmDraft'],
+                enum: ['Draft', 'ConfirmDraft'],
+            },
+        });
+
+        const resultString = parseSchemas({ json });
+
+        const expectedString = `export interface GlobalStateCounters {
+    states: {
+[key in ProductState]: number; 
+ }; 
+}
+export type ProductState = 'Draft' | 'ConfirmDraft';
+ 
+`;
+        expect(resultString).toEqual(expectedString);
+    });
+
+    it('should return dictionary value type for string', async () => {
+        const json = aSwaggerV3Mock({
+            GlobalStateCounters: {
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                    states: {
+                        type: 'object',
+                        nullable: true,
+                        'x-dictionaryKey': {
+                            $ref: '#/components/schemas/ProductState',
+                        },
+                        additionalProperties: {
+                            type: 'string',
+                        },
+                    },
+                },
+            },
+            ProductState: {
+                type: 'string',
+                description: '',
+                'x-enumNames': ['Draft', 'ConfirmDraft'],
+                enum: ['Draft', 'ConfirmDraft'],
+            },
+        });
+
+        const resultString = parseSchemas({ json });
+
+        const expectedString = `export interface GlobalStateCounters {
+    states: {
+[key in ProductState]: string; 
+ }; 
+}
+export type ProductState = 'Draft' | 'ConfirmDraft';
+ 
+`;
+        expect(resultString).toEqual(expectedString);
+    });
+});
