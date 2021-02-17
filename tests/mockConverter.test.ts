@@ -1739,4 +1739,83 @@ export const aGlobalStateCountersAPI = (overrides?: Partial<GlobalStateCounters>
 `;
         expect(result).toEqual(expectedString);
     });
+
+    it('should generate mocks for a "dictionary" type array', async () => {
+        const json = aSwaggerV3Mock({
+            ComplexDto: {
+              type: 'object',
+              additionalProperties: false,
+              properties: {
+                name: {
+                  type: 'string',
+                  nullable: true
+                }
+              }
+            },
+            MainDto: {
+              type: 'object',
+              additionalProperties: false,
+              properties: {
+                contributors: {
+                  type: 'object',
+                  nullable: true,
+                  'x-dictionaryKey': {
+                    $ref: '#/components/schemas/Role'
+                  },
+                  additionalProperties: {
+                    type: 'array',
+                    items: {
+                      $ref: '#/components/schemas/ComplexDto'
+                    }
+                  }
+                }
+              }
+            },
+            Role: {
+              type: 'string',
+              'x-enumNames': [
+                'Role1',
+                'Role2',
+                'Role3'
+              ],
+              enum: [
+                'role1',
+                'role2',
+                'role3'
+              ]
+            },
+        });
+    
+        const expected = `/* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {ComplexDto, MainDto, Role} from './pathToTypes';
+
+export const aComplexDtoAPI = (overrides?: Partial<ComplexDto>): ComplexDto => {
+  return {
+    name: 'name-complexdto',
+  ...overrides,
+  };
+};
+
+export const aMainDtoAPI = (overrides?: Partial<MainDto>): MainDto => {
+  return {
+    contributors: { 
+"role1": [],
+"role2": [],
+"role3": [],
+},
+  ...overrides,
+  };
+};
+ 
+`;
+        const result = await convertToMocks({
+            json,
+            fileName: "doesn't matter",
+            folderPath: './someFolder',
+            typesPath: './pathToTypes',
+        });
+    
+        expect(result).toEqual(expected);
+    });    
 });
