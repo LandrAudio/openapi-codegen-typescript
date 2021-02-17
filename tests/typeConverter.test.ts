@@ -1234,18 +1234,6 @@ it('should return type for a "dictionary" type array', async () => {
 
     const resultString = parseSchemas({ json });
 
-    const expectedString = `export interface ComplexDto {
-    name?: string;
-}
-export interface MainDto {
-    contributors: {
-[key in Role]: ComplexDto[]; 
- }; 
-}
-export type Role = 'role1' | 'role2' | 'role3';
- 
-`;
-
-    expect(resultString).toEqual(expectedString);
+    expect(resultString).toMatchSnapshot();
 });
 

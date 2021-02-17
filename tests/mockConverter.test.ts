@@ -1786,29 +1786,6 @@ export const aGlobalStateCountersAPI = (overrides?: Partial<GlobalStateCounters>
             },
         });
     
-        const expected = `/* eslint-disable @typescript-eslint/no-use-before-define */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import {ComplexDto, MainDto, Role} from './pathToTypes';
-
-export const aComplexDtoAPI = (overrides?: Partial<ComplexDto>): ComplexDto => {
-  return {
-    name: 'name-complexdto',
-  ...overrides,
-  };
-};
-
-export const aMainDtoAPI = (overrides?: Partial<MainDto>): MainDto => {
-  return {
-    contributors: { 
-"role1": [],
-"role2": [],
-"role3": [],
-},
-  ...overrides,
-  };
-};
- 
-`;
         const result = await convertToMocks({
             json,
             fileName: "doesn't matter",
@@ -1816,6 +1793,6 @@ export const aMainDtoAPI = (overrides?: Partial<MainDto>): MainDto => {
             typesPath: './pathToTypes',
         });
     
-        expect(result).toEqual(expected);
+        expect(result).toMatchSnapshot();
     });    
 });

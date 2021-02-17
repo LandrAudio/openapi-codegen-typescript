@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Dictionary type should generate mocks for a "dictionary" type array 1`] = `
+"/* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {ComplexDto, MainDto, Role} from './pathToTypes';
+
+export const aComplexDtoAPI = (overrides?: Partial<ComplexDto>): ComplexDto => {
+  return {
+    name: 'name-complexdto',
+  ...overrides,
+  };
+};
+
+export const aMainDtoAPI = (overrides?: Partial<MainDto>): MainDto => {
+  return {
+    contributors: { 
+\\"role1\\": [],
+\\"role2\\": [],
+\\"role3\\": [],
+},
+  ...overrides,
+  };
+};
+ 
+"
+`;
