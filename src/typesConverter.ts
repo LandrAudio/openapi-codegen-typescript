@@ -292,8 +292,9 @@ const convertToTypesFromSchemaProperties = ({
                                     } else {
                                        res = ` "// TODO: Something is wrong" `;
                                     }
+                                    break;
                                 default:
-                                    res = ` "// TODO: Something is wrong" `;
+                                    res = ` "// TODO: Something is wrong, type ${additionalProperties.type} is not supported" `;
                                     break;
                             }
 
