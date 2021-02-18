@@ -1185,3 +1185,55 @@ export type ProductState = 'Draft' | 'ConfirmDraft';
         expect(resultString).toEqual(expectedString);
     });
 });
+
+it('should return type for a "dictionary" type array', async () => {
+    const json = aSwaggerV3Mock({
+        ComplexDto: {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            name: {
+              type: 'string',
+              nullable: true
+            }
+          }
+        },
+        MainDto: {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            contributors: {
+              type: 'object',
+              nullable: true,
+              'x-dictionaryKey': {
+                $ref: '#/components/schemas/Role'
+              },
+              additionalProperties: {
+                type: 'array',
+                items: {
+                  $ref: '#/components/schemas/ComplexDto'
+                }
+              }
+            }
+          }
+        },
+        Role: {
+          type: 'string',
+          'x-enumNames': [
+            'Role1',
+            'Role2',
+            'Role3'
+          ],
+          enum: [
+            'role1',
+            'role2',
+            'role3'
+          ]
+        },
+    });
+
+    const resultString = parseSchemas({ json });
+
+    expect(resultString).toMatchSnapshot();
+});
+

@@ -286,8 +286,15 @@ const convertToTypesFromSchemaProperties = ({
                                 case DataTypes.String:
                                     res = DataTypes.String;
                                     break;
+                                case DataTypes.Array:
+                                    if (additionalProperties.items && additionalProperties.items[SwaggerProps.$ref]) {
+                                       res = `${parseRefType(additionalProperties.items[SwaggerProps.$ref].split('/'))}[]`;
+                                    } else {
+                                       res = ` "// TODO: Something is wrong" `;
+                                    }
+                                    break;
                                 default:
-                                    res = ` "// TODO: Something in wrong" `;
+                                    res = ` "// TODO: Something is wrong, type ${additionalProperties.type} is not supported" `;
                                     break;
                             }
 
@@ -298,10 +305,10 @@ const convertToTypesFromSchemaProperties = ({
                                 value: res,
                             });
                         } else {
-                            result += ` "// TODO: Something in wrong" `;
+                            result += ` "// TODO: Something is wrong" `;
                         }
                     } else {
-                        result += ' "// TODO: Something in wrong" ';
+                        result += ' "// TODO: Something is wrong" ';
                     }
                 }
             },

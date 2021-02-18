@@ -233,6 +233,9 @@ export class MockGenerateHelper {
                     case DataTypes.Boolean:
                         result = 'true';
                         break;
+                    case DataTypes.Array:
+                        result = '[]';
+                        break;
                     default: {
                         result = ' // TODO: Wrong dictionary value';
                         break;
