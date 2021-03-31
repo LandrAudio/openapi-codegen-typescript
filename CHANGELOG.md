@@ -1,3 +1,22 @@
+# v0.1.20 (Wed Mar 31 2021)
+
+#### 🐛 Bug Fix
+
+- build(deps): bump y18n from 4.0.0 to 4.0.1 [#31](https://github.com/LandrAudio/openapi-codegen-typescript/pull/31) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+- feat: support dictionary of array of complex type [#30](https://github.com/LandrAudio/openapi-codegen-typescript/pull/30) ([@boulc](https://github.com/boulc))
+
+#### ⚠️ Pushed to `master`
+
+- chore: manual bump of version ([@ardeois](https://github.com/ardeois))
+
+#### Authors: 3
+
+- [@dependabot[bot]](https://github.com/dependabot[bot])
+- Corentin Ardeois ([@ardeois](https://github.com/ardeois))
+- Sébastien Boulay ([@boulc](https://github.com/boulc))
+
+---
+
 # v0.1.19 (Tue Dec 15 2020)
 
 #### 🐛 Bug Fix
