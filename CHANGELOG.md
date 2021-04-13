@@ -1,3 +1,15 @@
+# v0.1.22 (Tue Apr 13 2021)
+
+#### 🐛 Bug Fix
+
+- build(deps): bump gitlog from 4.0.3 to 4.0.4 [#32](https://github.com/LandrAudio/openapi-codegen-typescript/pull/32) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+
+#### Authors: 1
+
+- [@dependabot[bot]](https://github.com/dependabot[bot])
+
+---
+
 # v0.1.20 (Wed Mar 31 2021)
 
 #### 🐛 Bug Fix
