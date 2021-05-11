@@ -1,3 +1,15 @@
+# v0.1.24 (Tue May 11 2021)
+
+#### 🐛 Bug Fix
+
+- build(deps): bump hosted-git-info from 2.8.5 to 2.8.9 [#34](https://github.com/LandrAudio/openapi-codegen-typescript/pull/34) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+
+#### Authors: 1
+
+- [@dependabot[bot]](https://github.com/dependabot[bot])
+
+---
+
 # v0.1.23 (Tue May 11 2021)
 
 #### 🐛 Bug Fix
