@@ -1,3 +1,15 @@
+# v0.1.23 (Tue May 11 2021)
+
+#### 🐛 Bug Fix
+
+- build(deps): bump lodash from 4.17.19 to 4.17.21 [#33](https://github.com/LandrAudio/openapi-codegen-typescript/pull/33) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+
+#### Authors: 1
+
+- [@dependabot[bot]](https://github.com/dependabot[bot])
+
+---
+
 # v0.1.22 (Tue Apr 13 2021)
 
 #### 🐛 Bug Fix
