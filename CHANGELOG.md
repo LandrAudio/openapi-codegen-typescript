@@ -1,3 +1,15 @@
+# (Tue Sep 21 2021)
+
+#### 🔩 Dependency Updates
+
+- build(deps): bump glob-parent from 5.1.0 to 5.1.2 [#36](https://github.com/LandrAudio/openapi-codegen-typescript/pull/36) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+
+#### Authors: 1
+
+- [@dependabot[bot]](https://github.com/dependabot[bot])
+
+---
+
 # v0.1.25 (Tue Sep 21 2021)
 
 #### 🐛 Bug Fix
