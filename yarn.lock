@@ -2,17 +2,17 @@
 # yarn lockfile v1
 
 
-"@auto-it/bot-list@10.27.0":
-  version "10.27.0"
-  resolved "https://registry.yarnpkg.com/@auto-it/bot-list/-/bot-list-10.27.0.tgz#39264ca2974f227a8e7b0f327e7601eba2a23b7d"
-  integrity sha512-KIiWpm8h2PWJEZOKN+bu+O8/16IdogQlEpmXT+I0ipwB9mnulliCQwYdi4OleE9Y7wedd7WTszG4tbRIRqyW+A==
+"@auto-it/bot-list@10.32.0":
+  version "10.32.0"
+  resolved "https://registry.yarnpkg.com/@auto-it/bot-list/-/bot-list-10.32.0.tgz#3614b5fd04041f486b62fea98cc137ec83dc2f98"
+  integrity sha512-W04OgTRHXpgorZRojYZ36AT54uUYqzsFnBm6FaAgVqGS2d5zS1CvyOBzH+rgYN38709suSWNK/xQYbua6ycoVA==
 
-"@auto-it/core@10.27.0":
-  version "10.27.0"
-  resolved "https://registry.yarnpkg.com/@auto-it/core/-/core-10.27.0.tgz#2f8d3480b1729dbd5c43d629689090f4193324ef"
-  integrity sha512-vsaj4xsQXLYhsggGLygK+8VRZEc5M4HwAc9u4aKb6ATzN3oT3uABW+xVBjeKiA8wX5JAhAWP9yQy/IbPwW5otw==
+"@auto-it/core@10.32.0":
+  version "10.32.0"
+  resolved "https://registry.yarnpkg.com/@auto-it/core/-/core-10.32.0.tgz#d0d4c54878b7c1d5c5a926e304b9d652b2ee8059"
+  integrity sha512-xx1lldpBT23W2sHv63UhpxlRy7WvAazrp0ZFnQ/n7JQL1x81kuHSs8trlnpa/G+R7fdATTJU5R6yr8vGz03FpQ==
   dependencies:
-    "@auto-it/bot-list" "10.27.0"
+    "@auto-it/bot-list" "10.32.0"
     "@endemolshinegroup/cosmiconfig-typescript-loader" "^3.0.2"
     "@octokit/plugin-enterprise-compatibility" "^1.2.2"
     "@octokit/plugin-retry" "^3.0.1"
@@ -43,7 +43,7 @@
     requireg "^0.2.2"
     semver "^7.0.0"
     signale "^1.4.0"
-    tapable "^2.0.0-beta.2"
+    tapable "^2.2.0"
     terminal-link "^2.1.1"
     tinycolor2 "^1.4.1"
     ts-node "^9.1.1"
@@ -52,13 +52,13 @@
     typescript-memoize "^1.0.0-alpha.3"
     url-join "^4.0.0"
 
-"@auto-it/npm@10.27.0":
-  version "10.27.0"
-  resolved "https://registry.yarnpkg.com/@auto-it/npm/-/npm-10.27.0.tgz#1409dc353b253079b9dc2368a3b889f84219505b"
-  integrity sha512-wuvrzpo87QHm1jnIGtcW9ETdu6URCVYsWmTAo8P4CZj9hgI1vdwX9e+dfDp1Kp120CsON7Y1i8acxK2nMzOtVQ==
+"@auto-it/npm@10.32.0":
+  version "10.32.0"
+  resolved "https://registry.yarnpkg.com/@auto-it/npm/-/npm-10.32.0.tgz#ff0c70690ba007a9cd2338e5162b06d58092fc7a"
+  integrity sha512-sI3QVzZE9GVzzC5+ds39elC8EPk4RVgkXyPmat8Tp67pGh9haSJi3H2hXwijZVkrEmwC0PZcC0imEx+PRb8L+g==
   dependencies:
-    "@auto-it/core" "10.27.0"
-    "@auto-it/package-json-utils" "10.27.0"
+    "@auto-it/core" "10.32.0"
+    "@auto-it/package-json-utils" "10.32.0"
     await-to-js "^3.0.0"
     endent "^2.0.1"
     env-ci "^5.0.1"
@@ -72,21 +72,21 @@
     url-join "^4.0.0"
     user-home "^2.0.0"
 
-"@auto-it/package-json-utils@10.27.0":
-  version "10.27.0"
-  resolved "https://registry.yarnpkg.com/@auto-it/package-json-utils/-/package-json-utils-10.27.0.tgz#059fa5996ed643bdcf1a946ed9437c1dcba6d16c"
-  integrity sha512-+Fzf8TqLChWwLZtSspmuvzcyzWBWPfbZsjE2IehOagtWrhGqz9CUPHQoAZPIU6MUQeXkrvgLrQi8IFj3gs6D/Q==
+"@auto-it/package-json-utils@10.32.0":
+  version "10.32.0"
+  resolved "https://registry.yarnpkg.com/@auto-it/package-json-utils/-/package-json-utils-10.32.0.tgz#c9a479cb2becac139821f525aab0973170cde40a"
+  integrity sha512-XSlHt4SOxp3XClzxJdrK/BUt4ix3k4zvZGQGN/3fLp9Z+2vm5/VTuyCqvMnqrvNyWt8POvBbeTIqYDnMUIQPkg==
   dependencies:
     parse-author "^2.0.0"
     parse-github-url "1.0.2"
 
-"@auto-it/released@10.27.0":
-  version "10.27.0"
-  resolved "https://registry.yarnpkg.com/@auto-it/released/-/released-10.27.0.tgz#a1e61cbb24b9fc9bcd362ac19fceef92929d8e89"
-  integrity sha512-FbHb2BDkv+pAhm9+wqqKc30w1vDr5fuGZ5JxvVLTAMYjOxN5CKDmOh10rvjYQ8tDY2vxcwQgX0Gf24EB3pPEZQ==
+"@auto-it/released@10.32.0":
+  version "10.32.0"
+  resolved "https://registry.yarnpkg.com/@auto-it/released/-/released-10.32.0.tgz#2164fff6057b32db5921282b0166b282fd182a3b"
+  integrity sha512-7OfjcgdCz1otdH1JcsUOvbFQeQRyG7d6fv0G1bPUVoEo5wWzJGdcPrFTKQOmeypeyVyG2uMBnJMfUJkZDE77PQ==
   dependencies:
-    "@auto-it/bot-list" "10.27.0"
-    "@auto-it/core" "10.27.0"
+    "@auto-it/bot-list" "10.32.0"
+    "@auto-it/core" "10.32.0"
     deepmerge "^4.0.0"
     fp-ts "^2.5.3"
     io-ts "^2.1.2"
@@ -1010,14 +1010,14 @@ author-regex@^1.0.0:
   resolved "https://registry.yarnpkg.com/author-regex/-/author-regex-1.0.0.tgz#d08885be6b9bbf9439fe087c76287245f0a81450"
   integrity sha1-0IiFvmubv5Q5/gh8dihyRfCoFFA=
 
-auto@^10.27.0:
-  version "10.27.0"
-  resolved "https://registry.yarnpkg.com/auto/-/auto-10.27.0.tgz#48f1a58d355cf2a03dfd397538dc5f56ac751dd8"
-  integrity sha512-38aMBY95TSGohSOkR74YVcR42QmD8QWt5Q2woHdpCn/SO2YpF2lEdwPyc4ew4VUHXU640NNh7Bx1zVx8zwv1Fw==
+auto@^10.32.0:
+  version "10.32.0"
+  resolved "https://registry.yarnpkg.com/auto/-/auto-10.32.0.tgz#0b6465d75119b9b64b313ce3e1ebb9cdd52ccc9a"
+  integrity sha512-3vvekuxeV1YGCsu/kl/hVS8GE+6M6K7Twjx8RpTAowHg6f81Mhj7/YVc9NGzTQE7OQVeMv9F7zOVIhys5+RKww==
   dependencies:
-    "@auto-it/core" "10.27.0"
-    "@auto-it/npm" "10.27.0"
-    "@auto-it/released" "10.27.0"
+    "@auto-it/core" "10.32.0"
+    "@auto-it/npm" "10.32.0"
+    "@auto-it/released" "10.32.0"
     await-to-js "^3.0.0"
     chalk "^4.0.0"
     command-line-application "^0.10.1"
@@ -2309,17 +2309,10 @@ gitlog@^4.0.3:
     debug "^4.1.1"
     tslib "^1.14.1"
 
-glob-parent@^5.0.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/glob-parent/-/glob-parent-5.1.0.tgz#5f4c1d1e748d30cd73ad2944b3577a81b081e8c2"
-  integrity sha512-qjtRgnIVmOfnKUE3NJAQEdk+lKrxfw8t5ke7SXtfMTHcjsBfOfWXCQfdb30zfDoZQ2IRSIiidmjtbHZPZ++Ihw==
-  dependencies:
-    is-glob "^4.0.1"
-
-glob-parent@^5.1.0:
-  version "5.1.1"
-  resolved "https://registry.yarnpkg.com/glob-parent/-/glob-parent-5.1.1.tgz#b6c1ef417c4e5663ea498f1c45afac6916bbc229"
-  integrity sha512-FnI+VGOpnlGHWZxthPGR+QhR78fuiK0sNLkHQv+bL9fQi57lNNdquIbna/WrfROrolq8GK5Ek6BiMwqL/voRYQ==
+glob-parent@^5.0.0, glob-parent@^5.1.0:
+  version "5.1.2"
+  resolved "https://registry.yarnpkg.com/glob-parent/-/glob-parent-5.1.2.tgz#869832c58034fe68a4093c17dc15e8340d8401c4"
+  integrity sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==
   dependencies:
     is-glob "^4.0.1"
 
@@ -4890,10 +4883,10 @@ tapable@^1.0.0:
   resolved "https://registry.yarnpkg.com/tapable/-/tapable-1.1.3.tgz#a1fccc06b58db61fd7a45da2da44f5f3a3e67ba2"
   integrity sha512-4WK/bYZmj8xLr+HUCODHGF1ZFzsYffasLUgEiMBY4fgtltdO6B4WJtlSbPaDTLpYTcGVwM2qLnFTICEcNxs3kA==
 
-tapable@^2.0.0-beta.2:
-  version "2.0.0-beta.9"
-  resolved "https://registry.yarnpkg.com/tapable/-/tapable-2.0.0-beta.9.tgz#638496fb27b53e69c21a0e6a4435afbe805845cb"
-  integrity sha512-+VBUuZXh+WIHnKOeo+A27SB/1sHTVWozcKweDIAhB/XOGnr8cy6ULZjU+qpGxO/G4xEyWCCaWTX/HPEkGg3Xrg==
+tapable@^2.2.0:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/tapable/-/tapable-2.2.1.tgz#1967a73ef4060a82f12ab96af86d52fdb76eeca0"
+  integrity sha512-GNzQvQTOIP6RyTfE2Qxb8ZVlNmw0n88vp1szwWRimP02mnTsx3Wtn5qRdqY9w2XduFNUgvOwhNnQsjwCp+kqaQ==
 
 terminal-link@^2.0.0, terminal-link@^2.1.1:
   version "2.1.1"
