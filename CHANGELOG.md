@@ -1,3 +1,15 @@
+# v0.1.25 (Tue Sep 21 2021)
+
+#### 🐛 Bug Fix
+
+- build(deps): bump tmpl from 1.0.4 to 1.0.5 [#38](https://github.com/LandrAudio/openapi-codegen-typescript/pull/38) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+
+#### Authors: 1
+
+- [@dependabot[bot]](https://github.com/dependabot[bot])
+
+---
+
 # v0.1.24 (Tue May 11 2021)
 
 #### 🐛 Bug Fix
