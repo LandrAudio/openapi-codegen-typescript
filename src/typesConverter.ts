@@ -214,7 +214,7 @@ const convertToTypesFromSchemaProperties = ({
                             if (swaggerType === 'integer') {
                                 type = 'number';
                             } else {
-                                type = swaggerType;
+                                type = swaggerType || 'any';
                             }
                         }
 
