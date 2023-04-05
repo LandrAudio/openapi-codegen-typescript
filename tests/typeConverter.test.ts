@@ -678,6 +678,31 @@ export interface AssetFileDto {
         expect(resultString).toEqual(expectedString);
     });
 
+    it('should return "any" type items in array for items without a type', async () => {
+        const json = aSwaggerV3Mock({
+            ArrayOfAny: {
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                    invoiceNumbers: {
+                        type: 'array',
+                        nullable: true,
+                        items: {},
+                    },
+                },
+            },
+        });
+
+        const resultString = parseSchemas({ json });
+
+        const expectedString = `export interface ArrayOfAny {
+    invoiceNumbers?: any[];
+}
+ 
+`;
+        expect(resultString).toEqual(expectedString);
+    });
+
     it('should return type for a "dictionary"', async () => {
         const json = aSwaggerV3Mock({
             BillingProviderKind: {
