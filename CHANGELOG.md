@@ -1,3 +1,16 @@
+# v0.1.27 (Wed Apr 05 2023)
+
+#### 🐛 Bug Fix
+
+- feat: use node 14 [#50](https://github.com/LandrAudio/openapi-codegen-typescript/pull/50) ([@pkiler](https://github.com/pkiler))
+- feat: support any[] [#49](https://github.com/LandrAudio/openapi-codegen-typescript/pull/49) ([@pkiler](https://github.com/pkiler))
+
+#### Authors: 1
+
+- PK ([@pkiler](https://github.com/pkiler))
+
+---
+
 # (Tue Sep 21 2021)
 
 #### 🔩 Dependency Updates
