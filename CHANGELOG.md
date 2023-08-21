@@ -1,3 +1,15 @@
+# v0.1.28 (Mon Aug 21 2023)
+
+#### 🐛 Bug Fix
+
+- fix(mocks): fix duration format in mocks [#51](https://github.com/LandrAudio/openapi-codegen-typescript/pull/51) ([@MPeloquin](https://github.com/MPeloquin))
+
+#### Authors: 1
+
+- Maxime Péloquin ([@MPeloquin](https://github.com/MPeloquin))
+
+---
+
 # v0.1.27 (Wed Apr 05 2023)
 
 #### 🐛 Bug Fix
