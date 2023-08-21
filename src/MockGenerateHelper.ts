@@ -43,10 +43,12 @@ export class MockGenerateHelper {
             value = `'${this.casual.email}'`;
         } else if (format === StringFormats.Uri) {
             value = `'${this.casual.url}'`;
+        } else if (format === StringFormats.Duration) {
+            value = `'${this.casual.integer(0, 1000)}'`;
         }
 
         if (!value) {
-            value = 'TODO: FIX';
+            value = `'TODO: FIX'`;
         }
 
         return {
