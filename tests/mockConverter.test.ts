@@ -171,6 +171,31 @@ export const aDatesAPI = (overrides?: Partial<Dates>): Dates => {
     expect(result).toEqual(expectedString);
 });
 
+it('should generate duration format', async () => {
+    const schema = {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+            duration: {
+                type: 'string',
+                format: 'duration',
+            },
+        },
+    };
+
+    const result = parseSchema({ schema, name: 'Dates' });
+
+    const expectedString = `
+export const aDatesAPI = (overrides?: Partial<Dates>): Dates => {
+  return {
+    duration: '902',
+  ...overrides,
+  };
+};
+`;
+    expect(result).toEqual(expectedString);
+});
+
 it('should generate boolean type', async () => {
     const schema = {
         type: 'object',
@@ -1785,14 +1810,14 @@ export const aGlobalStateCountersAPI = (overrides?: Partial<GlobalStateCounters>
               ]
             },
         });
-    
+
         const result = await convertToMocks({
             json,
             fileName: "doesn't matter",
             folderPath: './someFolder',
             typesPath: './pathToTypes',
         });
-    
+
         expect(result).toMatchSnapshot();
-    });    
+    });
 });

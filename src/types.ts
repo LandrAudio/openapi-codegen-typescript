@@ -21,6 +21,7 @@ export enum DataTypes {
 export enum StringFormats {
     Date = 'date',
     DateTime = 'date-time',
+    Duration = 'duration',
     Password = 'password',
     Byte = 'byte',
     Binary = 'binary',
