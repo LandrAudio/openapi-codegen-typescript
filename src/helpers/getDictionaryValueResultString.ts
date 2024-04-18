@@ -4,8 +4,8 @@ import { getDescription } from './getDescription';
 export const getDictionaryValueResultString = ({
     description,
     propertyName,
-    xDictionaryKey,
+    dictionaryRef,
     value,
 }: DictionaryValueResultString) => {
-    return `${getDescription({ description })}\t${propertyName}: {\n[key in ${xDictionaryKey}]: ${value}; \n }; \n`;
+    return `${getDescription({ description })}\t${propertyName}: {\n[key in ${dictionaryRef}]: ${value}; \n }; \n`;
 };

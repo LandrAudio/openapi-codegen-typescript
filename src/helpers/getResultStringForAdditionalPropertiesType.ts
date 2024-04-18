@@ -41,7 +41,7 @@ export const getResultStringForAdditionalPropertiesType = ({
 
         return getDictionaryValueResultString({
             description,
-            xDictionaryKey: dictionaryRef,
+            dictionaryRef,
             propertyName,
             value: res,
         });

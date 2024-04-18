@@ -138,9 +138,9 @@ export type ResultStringForArrayWithoutItemRef = Pick<
     'items' | 'propertyName' | 'description' | 'nullable' | 'format' | 'maxItems'
 >;
 
-export interface DictionaryValueResultString
-    extends Pick<SchemaProperties, 'description' | 'propertyName' | 'xDictionaryKey'> {
+export interface DictionaryValueResultString extends Pick<SchemaProperties, 'description' | 'propertyName'> {
     value: string;
+    dictionaryRef: string;
 }
 
 export type ResultStringForDictionaryKey = Pick<
