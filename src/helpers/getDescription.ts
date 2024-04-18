@@ -1,1 +1,4 @@
-export const getDescription = (description?: string) => `${description ? `/**\n * ${description}\n */\n` : ''}`;
+import { SchemaProperties } from '../types';
+
+export const getDescription = ({ description }: Pick<SchemaProperties, 'description'>) =>
+    `${description ? `/**\n * ${description}\n */\n` : ''}`;

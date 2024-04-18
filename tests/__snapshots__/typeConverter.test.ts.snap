@@ -2,7 +2,7 @@
 
 exports[`should return type for a "dictionary" type array 1`] = `
 "export interface ComplexDto {
-    name?: string;
+	name?: string;
 }
 export interface MainDto {
     contributors: {

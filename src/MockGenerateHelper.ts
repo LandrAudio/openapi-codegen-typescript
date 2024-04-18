@@ -17,7 +17,6 @@ import {
     StringFormats,
     SwaggerProps,
 } from './types';
-import { parseEnum } from './typesConverter';
 
 export class MockGenerateHelper {
     private casual: Casual.Generators & Casual.Casual;

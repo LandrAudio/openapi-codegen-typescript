@@ -1,16 +1,14 @@
-import { DataTypes, SwaggerProps } from '../types';
+import { DataTypes, ResultStringForAdditionalPropertiesType, SwaggerProps } from '../types';
 import { getDescription } from './getDescription';
+import { getDictionaryValueResultString } from './getDictionaryValueResultString';
 import { parseRefType } from './parseRefType';
 
 export const getResultStringForAdditionalPropertiesType = ({
     additionalProperties,
+    xDictionaryKey,
     description,
     propertyName,
-}: {
-    additionalProperties: any;
-    description?: string;
-    propertyName: string;
-}) => {
+}: ResultStringForAdditionalPropertiesType) => {
     let res;
 
     switch (additionalProperties.type) {
@@ -38,5 +36,16 @@ export const getResultStringForAdditionalPropertiesType = ({
             break;
     }
 
-    return `${getDescription(description)}\t${propertyName}: {\n [key: string]: ${res};\n };\n`;
+    if (xDictionaryKey && !!xDictionaryKey[SwaggerProps.$ref]) {
+        const dictionaryRef = parseRefType(xDictionaryKey[SwaggerProps.$ref].split('/'));
+
+        return getDictionaryValueResultString({
+            description,
+            xDictionaryKey: dictionaryRef,
+            propertyName,
+            value: res,
+        });
+    } else {
+        return `${getDescription({ description })}\t${propertyName}: {\n [key: string]: ${res};\n };\n`;
+    }
 };

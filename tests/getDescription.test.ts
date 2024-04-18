@@ -2,19 +2,19 @@ import { getDescription } from '../src/helpers/getDescription';
 
 const scenarios = [
     {
-        props: 'mock description',
+        description: 'mock description',
         expected: `/**\n * mock description\n */\n`,
     },
     {
-        props: undefined,
+        description: undefined,
         expected: '',
     },
 ];
 
 describe(`getDescription`, () => {
     scenarios.forEach(config => {
-        it(`should return ${config.expected} when props is ${config.props}`, async () => {
-            const result = getDescription(config.props);
+        it(`should return ${config.expected} when description is ${config.description}`, async () => {
+            const result = getDescription({ description: config.description });
 
             expect(result).toBe(config.expected);
         });

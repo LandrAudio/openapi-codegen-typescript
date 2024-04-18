@@ -1,9 +1,9 @@
-import { GetSchemasProps, SwaggerV2, SwaggerV3 } from './types';
+import { GetSchemasProps, SchemaProperties, SwaggerV2, SwaggerV3 } from './types';
 
 const fs = require('fs');
 const fetch = require('node-fetch');
 
-export const getSchemaProperties = (objectProps: any) =>
+export const getSchemaProperties = (objectProps: any): SchemaProperties[] =>
     Object.keys(objectProps).map(property => {
         const {
             type,
@@ -36,7 +36,7 @@ export const getSchemaProperties = (objectProps: any) =>
             format,
             minLength,
             maxLength,
-            nullable,
+            nullable: !!nullable,
             items,
             minimum,
             maximum,

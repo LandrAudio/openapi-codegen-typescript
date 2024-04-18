@@ -1,4 +1,6 @@
-import { parseEnum, parseObject, parseSchemas } from '../src/typesConverter';
+import { parseEnum } from '../src/helpers/parseEnum';
+import { parseObject } from '../src/helpers/parseObject';
+import { parseSchemas } from '../src/typesConverter';
 import { aSwaggerV2Mock, aSwaggerV3Mock } from '../src/utils/test-utils';
 
 describe('TS types generation', () => {
@@ -750,10 +752,10 @@ export interface AssetFileDto {
         const expectedString = `export type BillingProviderKind = 'Legacy' | 'Fusebill';
 export type ServiceOfferKind = 'MasteringAndDistribution' | 'Video' | 'Samples' | 'Mastering' | 'Distribution';
 export interface UserMetadata {
-    serviceOffers: {
+\tserviceOffers: {
 [key in ServiceOfferKind]: BillingProviderKind; 
  }; 
-    copy: {
+\tcopy: {
 [key in ServiceOfferKind]: BillingProviderKind; 
  }; 
 }
@@ -810,10 +812,10 @@ it('should return type for a multiple "dictionary" types', async () => {
     const expectedString = `export type BillingProviderKind = 'Legacy' | 'Fusebill';
 export type ServiceOfferKind = 'MasteringAndDistribution' | 'Video' | 'Samples' | 'Mastering' | 'Distribution';
 export interface UserSubscriptions {
-    current: {
+\tcurrent: {
 [key in ServiceOfferKind]: CurrentSubscription; 
  }; 
-    next: {
+\tnext: {
 [key in ServiceOfferKind]: NextSubscription; 
  }; 
 }
@@ -905,18 +907,18 @@ it('should return type for a "dictionary" type boolean', async () => {
     const resultString = parseSchemas({ json });
 
     const expectedString = `export interface ContentDtoOfCollectionDto {
-    data?: CollectionDto[];
-    paging?: PagingOptionsDto;
+\tdata?: CollectionDto[];
+\tpaging?: PagingOptionsDto;
 }
 export interface CollectionDto {
-    id: string; // format: "guid"
-    ownerId: string; // format: "guid"
-    name?: string;
-    type: CollectionType;
-    creationTime: string; // format: "date-time"
-    lastModifiedTime: string; // format: "date-time"
+\tid: string; // format: "guid"
+\townerId: string; // format: "guid"
+\tname?: string;
+\ttype: CollectionType;
+\tcreationTime: string; // format: "date-time"
+\tlastModifiedTime: string; // format: "date-time"
     isSoftDeleted: boolean;
-    collaborators?: CollaboratorDto[];
+\tcollaborators?: CollaboratorDto[];
     permissions: {
 [key in UserOperation]: boolean; 
  }; 
@@ -1028,19 +1030,19 @@ export interface PlanFrequencyIdentifier {
 /**
  * The Fusebill plan code.
  */
-    code?: string;
+\tcode?: string;
 /**
  * The current quantity of the product within the subscription.
  */
-    currentQuantity: number; // format: "decimal"
+\tcurrentQuantity: number; // format: "decimal"
 /**
  * The number of credits associated to this subscription product.
  */
-    numberOfCredits?: number; // format: "int32"
+\tnumberOfCredits?: number; // format: "int32"
 /**
  * The interval of the plan (monthly/yearly).
  */
-    frequency: Interval;
+\tfrequency: Interval;
 /**
  * Says if the user has overdue payments by service offer.
  */
@@ -1050,7 +1052,7 @@ export interface PlanFrequencyIdentifier {
 /**
  * The user IDs.
  */
-    userIds: string[];
+\tuserIds: string[];
 /**
  * Boolean description
  */
@@ -1083,8 +1085,8 @@ it('should return CollectionResponseDto', async () => {
     const resultString = parseSchemas({ json });
 
     const expectedString = `export interface CollectionResponseDto {
-    data: StoredCreditCardDto[];
-    paging: PagingDto;
+\tdata: StoredCreditCardDto[];
+\tpaging: PagingDto;
 }
  
 `;
