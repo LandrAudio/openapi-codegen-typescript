@@ -108,7 +108,7 @@ describe('TS types generation', () => {
         const result = parseObject({ schema: swaggerJson, schemaKey: 'AssetDto' });
 
         const expectedString = `/**
- * DESCRIPTION 
+ * DESCRIPTION
  */
 export interface AssetDto {
     id: string; // format: "guid"
@@ -1022,37 +1022,37 @@ it('should return description', async () => {
     const resultString = parseSchemas({ json });
 
     const expectedString = `/**
- * PlanFrequencyIdentifier description 
+ * PlanFrequencyIdentifier description
  */
 export interface PlanFrequencyIdentifier {
 /**
- * The Fusebill plan code. 
+ * The Fusebill plan code.
  */
     code?: string;
 /**
- * The current quantity of the product within the subscription. 
+ * The current quantity of the product within the subscription.
  */
     currentQuantity: number; // format: "decimal"
 /**
- * The number of credits associated to this subscription product. 
+ * The number of credits associated to this subscription product.
  */
     numberOfCredits?: number; // format: "int32"
 /**
- * The interval of the plan (monthly/yearly). 
+ * The interval of the plan (monthly/yearly).
  */
     frequency: Interval;
 /**
- * Says if the user has overdue payments by service offer. 
+ * Says if the user has overdue payments by service offer.
  */
     hasOverduePayment: {
 [key in ServiceOfferKind]: boolean; 
  }; 
 /**
- * The user IDs. 
+ * The user IDs.
  */
     userIds: string[];
 /**
- * Boolean description 
+ * Boolean description
  */
     isDefault: boolean;
 }
@@ -1214,46 +1214,38 @@ export type ProductState = 'Draft' | 'ConfirmDraft';
 it('should return type for a "dictionary" type array', async () => {
     const json = aSwaggerV3Mock({
         ComplexDto: {
-          type: 'object',
-          additionalProperties: false,
-          properties: {
-            name: {
-              type: 'string',
-              nullable: true
-            }
-          }
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+                name: {
+                    type: 'string',
+                    nullable: true,
+                },
+            },
         },
         MainDto: {
-          type: 'object',
-          additionalProperties: false,
-          properties: {
-            contributors: {
-              type: 'object',
-              nullable: true,
-              'x-dictionaryKey': {
-                $ref: '#/components/schemas/Role'
-              },
-              additionalProperties: {
-                type: 'array',
-                items: {
-                  $ref: '#/components/schemas/ComplexDto'
-                }
-              }
-            }
-          }
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+                contributors: {
+                    type: 'object',
+                    nullable: true,
+                    'x-dictionaryKey': {
+                        $ref: '#/components/schemas/Role',
+                    },
+                    additionalProperties: {
+                        type: 'array',
+                        items: {
+                            $ref: '#/components/schemas/ComplexDto',
+                        },
+                    },
+                },
+            },
         },
         Role: {
-          type: 'string',
-          'x-enumNames': [
-            'Role1',
-            'Role2',
-            'Role3'
-          ],
-          enum: [
-            'role1',
-            'role2',
-            'role3'
-          ]
+            type: 'string',
+            'x-enumNames': ['Role1', 'Role2', 'Role3'],
+            enum: ['role1', 'role2', 'role3'],
         },
     });
 
@@ -1261,4 +1253,3 @@ it('should return type for a "dictionary" type array', async () => {
 
     expect(resultString).toMatchSnapshot();
 });
-

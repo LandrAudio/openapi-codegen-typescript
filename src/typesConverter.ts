@@ -14,9 +14,11 @@ import {
     GetSchemasProps,
 } from './types';
 import { getSchemaProperties, getSchemas, isSwaggerV2, writeToFile } from './shared';
+import { getDescription } from './helpers/getDescription';
+import { parseRefType } from './helpers/parseRefType';
+import { getResultStringForAdditionalPropertiesType } from './helpers/getResultStringForAdditionalPropertiesType';
 
 const parseFormat = (format?: string): string => (format ? `format: "${format}"` : '');
-const parseRefType = (refType: string[]): string => refType[refType.length - 1];
 const parsePropertyName = ({ propertyName, nullable, type }: any): string =>
     `    ${propertyName}${nullable ? '?' : ''}: ${type};`;
 
@@ -67,8 +69,6 @@ const getResultStringForBooleanType = ({ propertyName, description, nullable }: 
 
     return `${getDescription(description)}${nameAndValue}\n`;
 };
-
-const getDescription = (description?: string) => `${description ? `/**\n * ${description} \n */\n` : ''}`;
 
 const getResultStringForStringType = ({
     propertyName,
@@ -310,6 +310,14 @@ const convertToTypesFromSchemaProperties = ({
                     } else {
                         result += ' "// TODO: Something is wrong" ';
                     }
+                }
+
+                if (!xDictionaryKey && additionalProperties) {
+                    result += getResultStringForAdditionalPropertiesType({
+                        additionalProperties,
+                        description,
+                        propertyName,
+                    });
                 }
             },
         );
