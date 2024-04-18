@@ -40,10 +40,10 @@ export const parseSchemas = ({ json, overrideSchemas }: GetSchemasProps) => {
                         result += parseEnum({ schema, schemaKey });
                     }
                 } else {
-                    result += `// TODO: ERROR! Something wrong with ${schemaKey} \n`;
+                    result += `// Error: Unsupported schema for ${schemaKey} \n`;
                 }
             } catch (error) {
-                result += `// TODO: ERROR! Something wrong with ${schemaKey} \n`;
+                result += `// Error: Unhandled error with ${schemaKey} \n`;
             }
         });
 

@@ -1,18 +1,16 @@
 import { getSchemaProperties } from '../shared';
 import { SwaggerProps, SwaggerSchema } from '../types';
-import { getDescription } from './getDescription';
 import { getResultStringForAdditionalPropertiesType } from './getResultStringForAdditionalPropertiesType';
 import { getResultStringForArrayType } from './getResultStringForArrayType';
 import { getResultStringForArrayWithoutItemRef } from './getResultStringForArrayWithoutItemRef';
 import { getResultStringForBooleanType } from './getResultStringForBooleanType';
 import { getResultStringForDictionaryKey } from './getResultStringForDictionaryKey';
+import { getResultStringForExportInterface } from './getResultStringForExportInterface';
 import { getResultStringForNumberType } from './getResultStringForNumberType';
 import { getResultStringForStringType } from './getResultStringForStringType';
 import { getResultStringForUndefinedTypeRefAndOneOf } from './getResultStringForUndefinedTypeRefAndOneOf';
 import { getResultStringType } from './getResultStringType';
-import { parseFormat } from './parseFormat';
-import { parseProperty } from './parseProperty';
-import { parseRefType } from './parseRefType';
+import { getStandardString } from './getStandardString';
 
 export const convertToTypesFromSchemaProperties = ({
     schema,
@@ -23,15 +21,7 @@ export const convertToTypesFromSchemaProperties = ({
     schemaKey?: string;
     interfaces?: Array<string>;
 }): string => {
-    const getStandardString = ({ propertyName, description, nullable, refType, format, isArray }: any) => {
-        return `${parseProperty({ propertyName, description, nullable })}${parseRefType(refType)}${
-            isArray ? '[]' : ''
-        };${parseFormat(format)}\n`;
-    };
-
-    let result = `${getDescription({ description: schema.description })}export interface ${schemaKey}${
-        interfaces ? ` extends ${interfaces.join(', ')} ` : ' '
-    }{\n`;
+    let result = getResultStringForExportInterface({ schemaKey, schema, interfaces });
 
     if (schema.properties) {
         getSchemaProperties(schema.properties).map(props => {
@@ -60,7 +50,6 @@ export const convertToTypesFromSchemaProperties = ({
                     result += getStandardString({
                         ...props,
                         refType: props.oneOf[0][SwaggerProps.$ref].split('/'),
-
                         isArray: false,
                     });
                     break;
@@ -78,7 +67,7 @@ export const convertToTypesFromSchemaProperties = ({
                     break;
                 case 'Invalid':
                 default:
-                    result += ' "// TODO: Something is wrong" ';
+                    result += '"// Error: Invalid schema properties"';
                     break;
             }
         });

@@ -28,11 +28,11 @@ export const getResultStringForAdditionalPropertiesType = ({
             if (additionalProperties.items && additionalProperties.items[SwaggerProps.$ref]) {
                 res = `${parseRefType(additionalProperties.items[SwaggerProps.$ref].split('/'))}[]`;
             } else {
-                res = `"// TODO: Something is wrong"`;
+                res = `"// Error: The additionalProperties items or the items ref is missing"`;
             }
             break;
         default:
-            res = `"// TODO: Something is wrong, type ${additionalProperties.type} is not supported"`;
+            res = `"// Error: ${additionalProperties.type} is not supported"`;
             break;
     }
 
