@@ -8,6 +8,7 @@ import { getResultStringForBooleanType } from './getResultStringForBooleanType';
 import { getResultStringForDictionaryKey } from './getResultStringForDictionaryKey';
 import { getResultStringForNumberType } from './getResultStringForNumberType';
 import { getResultStringForStringType } from './getResultStringForStringType';
+import { getResultStringForUndefinedTypeRefAndOneOf } from './getResultStringForUndefinedTypeRefAndOneOf';
 import { getResultStringType } from './getResultStringType';
 import { parseFormat } from './parseFormat';
 import { parseProperty } from './parseProperty';
@@ -67,7 +68,7 @@ export const convertToTypesFromSchemaProperties = ({
                     result += getStandardString({ ...props, refType: props.$ref.split('/'), isArray: false });
                     break;
                 case 'UndefinedTypeRefAndOneOf':
-                    result += `\t${props.propertyName}${props.nullable ? '?' : ''}: any;\n`;
+                    result += getResultStringForUndefinedTypeRefAndOneOf(props);
                     break;
                 case 'DictionaryKey':
                     result += getResultStringForDictionaryKey(props);
