@@ -227,5 +227,5 @@ export type SchemaProperties = {
     propertyName: string;
     type: string;
     uniqueItems?: boolean;
-    xDictionaryKey: any;
+    xDictionaryKey?: any;
 };

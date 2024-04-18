@@ -67,7 +67,7 @@ export const convertToTypesFromSchemaProperties = ({
                     result += getStandardString({ ...props, refType: props.$ref.split('/'), isArray: false });
                     break;
                 case 'UndefinedTypeRefAndOneOf':
-                    result += `    ${props.propertyName}${props.nullable ? '?' : ''}: any;\n`;
+                    result += `\t${props.propertyName}${props.nullable ? '?' : ''}: any;\n`;
                     break;
                 case 'DictionaryKey':
                     result += getResultStringForDictionaryKey(props);
