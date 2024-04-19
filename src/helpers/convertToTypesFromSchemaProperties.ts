@@ -68,7 +68,10 @@ export const convertToTypesFromSchemaProperties = ({
                     break;
                 case 'Invalid':
                 default:
-                    result += getResultStringForInvalidSchemaProperties('Invalid schema properties');
+                    result += getResultStringForInvalidSchemaProperties({
+                        ...props,
+                        errorMessage: 'Invalid schema properties',
+                    });
                     break;
             }
         });

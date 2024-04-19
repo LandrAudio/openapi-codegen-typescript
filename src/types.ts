@@ -142,6 +142,9 @@ export interface DictionaryValueResultString extends Pick<SchemaProperties, 'des
     value: string;
     dictionaryRef: string;
 }
+export interface InvalidSchemaProperties extends Pick<SchemaProperties, 'propertyName'> {
+    errorMessage: string;
+}
 
 export type ResultStringForDictionaryKey = Pick<
     SchemaProperties,

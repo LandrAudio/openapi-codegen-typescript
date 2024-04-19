@@ -308,7 +308,7 @@ describe(`convertToTypesFromSchemaProperties`, () => {
 
     it(`should call getResultStringForInvalidSchemaProperties when property has invalid type`, () => {
         const schema = {
-            properties: { propertyNames: { type: 'any-other-type' } },
+            properties: { propertyName: { type: 'any-other-type' } },
         };
         const props = {
             schema,
@@ -319,6 +319,11 @@ describe(`convertToTypesFromSchemaProperties`, () => {
         convertToTypesFromSchemaProperties(props);
 
         expect(getResultStringForExportInterface).toHaveBeenCalledWith(props);
-        expect(getResultStringForInvalidSchemaProperties).toHaveBeenCalledWith('Invalid schema properties');
+        expect(getResultStringForInvalidSchemaProperties).toHaveBeenCalledWith({
+            ...defaultProps,
+            type: 'any-other-type',
+            propertyName: 'propertyName',
+            errorMessage: 'Invalid schema properties',
+        });
     });
 });

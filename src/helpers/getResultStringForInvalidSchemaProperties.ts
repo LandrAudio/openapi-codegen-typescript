@@ -1,1 +1,4 @@
-export const getResultStringForInvalidSchemaProperties = (errorMessage: string) => `"// Error: ${errorMessage}"`;
+import { InvalidSchemaProperties } from '../types';
+
+export const getResultStringForInvalidSchemaProperties = ({ propertyName, errorMessage }: InvalidSchemaProperties) =>
+    `// Error: ${errorMessage} for property: ${propertyName}`;
