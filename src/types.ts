@@ -197,6 +197,7 @@ export interface SwaggerSchema {
     description?: string;
     properties?: {
         type?: string;
+        [key: string]: any;
     };
 }
 

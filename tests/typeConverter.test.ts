@@ -578,7 +578,7 @@ export type FileKind = 'Original' | 'Stream' | 'Waveform';
 
         const resultString = parseSchemas({ json });
 
-        const expectedString = '// TODO: ERROR! Something wrong with FileState \n \n';
+        const expectedString = '// Error: Unhandled error with FileState \n \n';
 
         expect(resultString).toEqual(expectedString);
     });
@@ -620,7 +620,7 @@ export type FileKind = 'Original' | 'Stream' | 'Waveform';
 \tid: string; // format: "guid"
 \tname?: string;
 }
-// TODO: ERROR! Something wrong with WrongData 
+// Error: Unsupported schema for WrongData 
 export interface AssetFileDto {
 \tcreationTime: string; // format: "date-time"
 }
@@ -920,8 +920,8 @@ export interface CollectionDto {
 \tisSoftDeleted: boolean;
 \tcollaborators?: CollaboratorDto[];
 \tpermissions: {
-[key in UserOperation]: boolean; 
- }; 
+[key in UserOperation]: boolean;
+};
 }
 export type UserOperation = 'Read' | 'Write';
  
@@ -1047,8 +1047,8 @@ export interface PlanFrequencyIdentifier {
  * Says if the user has overdue payments by service offer.
  */
 \thasOverduePayment: {
-[key in ServiceOfferKind]: boolean; 
- }; 
+[key in ServiceOfferKind]: boolean;
+};
 /**
  * The user IDs.
  */
@@ -1125,8 +1125,8 @@ describe('Dictionary types', () => {
 
         const expectedString = `export interface GlobalStateCounters {
 \tstates: {
-[key in ProductState]: number; 
- }; 
+[key in ProductState]: number;
+};
 }
 export type ProductState = 'Draft' | 'ConfirmDraft';
  
@@ -1164,8 +1164,8 @@ export type ProductState = 'Draft' | 'ConfirmDraft';
 
         const expectedString = `export interface GlobalStateCounters {
 \tstates: {
-[key in ProductState]: number; 
- }; 
+[key in ProductState]: number;
+};
 }
 export type ProductState = 'Draft' | 'ConfirmDraft';
  
@@ -1203,8 +1203,8 @@ export type ProductState = 'Draft' | 'ConfirmDraft';
 
         const expectedString = `export interface GlobalStateCounters {
 \tstates: {
-[key in ProductState]: string; 
- }; 
+[key in ProductState]: string;
+};
 }
 export type ProductState = 'Draft' | 'ConfirmDraft';
  

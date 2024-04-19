@@ -6,6 +6,7 @@ import { getResultStringForArrayWithoutItemRef } from './getResultStringForArray
 import { getResultStringForBooleanType } from './getResultStringForBooleanType';
 import { getResultStringForDictionaryKey } from './getResultStringForDictionaryKey';
 import { getResultStringForExportInterface } from './getResultStringForExportInterface';
+import { getResultStringForInvalidSchemaProperties } from './getResultStringForInvalidSchemaProperties';
 import { getResultStringForNumberType } from './getResultStringForNumberType';
 import { getResultStringForStringType } from './getResultStringForStringType';
 import { getResultStringForUndefinedTypeRefAndOneOf } from './getResultStringForUndefinedTypeRefAndOneOf';
@@ -67,7 +68,7 @@ export const convertToTypesFromSchemaProperties = ({
                     break;
                 case 'Invalid':
                 default:
-                    result += '"// Error: Invalid schema properties"';
+                    result += getResultStringForInvalidSchemaProperties('Invalid schema properties');
                     break;
             }
         });

@@ -6,8 +6,8 @@ exports[`should return type for a "dictionary" type array 1`] = `
 }
 export interface MainDto {
 	contributors: {
-[key in Role]: ComplexDto[]; 
- }; 
+[key in Role]: ComplexDto[];
+};
 }
 export type Role = 'role1' | 'role2' | 'role3';
  
