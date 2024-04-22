@@ -2,15 +2,17 @@ import { DataTypes, SwaggerProps } from '../types';
 import { getDescription } from './getDescription';
 import { parseRefType } from './parseRefType';
 
+export type ResultStringForAdditionalPropertiesType = {
+    additionalProperties: any;
+    description?: string;
+    propertyName: string;
+};
+
 export const getResultStringForAdditionalPropertiesType = ({
     additionalProperties,
     description,
     propertyName,
-}: {
-    additionalProperties: any;
-    description?: string;
-    propertyName: string;
-}) => {
+}: ResultStringForAdditionalPropertiesType) => {
     let res;
 
     switch (additionalProperties.type) {

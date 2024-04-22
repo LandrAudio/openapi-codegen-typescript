@@ -1,22 +1,14 @@
 import { getDescription } from '../src/helpers/getDescription';
 
 const scenarios = [
-    {
-        props: 'mock description',
-        expected: `/**\n * mock description\n */\n`,
-    },
-    {
-        props: undefined,
-        expected: '',
-    },
+    ['return a description when provided', 'mock description', `/**\n * mock description\n */\n`],
+    ['return empty string when description is undefined', undefined, ''],
 ];
 
 describe(`getDescription`, () => {
-    scenarios.forEach(config => {
-        it(`should return ${config.expected} when props is ${config.props}`, async () => {
-            const result = getDescription(config.props);
+    it.each(scenarios)(`should %s`, (_, props, expected) => {
+        const result = getDescription(props);
 
-            expect(result).toBe(config.expected);
-        });
+        expect(result).toBe(expected);
     });
 });
