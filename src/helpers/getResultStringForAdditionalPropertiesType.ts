@@ -3,6 +3,12 @@ import { getDescription } from './getDescription';
 import { getDictionaryValueResultString } from './getDictionaryValueResultString';
 import { parseRefType } from './parseRefType';
 
+export type ResultStringForAdditionalPropertiesType = {
+    additionalProperties: any;
+    description?: string;
+    propertyName: string;
+};
+
 export const getResultStringForAdditionalPropertiesType = ({
     additionalProperties,
     xDictionaryKey,
