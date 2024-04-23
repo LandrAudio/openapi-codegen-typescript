@@ -169,7 +169,7 @@ export interface GetDictionaryMockProps extends PropertyNameProp {
 
 export interface GetAdditionalPropertiesProps extends PropertyNameProp {
     propertyName: string;
-    additionalProperties: any;
+    additionalProperties: { type: string };
 }
 
 export interface GetRefTypeMockProps extends PropertyNameProp {

@@ -195,11 +195,13 @@ export const parseSchema = ({ schema, name, DTOs, overrideSchemas }: ParseSchema
                     );
                 }
 
-                if (!xDictionaryKey && additionalProperties && additionalProperties?.type) {
-                    mockGenerator.getAdditionalPropertiesMock({
-                        propertyName,
-                        additionalProperties,
-                    });
+                if (!xDictionaryKey && additionalProperties) {
+                    mocks.push(
+                        mockGenerator.getAdditionalPropertiesMock({
+                            propertyName,
+                            additionalProperties,
+                        }),
+                    );
                 }
 
                 if (!type && !$ref && !oneOf) {

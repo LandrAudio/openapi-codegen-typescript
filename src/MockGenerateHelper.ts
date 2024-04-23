@@ -259,31 +259,44 @@ export class MockGenerateHelper {
     }
 
     getAdditionalPropertiesMock({ propertyName, additionalProperties }: GetAdditionalPropertiesProps): MockArrayProps {
-        let result: string | Function | undefined = undefined;
+        let hasError: boolean;
+        let mockValue: string | Function | undefined = undefined;
 
-        switch (additionalProperties?.type) {
+        switch (additionalProperties.type) {
             case DataTypes.Integer:
-                result = () => casual.integer(0, 100);
+                hasError = false;
+                mockValue = () => casual.integer(0, 100);
                 break;
             case DataTypes.Number:
-                result = () => casual.double(0, 100);
+                hasError = false;
+                mockValue = () => casual.double(0, 100);
                 break;
             case DataTypes.String:
-                result = () => casual.string;
+                hasError = false;
+                mockValue = () => `'${casual.string}'`;
                 break;
             case DataTypes.Boolean:
-                result = 'true';
+                hasError = false;
+                mockValue = 'true';
                 break;
             case DataTypes.Array:
-                result = '[]';
+                hasError = false;
+                mockValue = '[]';
                 break;
             default: {
-                result = ' // Error: Invalid additionalProperties.type';
+                hasError = true;
+                mockValue = ` /** Error: Invalid additionalProperties.type ${propertyName} */`;
                 break;
             }
         }
 
-        return { propertyName, value: result };
+        const result = typeof mockValue === 'function' ? mockValue() : mockValue;
+        const value = hasError ? `{\n\t ${result} \n}` : `{\n\t ${casual.word}: ${result}, \n}`;
+
+        return {
+            propertyName,
+            value,
+        };
     }
 
     getAnyMock({ propertyName }: { propertyName: string }): MockArrayProps {
