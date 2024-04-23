@@ -4,5 +4,5 @@ export const getResultStringForUndefinedTypeRefAndOneOf = ({
     propertyName,
     nullable,
 }: Pick<SchemaProperties, 'propertyName' | 'nullable'>) => {
-    return `\t${propertyName}${nullable ? '?' : ''}: any;\n`;
+    return `    ${propertyName}${nullable ? '?' : ''}: any;\n`;
 };

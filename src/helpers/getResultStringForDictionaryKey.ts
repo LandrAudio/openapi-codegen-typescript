@@ -13,5 +13,5 @@ export const getResultStringForDictionaryKey = ({
 
     return `${getDescription({
         description,
-    })}\t${propertyName}: {\n[key in ${dictionaryRef}]: ${additionalRef}; \n }; \n`;
+    })}    ${propertyName}: {\n[key in ${dictionaryRef}]: ${additionalRef}; \n }; \n`;
 };

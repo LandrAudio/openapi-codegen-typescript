@@ -6,5 +6,5 @@ export const parseProperty = ({
     description,
     nullable,
 }: Pick<SchemaProperties, 'propertyName' | 'description' | 'nullable'>): string => {
-    return `${getDescription({ description })}\t${propertyName}${nullable ? '?' : ''}: `;
+    return `${getDescription({ description })}    ${propertyName}${nullable ? '?' : ''}: `;
 };
