@@ -10,7 +10,7 @@ const scenarios: [string, { input: ResultStringForAdditionalPropertiesType; outp
                 description: 'mock description',
                 propertyName: 'mock property name',
             },
-            output: `/**\n * mock description\n */\n    mock property name: {\n [key: string]: boolean;\n };\n`,
+            output: `/**\n * mock description \n */\n    mock property name: {\n [key: string]: boolean;\n };\n`,
         },
     ],
     [
@@ -21,7 +21,7 @@ const scenarios: [string, { input: ResultStringForAdditionalPropertiesType; outp
                 description: 'mock description',
                 propertyName: 'mock property name',
             },
-            output: `/**\n * mock description\n */\n    mock property name: {\n [key: string]: number;\n };\n`,
+            output: `/**\n * mock description \n */\n    mock property name: {\n [key: string]: number;\n };\n`,
         },
     ],
     [
@@ -32,7 +32,7 @@ const scenarios: [string, { input: ResultStringForAdditionalPropertiesType; outp
                 description: 'mock description',
                 propertyName: 'mock property name',
             },
-            output: `/**\n * mock description\n */\n    mock property name: {\n [key: string]: number;\n };\n`,
+            output: `/**\n * mock description \n */\n    mock property name: {\n [key: string]: number;\n };\n`,
         },
     ],
     [
@@ -43,7 +43,7 @@ const scenarios: [string, { input: ResultStringForAdditionalPropertiesType; outp
                 description: 'mock description',
                 propertyName: 'mock property name',
             },
-            output: `/**\n * mock description\n */\n    mock property name: {\n [key: string]: string;\n };\n`,
+            output: `/**\n * mock description \n */\n    mock property name: {\n [key: string]: string;\n };\n`,
         },
     ],
     [
@@ -59,7 +59,7 @@ const scenarios: [string, { input: ResultStringForAdditionalPropertiesType; outp
                 description: 'mock description',
                 propertyName: 'mock property name',
             },
-            output: `/**\n * mock description\n */\n    mock property name: {\n [key: string]: "// TODO: Something is wrong";\n };\n`,
+            output: `/**\n * mock description \n */\n    mock property name: {\n [key: string]: "// TODO: Something is wrong";\n };\n`,
         },
     ],
 
@@ -76,7 +76,7 @@ const scenarios: [string, { input: ResultStringForAdditionalPropertiesType; outp
                 description: 'mock description',
                 propertyName: 'mock property name',
             },
-            output: `/**\n * mock description\n */\n    mock property name: {\n [key: string]: AssetFileDto[];\n };\n`,
+            output: `/**\n * mock description \n */\n    mock property name: {\n [key: string]: AssetFileDto[];\n };\n`,
         },
     ],
     [
@@ -87,7 +87,7 @@ const scenarios: [string, { input: ResultStringForAdditionalPropertiesType; outp
                 description: 'mock description',
                 propertyName: 'mock property name',
             },
-            output: `/**\n * mock description\n */\n    mock property name: {\n [key: string]: "// TODO: Something is wrong, type test is not supported";\n };\n`,
+            output: `/**\n * mock description \n */\n    mock property name: {\n [key: string]: "// TODO: Something is wrong, type test is not supported";\n };\n`,
         },
     ],
 ];

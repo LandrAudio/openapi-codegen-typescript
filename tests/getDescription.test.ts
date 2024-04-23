@@ -4,7 +4,7 @@ import { SchemaProperties } from '../src/types';
 const scenarios: [string, { input: Pick<SchemaProperties, 'description'>; output: string }][] = [
     [
         'return a description when provided',
-        { input: { description: 'mock description' }, output: `/**\n * mock description\n */\n` },
+        { input: { description: 'mock description' }, output: `/**\n * mock description \n */\n` },
     ],
     ['return empty string when description is undefined', { input: { description: undefined }, output: '' }],
 ];

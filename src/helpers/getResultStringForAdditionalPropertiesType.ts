@@ -46,6 +46,6 @@ export const getResultStringForAdditionalPropertiesType = ({
             value: res,
         });
     } else {
-        return `${getDescription({ description })}    ${propertyName}: {\n [key: string]: ${res};\n };\n`;
+        return `${getDescription(description)}    ${propertyName}: {\n [key: string]: ${res};\n };\n`;
     }
 };
