@@ -6,6 +6,7 @@ import {
     DataTypes,
     EnumProps,
     EnumSchema,
+    GetAdditionalPropertiesProps,
     GetArrayOfItemsMockProps,
     GetArrayOfOneOfMockProps,
     GetDictionaryMockProps,
@@ -255,6 +256,34 @@ export class MockGenerateHelper {
         }
 
         return { propertyName, value: `" // TODO: Wrong dictionary value",` };
+    }
+
+    getAdditionalPropertiesMock({ propertyName, additionalProperties }: GetAdditionalPropertiesProps): MockArrayProps {
+        let result: string | Function | undefined = undefined;
+
+        switch (additionalProperties?.type) {
+            case DataTypes.Integer:
+                result = () => casual.integer(0, 100);
+                break;
+            case DataTypes.Number:
+                result = () => casual.double(0, 100);
+                break;
+            case DataTypes.String:
+                result = () => casual.string;
+                break;
+            case DataTypes.Boolean:
+                result = 'true';
+                break;
+            case DataTypes.Array:
+                result = '[]';
+                break;
+            default: {
+                result = ' // TODO: Wrong dictionary value';
+                break;
+            }
+        }
+
+        return { propertyName, value: result };
     }
 
     getAnyMock({ propertyName }: { propertyName: string }): MockArrayProps {
