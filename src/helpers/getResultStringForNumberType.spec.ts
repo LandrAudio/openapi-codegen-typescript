@@ -12,143 +12,105 @@ const defaultProps = {
     exclusiveMaximum: undefined,
 };
 
-const scenarios: [string, { input: ResultStringPropsForNumberType; output: string }][] = [
-    [
-        'Description provided',
-        {
-            input: {
-                ...defaultProps,
-                description: 'description mocked',
-            },
-            output: `/**\n * description mocked\n */\n\tpropertyName mocked?: number; // format: "format mocked"\n`,
+const scenarios: { input: ResultStringPropsForNumberType; output: string }[] = [
+    {
+        input: {
+            ...defaultProps,
+            description: 'description mocked',
         },
-    ],
-    [
-        'Description undefined',
-        {
-            input: {
-                ...defaultProps,
-                description: undefined,
-            },
-            output: `\tpropertyName mocked?: number; // format: "format mocked"\n`,
+        output: `/**\n * description mocked\n */\n\tpropertyName mocked?: number; // format: "format mocked"\n`,
+    },
+    {
+        input: {
+            ...defaultProps,
+            description: undefined,
         },
-    ],
-    [
-        'Nullable false',
-        {
-            input: {
-                ...defaultProps,
-                nullable: false,
-            },
-            output: `/**\n * description mocked\n */\n\tpropertyName mocked: number; // format: "format mocked"\n`,
+        output: `\tpropertyName mocked?: number; // format: "format mocked"\n`,
+    },
+    {
+        input: {
+            ...defaultProps,
+            nullable: false,
         },
-    ],
-    [
-        'Minimum defined',
-        {
-            input: {
-                ...defaultProps,
-                minimum: 1,
-            },
-            output: `/**\n * description mocked\n */\n\tpropertyName mocked?: number; // format: "format mocked"; minimum: 1\n`,
+        output: `/**\n * description mocked\n */\n\tpropertyName mocked: number; // format: "format mocked"\n`,
+    },
+    {
+        input: {
+            ...defaultProps,
+            minimum: 1,
         },
-    ],
-    [
-        'Minimum defined, format undefined',
-        {
-            input: {
-                ...defaultProps,
-                minimum: 1,
-                format: (undefined as unknown) as string,
-            },
-            output: `/**\n * description mocked\n */\n\tpropertyName mocked?: number; // minimum: 1\n`,
+        output: `/**\n * description mocked\n */\n\tpropertyName mocked?: number; // format: "format mocked"; minimum: 1\n`,
+    },
+    {
+        input: {
+            ...defaultProps,
+            minimum: 1,
+            format: (undefined as unknown) as string,
         },
-    ],
-    [
-        'Maximum defined',
-        {
-            input: {
-                ...defaultProps,
-                maximum: 10,
-            },
-            output: `/**\n * description mocked\n */\n\tpropertyName mocked?: number; // format: "format mocked"; maximum: 10\n`,
+        output: `/**\n * description mocked\n */\n\tpropertyName mocked?: number; // minimum: 1\n`,
+    },
+    {
+        input: {
+            ...defaultProps,
+            maximum: 10,
         },
-    ],
-    [
-        'Maximum defined, format and minimum undefined',
-        {
-            input: {
-                ...defaultProps,
-                maximum: 10,
-                minimum: undefined,
-                format: (undefined as unknown) as string,
-            },
-            output: `/**\n * description mocked\n */\n\tpropertyName mocked?: number; // maximum: 10\n`,
+        output: `/**\n * description mocked\n */\n\tpropertyName mocked?: number; // format: "format mocked"; maximum: 10\n`,
+    },
+    {
+        input: {
+            ...defaultProps,
+            maximum: 10,
+            minimum: undefined,
+            format: (undefined as unknown) as string,
         },
-    ],
-    [
-        'ExclusiveMinimum defined',
-        {
-            input: {
-                ...defaultProps,
-                exclusiveMinimum: true,
-            },
-            output: `/**\n * description mocked\n */\n\tpropertyName mocked?: number; // format: "format mocked"; exclusiveMinimum: true\n`,
+        output: `/**\n * description mocked\n */\n\tpropertyName mocked?: number; // maximum: 10\n`,
+    },
+    {
+        input: {
+            ...defaultProps,
+            exclusiveMinimum: true,
         },
-    ],
-    [
-        'ExclusiveMinimum defined, format, minimum and maximum undefined',
-        {
-            input: {
-                ...defaultProps,
-                exclusiveMinimum: true,
-                minimum: undefined,
-                maximum: undefined,
-                format: (undefined as unknown) as string,
-            },
-            output: `/**\n * description mocked\n */\n\tpropertyName mocked?: number; // exclusiveMinimum: true\n`,
+        output: `/**\n * description mocked\n */\n\tpropertyName mocked?: number; // format: "format mocked"; exclusiveMinimum: true\n`,
+    },
+    {
+        input: {
+            ...defaultProps,
+            exclusiveMinimum: true,
+            minimum: undefined,
+            maximum: undefined,
+            format: (undefined as unknown) as string,
         },
-    ],
-    [
-        'ExclusiveMaximum defined',
-        {
-            input: {
-                ...defaultProps,
-                exclusiveMaximum: true,
-            },
-            output: `/**\n * description mocked\n */\n\tpropertyName mocked?: number; // format: "format mocked"; exclusiveMaximum: true\n`,
+        output: `/**\n * description mocked\n */\n\tpropertyName mocked?: number; // exclusiveMinimum: true\n`,
+    },
+    {
+        input: {
+            ...defaultProps,
+            exclusiveMaximum: true,
         },
-    ],
-    [
-        'ExclusiveMaximum defined, exclusiveMinimum, minimum, maximum and format undefined',
-        {
-            input: {
-                ...defaultProps,
-                exclusiveMaximum: true,
-                exclusiveMinimum: undefined,
-                minimum: undefined,
-                maximum: undefined,
-                format: (undefined as unknown) as string,
-            },
-            output: `/**\n * description mocked\n */\n\tpropertyName mocked?: number; // exclusiveMaximum: true\n`,
+        output: `/**\n * description mocked\n */\n\tpropertyName mocked?: number; // format: "format mocked"; exclusiveMaximum: true\n`,
+    },
+    {
+        input: {
+            ...defaultProps,
+            exclusiveMaximum: true,
+            exclusiveMinimum: undefined,
+            minimum: undefined,
+            maximum: undefined,
+            format: (undefined as unknown) as string,
         },
-    ],
-    [
-        'No doc',
-        {
-            input: {
-                ...defaultProps,
-                format: (undefined as unknown) as string,
-            },
-            output: `/**\n * description mocked\n */\n\tpropertyName mocked?: number;\n`,
+        output: `/**\n * description mocked\n */\n\tpropertyName mocked?: number; // exclusiveMaximum: true\n`,
+    },
+    {
+        input: {
+            ...defaultProps,
+            format: (undefined as unknown) as string,
         },
-    ],
+        output: `/**\n * description mocked\n */\n\tpropertyName mocked?: number;\n`,
+    },
 ];
 
-describe(`getResultStringForNumberType`, () => {
-    it.each(scenarios)(`should return expected string when for %s`, (_, { input, output }) => {
-        const result = getResultStringForNumberType(input);
+it.each(scenarios)(`should return expected string`, ({ input, output }) => {
+    const result = getResultStringForNumberType(input);
 
-        expect(result).toBe(output);
-    });
+    expect(result).toBe(output);
 });

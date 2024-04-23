@@ -10,96 +10,77 @@ const defaultProps = {
     maxLength: undefined,
 };
 
-const scenarios: [string, { input: ResultStringPropsForStringType; output: string }][] = [
-    [
-        'Description provided',
-        {
-            input: {
-                ...defaultProps,
-                description: 'description mocked',
-            },
-            output: `/**\n * description mocked\n */\n\tpropertyName mocked?: string; // format: "format mocked"\n`,
+const scenarios: { input: ResultStringPropsForStringType; output: string }[] = [
+    {
+        input: {
+            ...defaultProps,
+            description: 'description mocked',
         },
-    ],
-    [
-        'Description undefined',
-        {
-            input: {
-                ...defaultProps,
-                description: undefined,
-            },
-            output: `\tpropertyName mocked?: string; // format: "format mocked"\n`,
+        output: `/**\n * description mocked\n */\n\tpropertyName mocked?: string; // format: "format mocked"\n`,
+    },
+
+    {
+        input: {
+            ...defaultProps,
+            description: undefined,
         },
-    ],
-    [
-        'Nullable false',
-        {
-            input: {
-                ...defaultProps,
-                nullable: false,
-            },
-            output: `/**\n * description mocked\n */\n\tpropertyName mocked: string; // format: "format mocked"\n`,
+        output: `\tpropertyName mocked?: string; // format: "format mocked"\n`,
+    },
+
+    {
+        input: {
+            ...defaultProps,
+            nullable: false,
         },
-    ],
-    [
-        'MinLength defined',
-        {
-            input: {
-                ...defaultProps,
-                minLength: 1,
-            },
-            output: `/**\n * description mocked\n */\n\tpropertyName mocked?: string; // format: "format mocked"; minLength: 1\n`,
+        output: `/**\n * description mocked\n */\n\tpropertyName mocked: string; // format: "format mocked"\n`,
+    },
+
+    {
+        input: {
+            ...defaultProps,
+            minLength: 1,
         },
-    ],
-    [
-        'MinLength defined, format undefined',
-        {
-            input: {
-                ...defaultProps,
-                minLength: 1,
-                format: (undefined as unknown) as string,
-            },
-            output: `/**\n * description mocked\n */\n\tpropertyName mocked?: string; // minLength: 1\n`,
+        output: `/**\n * description mocked\n */\n\tpropertyName mocked?: string; // format: "format mocked"; minLength: 1\n`,
+    },
+
+    {
+        input: {
+            ...defaultProps,
+            minLength: 1,
+            format: (undefined as unknown) as string,
         },
-    ],
-    [
-        'MaxLength defined',
-        {
-            input: {
-                ...defaultProps,
-                maxLength: 10,
-            },
-            output: `/**\n * description mocked\n */\n\tpropertyName mocked?: string; // format: "format mocked"; maxLength: 10\n`,
+        output: `/**\n * description mocked\n */\n\tpropertyName mocked?: string; // minLength: 1\n`,
+    },
+
+    {
+        input: {
+            ...defaultProps,
+            maxLength: 10,
         },
-    ],
-    [
-        'MaxLength defined, format and minLength undefined',
-        {
-            input: {
-                ...defaultProps,
-                maxLength: 10,
-                minLength: undefined,
-                format: (undefined as unknown) as string,
-            },
-            output: `/**\n * description mocked\n */\n\tpropertyName mocked?: string; // maxLength: 10\n`,
+        output: `/**\n * description mocked\n */\n\tpropertyName mocked?: string; // format: "format mocked"; maxLength: 10\n`,
+    },
+
+    {
+        input: {
+            ...defaultProps,
+            maxLength: 10,
+            minLength: undefined,
+            format: (undefined as unknown) as string,
         },
-    ],
-    [
-        'No doc',
-        {
-            input: {
-                ...defaultProps,
-                format: (undefined as unknown) as string,
-            },
-            output: `/**\n * description mocked\n */\n\tpropertyName mocked?: string;\n`,
+        output: `/**\n * description mocked\n */\n\tpropertyName mocked?: string; // maxLength: 10\n`,
+    },
+
+    {
+        input: {
+            ...defaultProps,
+            format: (undefined as unknown) as string,
         },
-    ],
+        output: `/**\n * description mocked\n */\n\tpropertyName mocked?: string;\n`,
+    },
 ];
 
-describe(`getResultStringForStringType`, () => {
-    it.each(scenarios)(`should return expected string when for %s`, (_, { input, output }) => {
-        const result = getResultStringForStringType(input);
+it.each(scenarios)(`should return expected string`, ({ input, output }) => {
+    const result = getResultStringForStringType(input);
 
-        expect(result).toBe(output);
-    });
+    expect(result).toBe(output);
 });

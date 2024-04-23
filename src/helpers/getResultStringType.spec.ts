@@ -10,171 +10,129 @@ const defaultProps = {
     $ref: undefined,
 };
 
-const scenarios: [
-    string,
+const scenarios: {
+    input: Pick<
+        SchemaProperties,
+        'type' | 'additionalProperties' | 'items' | 'oneOf' | 'xDictionaryKey' | 'additionalProperties' | '$ref'
+    >;
+    output: string;
+}[] = [
     {
-        input: Pick<
-            SchemaProperties,
-            'type' | 'additionalProperties' | 'items' | 'oneOf' | 'xDictionaryKey' | 'additionalProperties' | '$ref'
-        >;
-        output: string;
+        input: {
+            ...defaultProps,
+            type: 'string',
+        },
+        output: `String`,
     },
-][] = [
-    [
-        'String type',
-        {
-            input: {
-                ...defaultProps,
-                type: 'string',
-            },
-            output: `String`,
+    {
+        input: {
+            ...defaultProps,
+            type: 'integer',
         },
-    ],
-    [
-        'Integer type',
-        {
-            input: {
-                ...defaultProps,
-                type: 'integer',
-            },
-            output: `Number`,
+        output: `Number`,
+    },
+    {
+        input: {
+            ...defaultProps,
+            type: 'number',
         },
-    ],
-    [
-        'Number type',
-        {
-            input: {
-                ...defaultProps,
-                type: 'number',
-            },
-            output: `Number`,
+        output: `Number`,
+    },
+    {
+        input: {
+            ...defaultProps,
+            type: 'boolean',
         },
-    ],
-    [
-        'Boolean type',
-        {
-            input: {
-                ...defaultProps,
-                type: 'boolean',
-            },
-            output: `Boolean`,
-        },
-    ],
-    [
-        'Items with ref',
-        {
-            input: {
-                ...defaultProps,
-                type: 'array',
-                items: {
-                    $ref: '$ref mocked',
-                },
-            },
-            output: `ItemWithRef`,
-        },
-    ],
-    [
-        'Items without ref',
-        {
-            input: {
-                ...defaultProps,
-                type: 'array',
-                items: [],
-            },
-            output: `ItemWithoutRef`,
-        },
-    ],
-    [
-        'OneOf',
-        {
-            input: {
-                ...defaultProps,
-                oneOf: [{ $ref: '$ref mocked' }],
-            },
-            output: `OneOf`,
-        },
-    ],
-    [
-        'Ref',
-        {
-            input: {
-                ...defaultProps,
+        output: `Boolean`,
+    },
+    {
+        input: {
+            ...defaultProps,
+            type: 'array',
+            items: {
                 $ref: '$ref mocked',
             },
-            output: `Ref`,
         },
-    ],
-    [
-        'Undefined type, ref and oneOf',
-        {
-            input: {
-                ...defaultProps,
-                type: (undefined as unknown) as string,
-                $ref: undefined,
-                oneOf: undefined,
+        output: `ItemWithRef`,
+    },
+    {
+        input: {
+            ...defaultProps,
+            type: 'array',
+            items: [],
+        },
+        output: `ItemWithoutRef`,
+    },
+    {
+        input: {
+            ...defaultProps,
+            oneOf: [{ $ref: '$ref mocked' }],
+        },
+        output: `OneOf`,
+    },
+    {
+        input: {
+            ...defaultProps,
+            $ref: '$ref mocked',
+        },
+        output: `Ref`,
+    },
+
+    {
+        input: {
+            ...defaultProps,
+            type: (undefined as unknown) as string,
+            $ref: undefined,
+            oneOf: undefined,
+        },
+        output: `UndefinedTypeRefAndOneOf`,
+    },
+
+    {
+        input: {
+            ...defaultProps,
+            xDictionaryKey: {
+                $ref: '$ref mocked',
             },
-            output: `UndefinedTypeRefAndOneOf`,
-        },
-    ],
-    [
-        'Undefined type, ref and oneOf',
-        {
-            input: {
-                ...defaultProps,
-                xDictionaryKey: {
-                    $ref: '$ref mocked',
-                },
-                additionalProperties: {
-                    $ref: '$ref mocked',
-                },
+            additionalProperties: {
+                $ref: '$ref mocked',
             },
-            output: `DictionaryKey`,
         },
-    ],
-    [
-        'No additionalProperties $ref',
-        {
-            input: {
-                ...defaultProps,
-                xDictionaryKey: {
-                    $ref: '$ref mocked',
-                },
-                additionalProperties: {
-                    type: 'type mocked',
-                },
+        output: `DictionaryKey`,
+    },
+    {
+        input: {
+            ...defaultProps,
+            xDictionaryKey: {
+                $ref: '$ref mocked',
             },
-            output: `AdditionalPropertiesType`,
-        },
-    ],
-    [
-        'No xDictionaryKey and additionalProperties $ref',
-        {
-            input: {
-                ...defaultProps,
-                xDictionaryKey: undefined,
-                additionalProperties: {
-                    type: 'type mocked',
-                },
+            additionalProperties: {
+                type: 'type mocked',
             },
-            output: `AdditionalPropertiesType`,
         },
-    ],
-    [
-        'Invalid',
-        {
-            input: {
-                ...defaultProps,
-                type: 'unsupported type',
+        output: `AdditionalPropertiesType`,
+    },
+    {
+        input: {
+            ...defaultProps,
+            xDictionaryKey: undefined,
+            additionalProperties: {
+                type: 'type mocked',
             },
-            output: `Invalid`,
         },
-    ],
+        output: `AdditionalPropertiesType`,
+    },
+    {
+        input: {
+            ...defaultProps,
+            type: 'unsupported type',
+        },
+        output: `Invalid`,
+    },
 ];
 
-describe(`getResultStringType`, () => {
-    it.each(scenarios)(`should return expected string when for %s`, (_, { input, output }) => {
-        const result = getResultStringType(input);
+it.each(scenarios)(`should return expected string`, ({ input, output }) => {
+    const result = getResultStringType(input);
 
-        expect(result).toBe(output);
-    });
+    expect(result).toBe(output);
 });

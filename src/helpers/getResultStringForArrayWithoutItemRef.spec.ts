@@ -1,117 +1,94 @@
 import { ResultStringForArrayWithoutItemRef } from '../types';
 import { getResultStringForArrayWithoutItemRef } from './getResultStringForArrayWithoutItemRef';
 
-const scenarios: [string, { input: ResultStringForArrayWithoutItemRef; output: string }][] = [
-    [
-        'With all props defined',
-        {
-            input: {
-                items: ['items mocked'],
-                propertyName: 'propertyName mocked',
-                description: 'description mocked',
-                nullable: true,
-                format: 'format mocked',
-                maxItems: 10,
-            },
-            output: `/**\n * description mocked\n */\n\tpropertyName mocked?: any[];format: "format mocked" // maxItems: 10\n`,
+const scenarios: { input: ResultStringForArrayWithoutItemRef; output: string }[] = [
+    {
+        input: {
+            items: ['items mocked'],
+            propertyName: 'propertyName mocked',
+            description: 'description mocked',
+            nullable: true,
+            format: 'format mocked',
+            maxItems: 10,
         },
-    ],
-
-    [
-        'MaxItems undefined',
-        {
-            input: {
-                items: ['items mocked'],
-                propertyName: 'propertyName mocked',
-                description: 'description mocked',
-                nullable: true,
-                format: 'format mocked',
-                maxItems: undefined,
-            },
-            output: `/**\n * description mocked\n */\n\tpropertyName mocked?: any[];format: "format mocked"\n`,
+        output: `/**\n * description mocked\n */\n\tpropertyName mocked?: any[];format: "format mocked" // maxItems: 10\n`,
+    },
+    {
+        input: {
+            items: ['items mocked'],
+            propertyName: 'propertyName mocked',
+            description: 'description mocked',
+            nullable: true,
+            format: 'format mocked',
+            maxItems: undefined,
         },
-    ],
-    [
-        'items with oneOf $ref',
-        {
-            input: {
-                items: {
-                    oneOf: [
-                        {
-                            $ref: '$ref mocked',
-                        },
-                    ],
-                },
-                propertyName: 'propertyName mocked',
-                description: 'description mocked',
-                nullable: true,
-                format: 'format mocked',
-                maxItems: 10,
+        output: `/**\n * description mocked\n */\n\tpropertyName mocked?: any[];format: "format mocked"\n`,
+    },
+    {
+        input: {
+            items: {
+                oneOf: [
+                    {
+                        $ref: '$ref mocked',
+                    },
+                ],
             },
-            output: `/**\n * description mocked\n */\n\tpropertyName mocked?: $ref mocked[];format: "format mocked" // maxItems: 10\n`,
+            propertyName: 'propertyName mocked',
+            description: 'description mocked',
+            nullable: true,
+            format: 'format mocked',
+            maxItems: 10,
         },
-    ],
-
-    [
-        'items with oneOf type',
-        {
-            input: {
-                items: {
-                    oneOf: [
-                        {
-                            $ref: '$ref mocked',
-                            type: 'oneOf type mocked',
-                        },
-                    ],
-                },
-                propertyName: 'propertyName mocked',
-                description: 'description mocked',
-                nullable: true,
-                format: 'format mocked',
-                maxItems: 10,
+        output: `/**\n * description mocked\n */\n\tpropertyName mocked?: $ref mocked[];format: "format mocked" // maxItems: 10\n`,
+    },
+    {
+        input: {
+            items: {
+                oneOf: [
+                    {
+                        $ref: '$ref mocked',
+                        type: 'oneOf type mocked',
+                    },
+                ],
             },
-            output: `/**\n * description mocked\n */\n\tpropertyName mocked?: $ref mocked[];format: "format mocked" // maxItems: 10\n`,
+            propertyName: 'propertyName mocked',
+            description: 'description mocked',
+            nullable: true,
+            format: 'format mocked',
+            maxItems: 10,
         },
-    ],
-    [
-        'items type',
-        {
-            input: {
-                items: {
-                    type: 'item type mocked',
-                },
-                propertyName: 'propertyName mocked',
-                description: 'description mocked',
-                nullable: true,
-                format: 'format mocked',
-                maxItems: 10,
+        output: `/**\n * description mocked\n */\n\tpropertyName mocked?: $ref mocked[];format: "format mocked" // maxItems: 10\n`,
+    },
+    {
+        input: {
+            items: {
+                type: 'item type mocked',
             },
-            output: `/**\n * description mocked\n */\n\tpropertyName mocked?: item type mocked[];format: "format mocked" // maxItems: 10\n`,
+            propertyName: 'propertyName mocked',
+            description: 'description mocked',
+            nullable: true,
+            format: 'format mocked',
+            maxItems: 10,
         },
-    ],
-
-    [
-        'items integer type',
-        {
-            input: {
-                items: {
-                    type: 'integer',
-                },
-                propertyName: 'propertyName mocked',
-                description: 'description mocked',
-                nullable: true,
-                format: 'format mocked',
-                maxItems: 10,
+        output: `/**\n * description mocked\n */\n\tpropertyName mocked?: item type mocked[];format: "format mocked" // maxItems: 10\n`,
+    },
+    {
+        input: {
+            items: {
+                type: 'integer',
             },
-            output: `/**\n * description mocked\n */\n\tpropertyName mocked?: number[];format: "format mocked" // maxItems: 10\n`,
+            propertyName: 'propertyName mocked',
+            description: 'description mocked',
+            nullable: true,
+            format: 'format mocked',
+            maxItems: 10,
         },
-    ],
+        output: `/**\n * description mocked\n */\n\tpropertyName mocked?: number[];format: "format mocked" // maxItems: 10\n`,
+    },
 ];
 
-describe(`getResultStringForArrayWithoutItemRef`, () => {
-    it.each(scenarios)(`should return expected string when for %s`, (_, { input, output }) => {
-        const result = getResultStringForArrayWithoutItemRef(input);
+it.each(scenarios)(`should return expected string`, ({ input, output }) => {
+    const result = getResultStringForArrayWithoutItemRef(input);
 
-        expect(result).toBe(output);
-    });
+    expect(result).toBe(output);
 });

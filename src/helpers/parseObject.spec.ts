@@ -20,53 +20,46 @@ const SchemaWithAllOf = {
     ],
 };
 
-const scenarios: [string, { input: ParseObjectProps; output: ConvertToTypesFromSchemaPropertiesProps }][] = [
-    [
-        'With all props defined',
-        {
-            input: {
-                schema: {
-                    description: 'any',
-                    properties: {
-                        type: 'string',
-                    },
+const scenarios: { input: ParseObjectProps; output: ConvertToTypesFromSchemaPropertiesProps }[] = [
+    {
+        input: {
+            schema: {
+                description: 'any',
+                properties: {
+                    type: 'string',
                 },
-                schemaKey: 'schemaKey mocked',
             },
-            output: {
-                schema: {
-                    description: 'any',
-                    properties: {
-                        type: 'string',
-                    },
-                },
-                schemaKey: 'schemaKey mocked',
-            },
+            schemaKey: 'schemaKey mocked',
         },
-    ],
-    [
-        'With allOf defined',
-        {
-            input: { schema: SchemaWithAllOf, schemaKey: 'schemaKey mocked' },
-            output: {
-                schema: {
-                    $ref: 'pathname/first',
-                    type: 'first type mocked',
+        output: {
+            schema: {
+                description: 'any',
+                properties: {
+                    type: 'string',
                 },
-                schemaKey: 'schemaKey mocked',
-                interfaces: ['first', 'second'],
             },
+            schemaKey: 'schemaKey mocked',
         },
-    ],
+    },
+
+    {
+        input: { schema: SchemaWithAllOf, schemaKey: 'schemaKey mocked' },
+        output: {
+            schema: {
+                $ref: 'pathname/first',
+                type: 'first type mocked',
+            },
+            schemaKey: 'schemaKey mocked',
+            interfaces: ['first', 'second'],
+        },
+    },
 ];
 
-describe(`parseObject`, () => {
-    it.each(scenarios)(
-        `should call convertToTypesFromSchemaProperties with expected parameters for  %s`,
-        (_, { input, output }) => {
-            parseObject(input);
+it.each(scenarios)(
+    `should call convertToTypesFromSchemaProperties with expected parameters for  %s`,
+    ({ input, output }) => {
+        parseObject(input);
 
-            expect(convertToTypesFromSchemaProperties).toHaveBeenCalledWith(output);
-        },
-    );
-});
+        expect(convertToTypesFromSchemaProperties).toHaveBeenCalledWith(output);
+    },
+);

@@ -8,28 +8,20 @@ const defaultProps = {
     propertyName: 'propertyName mocked',
 };
 
-const scenarios: [string, { input: ResultStringForDictionaryKey; output: string }][] = [
-    [
-        'With all props defined',
-        {
-            input: defaultProps,
-            output: `/**\n * description mocked\n */\n\tpropertyName mocked: {\n\t[key in dictionaryKeyMocked]: additionalPropertiesMocked;\n};\n`,
-        },
-    ],
+const scenarios: { input: ResultStringForDictionaryKey; output: string }[] = [
+    {
+        input: defaultProps,
+        output: `/**\n * description mocked\n */\n\tpropertyName mocked: {\n\t[key in dictionaryKeyMocked]: additionalPropertiesMocked;\n};\n`,
+    },
 
-    [
-        'Description undefined',
-        {
-            input: { ...defaultProps, description: undefined },
-            output: `\tpropertyName mocked: {\n\t[key in dictionaryKeyMocked]: additionalPropertiesMocked;\n};\n`,
-        },
-    ],
+    {
+        input: { ...defaultProps, description: undefined },
+        output: `\tpropertyName mocked: {\n\t[key in dictionaryKeyMocked]: additionalPropertiesMocked;\n};\n`,
+    },
 ];
 
-describe(`getResultStringForDictionaryKey`, () => {
-    it.each(scenarios)(`should return expected string when for %s`, (_, { input, output }) => {
-        const result = getResultStringForDictionaryKey(input);
+it.each(scenarios)(`should return expected string`, ({ input, output }) => {
+    const result = getResultStringForDictionaryKey(input);
 
-        expect(result).toBe(output);
-    });
+    expect(result).toBe(output);
 });

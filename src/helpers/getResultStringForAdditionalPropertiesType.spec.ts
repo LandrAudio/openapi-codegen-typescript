@@ -145,27 +145,25 @@ const scenarios: [
     ],
 ];
 
-describe(`getResultStringForAdditionalPropertiesType`, () => {
-    it.each(scenarios)(
-        `should return expected result when props is %s and xDictionaryKey is undefined`,
-        (_, { input, outputString }) => {
-            const result = getResultStringForAdditionalPropertiesType({ ...input, xDictionaryKey: undefined });
+it.each(scenarios)(
+    `should return expected result when props is %s and xDictionaryKey is undefined`,
+    (_, { input, outputString }) => {
+        const result = getResultStringForAdditionalPropertiesType({ ...input, xDictionaryKey: undefined });
 
-            expect(result).toBe(outputString);
-        },
-    );
+        expect(result).toBe(outputString);
+    },
+);
 
-    it.each(scenarios)(
-        `should return expected result when props is %s and xDictionaryKey is defined`,
-        (_, { input, outputParams }) => {
-            getResultStringForAdditionalPropertiesType({
-                ...input,
-                xDictionaryKey: {
-                    $ref: 'path/ref-value',
-                },
-            });
+it.each(scenarios)(
+    `should return expected result when props is %s and xDictionaryKey is defined`,
+    (_, { input, outputParams }) => {
+        getResultStringForAdditionalPropertiesType({
+            ...input,
+            xDictionaryKey: {
+                $ref: 'path/ref-value',
+            },
+        });
 
-            expect(getDictionaryValueResultString).toHaveBeenCalledWith(outputParams);
-        },
-    );
-});
+        expect(getDictionaryValueResultString).toHaveBeenCalledWith(outputParams);
+    },
+);

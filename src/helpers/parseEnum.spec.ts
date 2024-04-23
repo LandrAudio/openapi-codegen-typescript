@@ -8,27 +8,20 @@ const defaultSchema = {
     enum: ['Audio', 'Video', 'Image', 'Youtube'],
 };
 
-const scenarios: [string, { input: ParseProps; output: string }][] = [
-    [
-        'With all props defined',
-        {
-            input: { schema: defaultSchema, schemaKey: 'AssetType' },
-            output: `/**\n * description mocked\n */\nexport type AssetType = 'Audio' | 'Video' | 'Image' | 'Youtube';\n`,
-        },
-    ],
-    [
-        'With all props defined',
-        {
-            input: { schema: { ...defaultSchema, description: '' }, schemaKey: 'AssetType' },
-            output: `export type AssetType = 'Audio' | 'Video' | 'Image' | 'Youtube';\n`,
-        },
-    ],
+const scenarios: { input: ParseProps; output: string }[] = [
+    {
+        input: { schema: defaultSchema, schemaKey: 'AssetType' },
+        output: `/**\n * description mocked\n */\nexport type AssetType = 'Audio' | 'Video' | 'Image' | 'Youtube';\n`,
+    },
+
+    {
+        input: { schema: { ...defaultSchema, description: '' }, schemaKey: 'AssetType' },
+        output: `export type AssetType = 'Audio' | 'Video' | 'Image' | 'Youtube';\n`,
+    },
 ];
 
-describe(`parseEnum`, () => {
-    it.each(scenarios)(`should return expected string when for %s`, (_, { input, output }) => {
-        const result = parseEnum(input);
+it.each(scenarios)(`should return expected string`, ({ input, output }) => {
+    const result = parseEnum(input);
 
-        expect(result).toBe(output);
-    });
+    expect(result).toBe(output);
 });

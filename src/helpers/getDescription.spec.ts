@@ -1,18 +1,13 @@
 import { SchemaProperties } from '../types';
 import { getDescription } from './getDescription';
 
-const scenarios: [string, { input: Pick<SchemaProperties, 'description'>; output: string }][] = [
-    [
-        'return a description when provided',
-        { input: { description: 'mock description' }, output: `/**\n * mock description\n */\n` },
-    ],
-    ['return empty string when description is undefined', { input: { description: undefined }, output: '' }],
+const scenarios: { input: Pick<SchemaProperties, 'description'>; output: string }[] = [
+    { input: { description: 'mock description' }, output: `/**\n * mock description\n */\n` },
+    { input: { description: undefined }, output: '' },
 ];
 
-describe(`getDescription`, () => {
-    it.each(scenarios)(`should %s`, (_, { input, output }) => {
-        const result = getDescription(input);
+it.each(scenarios)(`should %s`, ({ input, output }) => {
+    const result = getDescription(input);
 
-        expect(result).toBe(output);
-    });
+    expect(result).toBe(output);
 });

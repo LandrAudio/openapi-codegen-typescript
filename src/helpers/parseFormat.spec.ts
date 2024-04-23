@@ -1,14 +1,12 @@
 import { parseFormat } from './parseFormat';
 
-const scenarios: [string, { input?: string; output: string }][] = [
-    ['format defined', { input: 'format mocked', output: `format: "format mocked"` }],
-    ['format undefined', { input: undefined, output: `` }],
+const scenarios: { input?: string; output: string }[] = [
+    { input: 'format mocked', output: `format: "format mocked"` },
+    { input: undefined, output: `` },
 ];
 
-describe(`parseFormat`, () => {
-    it.each(scenarios)(`should return expected string when for %s`, (_, { input, output }) => {
-        const result = parseFormat(input);
+it.each(scenarios)(`should return expected string`, ({ input, output }) => {
+    const result = parseFormat(input);
 
-        expect(result).toBe(output);
-    });
+    expect(result).toBe(output);
 });
