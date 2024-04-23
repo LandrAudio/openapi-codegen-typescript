@@ -12,7 +12,7 @@ const scenarios: [string, { input: Pick<SchemaProperties, 'propertyName' | 'type
     ['Nullalble false', { input: { ...defaultProps, nullable: false }, output: `\tpropertyName mocked: type mocked;` }],
 ];
 
-describe(`parseRefType`, () => {
+describe(`parsePropertyName`, () => {
     it.each(scenarios)(`should return expected string when for %s`, (_, { input, output }) => {
         const result = parsePropertyName(input);
 

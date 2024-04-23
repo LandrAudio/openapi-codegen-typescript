@@ -25,7 +25,7 @@ const scenarios: [string, { input: ParseProps; output: string }][] = [
     ],
 ];
 
-describe(`getDescription`, () => {
+describe(`parseEnum`, () => {
     it.each(scenarios)(`should return expected string when for %s`, (_, { input, output }) => {
         const result = parseEnum(input);
 

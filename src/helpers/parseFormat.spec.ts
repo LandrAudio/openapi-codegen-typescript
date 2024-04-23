@@ -5,7 +5,7 @@ const scenarios: [string, { input?: string; output: string }][] = [
     ['format undefined', { input: undefined, output: `` }],
 ];
 
-describe(`getDescription`, () => {
+describe(`parseFormat`, () => {
     it.each(scenarios)(`should return expected string when for %s`, (_, { input, output }) => {
         const result = parseFormat(input);
 

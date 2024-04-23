@@ -60,7 +60,7 @@ const scenarios: [string, { input: ParseObjectProps; output: ConvertToTypesFromS
     ],
 ];
 
-describe(`parseRefType`, () => {
+describe(`parseObject`, () => {
     it.each(scenarios)(
         `should call convertToTypesFromSchemaProperties with expected parameters for  %s`,
         (_, { input, output }) => {

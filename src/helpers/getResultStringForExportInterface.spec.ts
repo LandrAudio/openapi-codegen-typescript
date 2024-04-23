@@ -67,7 +67,7 @@ const scenarios: [string, { input: ResultStringForExportInterface; output: strin
     ],
 ];
 
-describe(`getDescription`, () => {
+describe(`getResultStringForExportInterface`, () => {
     it.each(scenarios)(`should return expected string when for %s`, (_, { input, output }) => {
         const result = getResultStringForExportInterface(input);
 

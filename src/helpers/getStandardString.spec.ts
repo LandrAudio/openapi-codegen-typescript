@@ -73,7 +73,7 @@ const scenarios: [string, { input: any; output: string }][] = [
     ],
 ];
 
-describe(`getDescription`, () => {
+describe(`getStandardString`, () => {
     it.each(scenarios)(`should return expected string when for %s`, (_, { input, output }) => {
         const result = getStandardString(input);
 
