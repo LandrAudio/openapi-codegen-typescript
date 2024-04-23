@@ -1,29 +1,34 @@
+import { ResultStringProps } from '../types';
 import { getResultStringForBooleanType } from './getResultStringForBooleanType';
 
-const scenarios = [
-    {
-        scenarioName: 'With all props defined',
-        props: { propertyName: 'propertyName mocked', description: 'description mocked', nullable: true },
-        expected: `/**\n * description mocked\n */\n\tpropertyName mocked?: boolean;\n`,
-    },
-    {
-        scenarioName: 'Description undefined',
-        props: { propertyName: 'propertyName mocked', description: undefined, nullable: true },
-        expected: `\tpropertyName mocked?: boolean;\n`,
-    },
-    {
-        scenarioName: 'Nullable is false',
-        props: { propertyName: 'propertyName mocked', description: 'description mocked', nullable: false },
-        expected: `/**\n * description mocked\n */\n\tpropertyName mocked: boolean;\n`,
-    },
+const scenarios: [string, { input: ResultStringProps; output: string }][] = [
+    [
+        'With all props defined',
+        {
+            input: { propertyName: 'propertyName mocked', description: 'description mocked', nullable: true },
+            output: `/**\n * description mocked\n */\n\tpropertyName mocked?: boolean;\n`,
+        },
+    ],
+    [
+        'Description undefined',
+        {
+            input: { propertyName: 'propertyName mocked', description: undefined, nullable: true },
+            output: `\tpropertyName mocked?: boolean;\n`,
+        },
+    ],
+    [
+        'Nullable is false',
+        {
+            input: { propertyName: 'propertyName mocked', description: 'description mocked', nullable: false },
+            output: `/**\n * description mocked\n */\n\tpropertyName mocked: boolean;\n`,
+        },
+    ],
 ];
 
 describe(`getResultStringForBooleanType`, () => {
-    scenarios.forEach(config => {
-        it(`should return expected string when for ${config.scenarioName}`, async () => {
-            const result = getResultStringForBooleanType(config.props);
+    it.each(scenarios)(`should return expected string when for %s`, (_, { input, output }) => {
+        const result = getResultStringForBooleanType(input);
 
-            expect(result).toBe(config.expected);
-        });
+        expect(result).toBe(output);
     });
 });

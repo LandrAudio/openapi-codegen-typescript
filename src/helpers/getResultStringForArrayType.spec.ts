@@ -1,3 +1,4 @@
+import { ResultStringPropsForArrayType } from '../types';
 import { getResultStringForArrayType } from './getResultStringForArrayType';
 
 const defaultProps = {
@@ -11,93 +12,111 @@ const defaultProps = {
     uniqueItems: true,
 };
 
-const scenarios = [
-    {
-        scenarioName: 'Description provided',
-        props: {
-            ...defaultProps,
-            description: 'description mocked',
+const scenarios: [string, { input: ResultStringPropsForArrayType; output: string }][] = [
+    [
+        'Description provided',
+        {
+            input: {
+                ...defaultProps,
+                description: 'description mocked',
+            },
+            output: `/**\n * description mocked\n */\n\tpropertyName mocked?: refType mocked[]; // format: "format mocked"; minItems: 1; maxItems: 10; uniqueItems: true\n`,
         },
-        expected: `/**\n * description mocked\n */\n\tpropertyName mocked?: refType mocked[]; // format: "format mocked"; minItems: 1; maxItems: 10; uniqueItems: true\n`,
-    },
-    {
-        scenarioName: 'Description undefined',
-        props: {
-            ...defaultProps,
-            description: undefined,
+    ],
+    [
+        'Description undefined',
+        {
+            input: {
+                ...defaultProps,
+                description: undefined,
+            },
+            output: `\tpropertyName mocked?: refType mocked[]; // format: "format mocked"; minItems: 1; maxItems: 10; uniqueItems: true\n`,
         },
-        expected: `\tpropertyName mocked?: refType mocked[]; // format: "format mocked"; minItems: 1; maxItems: 10; uniqueItems: true\n`,
-    },
-    {
-        scenarioName: 'MinItems undefined',
-        props: {
-            ...defaultProps,
-            minItems: undefined,
+    ],
+    [
+        'MinItems undefined',
+        {
+            input: {
+                ...defaultProps,
+                minItems: undefined,
+            },
+            output: `/**\n * description mocked\n */\n\tpropertyName mocked?: refType mocked[]; // format: "format mocked"; maxItems: 10; uniqueItems: true\n`,
         },
-        expected: `/**\n * description mocked\n */\n\tpropertyName mocked?: refType mocked[]; // format: "format mocked"; maxItems: 10; uniqueItems: true\n`,
-    },
-    {
-        scenarioName: 'MaxItems undefined',
-        props: {
-            ...defaultProps,
-            maxItems: undefined,
+    ],
+    [
+        'MaxItems undefined',
+        {
+            input: {
+                ...defaultProps,
+                maxItems: undefined,
+            },
+            output: `/**\n * description mocked\n */\n\tpropertyName mocked?: refType mocked[]; // format: "format mocked"; minItems: 1; uniqueItems: true\n`,
         },
-        expected: `/**\n * description mocked\n */\n\tpropertyName mocked?: refType mocked[]; // format: "format mocked"; minItems: 1; uniqueItems: true\n`,
-    },
-    {
-        scenarioName: 'Format undefined',
-        props: {
-            ...defaultProps,
-            format: (undefined as unknown) as string,
+    ],
+    [
+        'Format undefined',
+        {
+            input: {
+                ...defaultProps,
+                format: (undefined as unknown) as string,
+            },
+            output: `/**\n * description mocked\n */\n\tpropertyName mocked?: refType mocked[]; // minItems: 1; maxItems: 10; uniqueItems: true\n`,
         },
-        expected: `/**\n * description mocked\n */\n\tpropertyName mocked?: refType mocked[]; // minItems: 1; maxItems: 10; uniqueItems: true\n`,
-    },
-    {
-        scenarioName: 'UniqueItems is false',
-        props: {
-            ...defaultProps,
-            uniqueItems: false,
+    ],
+    [
+        'UniqueItems is false',
+        {
+            input: {
+                ...defaultProps,
+                uniqueItems: false,
+            },
+            output: `/**\n * description mocked\n */\n\tpropertyName mocked?: refType mocked[]; // format: "format mocked"; minItems: 1; maxItems: 10\n`,
         },
-        expected: `/**\n * description mocked\n */\n\tpropertyName mocked?: refType mocked[]; // format: "format mocked"; minItems: 1; maxItems: 10\n`,
-    },
-    {
-        scenarioName: 'Format and min items undefined',
-        props: {
-            ...defaultProps,
-            format: (undefined as unknown) as string,
-            minItems: undefined,
+    ],
+    [
+        'Format and min items undefined',
+        {
+            input: {
+                ...defaultProps,
+                format: (undefined as unknown) as string,
+                minItems: undefined,
+            },
+            output: `/**\n * description mocked\n */\n\tpropertyName mocked?: refType mocked[]; // maxItems: 10; uniqueItems: true\n`,
         },
-        expected: `/**\n * description mocked\n */\n\tpropertyName mocked?: refType mocked[]; // maxItems: 10; uniqueItems: true\n`,
-    },
-    {
-        scenarioName: 'Format, min and max items undefined',
-        props: {
-            ...defaultProps,
-            format: (undefined as unknown) as string,
-            minItems: undefined,
-            maxItems: undefined,
+    ],
+
+    [
+        'Format, min and max items undefined',
+        {
+            input: {
+                ...defaultProps,
+                format: (undefined as unknown) as string,
+                minItems: undefined,
+                maxItems: undefined,
+            },
+            output: `/**\n * description mocked\n */\n\tpropertyName mocked?: refType mocked[]; // uniqueItems: true\n`,
         },
-        expected: `/**\n * description mocked\n */\n\tpropertyName mocked?: refType mocked[]; // uniqueItems: true\n`,
-    },
-    {
-        scenarioName: 'No doc',
-        props: {
-            ...defaultProps,
-            format: (undefined as unknown) as string,
-            minItems: undefined,
-            maxItems: undefined,
-            uniqueItems: false,
+    ],
+
+    [
+        'No doc',
+        {
+            input: {
+                ...defaultProps,
+                format: (undefined as unknown) as string,
+                minItems: undefined,
+                maxItems: undefined,
+                uniqueItems: false,
+            },
+            output: `/**\n * description mocked\n */\n\tpropertyName mocked?: refType mocked[];\n`,
         },
-        expected: `/**\n * description mocked\n */\n\tpropertyName mocked?: refType mocked[];\n`,
-    },
+    ],
 ];
 
 describe(`getResultStringForArrayType`, () => {
-    scenarios.forEach(config => {
-        it(`should return expected string when for ${config.scenarioName}`, async () => {
-            const result = getResultStringForArrayType(config.props);
+    it.each(scenarios)(`should return expected string when for %s`, (_, { input, output }) => {
+        const result = getResultStringForArrayType(input);
 
-            expect(result).toBe(config.expected);
-        });
+        expect(result).toBe(output);
     });
 });

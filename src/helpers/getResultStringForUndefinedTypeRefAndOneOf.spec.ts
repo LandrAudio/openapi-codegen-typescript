@@ -1,24 +1,21 @@
+import { SchemaProperties } from '../types';
 import { getResultStringForUndefinedTypeRefAndOneOf } from './getResultStringForUndefinedTypeRefAndOneOf';
 
-const scenarios = [
-    {
-        scenarioName: 'Nullable true',
-        props: { propertyName: 'propertyName mocked', nullable: true },
-        expected: `\tpropertyName mocked?: any;\n`,
-    },
-    {
-        scenarioName: 'Nullable false',
-        props: { propertyName: 'propertyName mocked', nullable: false },
-        expected: `\tpropertyName mocked: any;\n`,
-    },
+const scenarios: [string, { input: Pick<SchemaProperties, 'propertyName' | 'nullable'>; output: string }][] = [
+    [
+        'Nullable true',
+        { input: { propertyName: 'propertyName mocked', nullable: true }, output: `\tpropertyName mocked?: any;\n` },
+    ],
+    [
+        'Nullable false',
+        { input: { propertyName: 'propertyName mocked', nullable: false }, output: `\tpropertyName mocked: any;\n` },
+    ],
 ];
 
 describe(`getResultStringForUndefinedTypeRefAndOneOf`, () => {
-    scenarios.forEach(config => {
-        it(`should return expected string when for ${config.scenarioName}`, async () => {
-            const result = getResultStringForUndefinedTypeRefAndOneOf(config.props);
+    it.each(scenarios)(`should return expected string when for %s`, (_, { input, output }) => {
+        const result = getResultStringForUndefinedTypeRefAndOneOf(input);
 
-            expect(result).toBe(config.expected);
-        });
+        expect(result).toBe(output);
     });
 });

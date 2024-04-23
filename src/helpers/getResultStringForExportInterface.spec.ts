@@ -1,69 +1,76 @@
-import { getResultStringForExportInterface } from './getResultStringForExportInterface';
+import { ResultStringForExportInterface, getResultStringForExportInterface } from './getResultStringForExportInterface';
 
-const scenarios = [
-    {
-        scenarioName: 'All props defined',
-        props: {
-            schemaKey: 'schemaKey mocked',
-            schema: {
-                description: 'description mocked',
-                properties: {
-                    type: 'type mocked',
+const scenarios: [string, { input: ResultStringForExportInterface; output: string }][] = [
+    [
+        'All props defined',
+        {
+            input: {
+                schemaKey: 'schemaKey mocked',
+                schema: {
+                    description: 'description mocked',
+                    properties: {
+                        type: 'type mocked',
+                    },
                 },
+                interfaces: ['first', 'second', 'third'],
             },
-            interfaces: ['first', 'second', 'third'],
+            output: `/**\n * description mocked\n */\nexport interface schemaKey mocked extends first, second, third {\n`,
         },
-        expected: `/**\n * description mocked\n */\nexport interface schemaKey mocked extends first, second, third {\n`,
-    },
-    {
-        scenarioName: 'Interface undefined',
-        props: {
-            schemaKey: 'schemaKey mocked',
-            schema: {
-                description: 'description mocked',
-                properties: {
-                    type: 'type mocked',
+    ],
+
+    [
+        'Interface undefined',
+        {
+            input: {
+                schemaKey: 'schemaKey mocked',
+                schema: {
+                    description: 'description mocked',
+                    properties: {
+                        type: 'type mocked',
+                    },
                 },
+                interfaces: undefined,
             },
-            interfaces: undefined,
+            output: `/**\n * description mocked\n */\nexport interface schemaKey mocked {\n`,
         },
-        expected: `/**\n * description mocked\n */\nexport interface schemaKey mocked {\n`,
-    },
-    {
-        scenarioName: 'schemaKey undefined',
-        props: {
-            schemaKey: undefined,
-            schema: {
-                description: 'description mocked',
-                properties: {
-                    type: 'type mocked',
+    ],
+    [
+        'schemaKey undefined',
+        {
+            input: {
+                schemaKey: undefined,
+                schema: {
+                    description: 'description mocked',
+                    properties: {
+                        type: 'type mocked',
+                    },
                 },
+                interfaces: ['first', 'second', 'third'],
             },
-            interfaces: ['first', 'second', 'third'],
+            output: `/**\n * description mocked\n */\nexport interface undefined extends first, second, third {\n`,
         },
-        expected: `/**\n * description mocked\n */\nexport interface undefined extends first, second, third {\n`,
-    },
-    {
-        scenarioName: 'description undefined',
-        props: {
-            schemaKey: 'schemaKey mocked',
-            schema: {
-                properties: {
-                    type: 'type mocked',
+    ],
+    [
+        'description undefined',
+        {
+            input: {
+                schemaKey: 'schemaKey mocked',
+                schema: {
+                    properties: {
+                        type: 'type mocked',
+                    },
                 },
+                interfaces: ['first', 'second', 'third'],
             },
-            interfaces: ['first', 'second', 'third'],
+            output: `export interface schemaKey mocked extends first, second, third {\n`,
         },
-        expected: `export interface schemaKey mocked extends first, second, third {\n`,
-    },
+    ],
 ];
 
 describe(`getDescription`, () => {
-    scenarios.forEach(config => {
-        it(`should return expected string when for ${config.scenarioName}`, async () => {
-            const result = getResultStringForExportInterface(config.props);
+    it.each(scenarios)(`should return expected string when for %s`, (_, { input, output }) => {
+        const result = getResultStringForExportInterface(input);
 
-            expect(result).toBe(config.expected);
-        });
+        expect(result).toBe(output);
     });
 });

@@ -1,29 +1,37 @@
+import { SchemaProperties } from '../types';
 import { parseProperty } from './parseProperty';
 
-const scenarios = [
-    {
-        scenarioName: 'With all props defined',
-        props: { propertyName: 'propertyName mocked', description: 'description mocked', nullable: true },
-        expected: `/**\n * description mocked\n */\n\tpropertyName mocked?: `,
-    },
-    {
-        scenarioName: 'Description undefined',
-        props: { propertyName: 'propertyName mocked', description: undefined, nullable: true },
-        expected: `\tpropertyName mocked?: `,
-    },
-    {
-        scenarioName: 'Nullable is false',
-        props: { propertyName: 'propertyName mocked', description: 'description mocked', nullable: false },
-        expected: `/**\n * description mocked\n */\n\tpropertyName mocked: `,
-    },
+const scenarios: [
+    string,
+    { input: Pick<SchemaProperties, 'propertyName' | 'description' | 'nullable'>; output: string },
+][] = [
+    [
+        'With all props defined',
+        {
+            input: { propertyName: 'propertyName mocked', description: 'description mocked', nullable: true },
+            output: `/**\n * description mocked\n */\n\tpropertyName mocked?: `,
+        },
+    ],
+    [
+        'Description undefined',
+        {
+            input: { propertyName: 'propertyName mocked', description: undefined, nullable: true },
+            output: `\tpropertyName mocked?: `,
+        },
+    ],
+    [
+        'Nullable is false',
+        {
+            input: { propertyName: 'propertyName mocked', description: 'description mocked', nullable: false },
+            output: `/**\n * description mocked\n */\n\tpropertyName mocked: `,
+        },
+    ],
 ];
 
 describe(`parseProperty`, () => {
-    scenarios.forEach(config => {
-        it(`should return expected string when for ${config.scenarioName}`, async () => {
-            const result = parseProperty(config.props);
+    it.each(scenarios)(`should return expected string when for %s`, (_, { input, output }) => {
+        const result = parseProperty(input);
 
-            expect(result).toBe(config.expected);
-        });
+        expect(result).toBe(output);
     });
 });

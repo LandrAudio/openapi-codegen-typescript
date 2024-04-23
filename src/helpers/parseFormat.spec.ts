@@ -1,24 +1,14 @@
 import { parseFormat } from './parseFormat';
 
-const scenarios = [
-    {
-        scenarioName: 'format defined',
-        props: 'format mocked',
-        expected: `format: "format mocked"`,
-    },
-    {
-        scenarioName: 'format undefined',
-        props: undefined,
-        expected: ``,
-    },
+const scenarios: [string, { input?: string; output: string }][] = [
+    ['format defined', { input: 'format mocked', output: `format: "format mocked"` }],
+    ['format undefined', { input: undefined, output: `` }],
 ];
 
 describe(`getDescription`, () => {
-    scenarios.forEach(config => {
-        it(`should return expected string for ${config.scenarioName}`, async () => {
-            const result = parseFormat(config.props);
+    it.each(scenarios)(`should return expected string when for %s`, (_, { input, output }) => {
+        const result = parseFormat(input);
 
-            expect(result).toBe(config.expected);
-        });
+        expect(result).toBe(output);
     });
 });

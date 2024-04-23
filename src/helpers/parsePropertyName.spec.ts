@@ -1,3 +1,4 @@
+import { SchemaProperties } from '../types';
 import { parsePropertyName } from './parsePropertyName';
 
 const defaultProps = {
@@ -6,25 +7,15 @@ const defaultProps = {
     type: 'type mocked',
 };
 
-const scenarios = [
-    {
-        scenarioName: 'With all props defined',
-        props: { ...defaultProps },
-        expected: `\tpropertyName mocked?: type mocked;`,
-    },
-    {
-        scenarioName: 'Nullalble false',
-        props: { ...defaultProps, nullable: false },
-        expected: `\tpropertyName mocked: type mocked;`,
-    },
+const scenarios: [string, { input: Pick<SchemaProperties, 'propertyName' | 'type' | 'nullable'>; output: string }][] = [
+    ['With all props defined', { input: { ...defaultProps }, output: `\tpropertyName mocked?: type mocked;` }],
+    ['Nullalble false', { input: { ...defaultProps, nullable: false }, output: `\tpropertyName mocked: type mocked;` }],
 ];
 
 describe(`parseRefType`, () => {
-    scenarios.forEach(config => {
-        it(`should return expected string for ${config.scenarioName}`, async () => {
-            const result = parsePropertyName(config.props);
+    it.each(scenarios)(`should return expected string when for %s`, (_, { input, output }) => {
+        const result = parsePropertyName(input);
 
-            expect(result).toBe(config.expected);
-        });
+        expect(result).toBe(output);
     });
 });

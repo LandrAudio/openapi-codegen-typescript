@@ -1,3 +1,4 @@
+import { ParseProps } from '../types';
 import { parseEnum } from './parseEnum';
 
 const defaultSchema = {
@@ -7,25 +8,27 @@ const defaultSchema = {
     enum: ['Audio', 'Video', 'Image', 'Youtube'],
 };
 
-const scenarios = [
-    {
-        scenarioName: 'With all props defined',
-        props: { schema: defaultSchema, schemaKey: 'AssetType' },
-        expected: `/**\n * description mocked \n */\nexport type AssetType = 'Audio' | 'Video' | 'Image' | 'Youtube';\n`,
-    },
-    {
-        scenarioName: 'With all props defined',
-        props: { schema: { ...defaultSchema, description: '' }, schemaKey: 'AssetType' },
-        expected: `export type AssetType = 'Audio' | 'Video' | 'Image' | 'Youtube';\n`,
-    },
+const scenarios: [string, { input: ParseProps; output: string }][] = [
+    [
+        'With all props defined',
+        {
+            input: { schema: defaultSchema, schemaKey: 'AssetType' },
+            output: `/**\n * description mocked\n */\nexport type AssetType = 'Audio' | 'Video' | 'Image' | 'Youtube';\n`,
+        },
+    ],
+    [
+        'With all props defined',
+        {
+            input: { schema: { ...defaultSchema, description: '' }, schemaKey: 'AssetType' },
+            output: `export type AssetType = 'Audio' | 'Video' | 'Image' | 'Youtube';\n`,
+        },
+    ],
 ];
 
 describe(`getDescription`, () => {
-    scenarios.forEach(config => {
-        it(`should return expected string for ${config.scenarioName}`, async () => {
-            const result = parseEnum(config.props);
+    it.each(scenarios)(`should return expected string when for %s`, (_, { input, output }) => {
+        const result = parseEnum(input);
 
-            expect(result).toBe(config.expected);
-        });
+        expect(result).toBe(output);
     });
 });

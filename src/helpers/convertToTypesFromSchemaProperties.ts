@@ -13,15 +13,17 @@ import { getResultStringForUndefinedTypeRefAndOneOf } from './getResultStringFor
 import { getResultStringType } from './getResultStringType';
 import { getStandardString } from './getStandardString';
 
+export type ConvertToTypesFromSchemaPropertiesProps = {
+    schema: any;
+    schemaKey?: string;
+    interfaces?: Array<string>;
+};
+
 export const convertToTypesFromSchemaProperties = ({
     schema,
     schemaKey,
     interfaces,
-}: {
-    schema: SwaggerSchema;
-    schemaKey?: string;
-    interfaces?: Array<string>;
-}): string => {
+}: ConvertToTypesFromSchemaPropertiesProps): string => {
     let result = getResultStringForExportInterface({ schemaKey, schema, interfaces });
 
     if (schema.properties) {

@@ -40,14 +40,14 @@ export const parseSchemas = ({ json, overrideSchemas }: GetSchemasProps) => {
                         result += parseEnum({ schema, schemaKey });
                     }
                 } else {
-                    result += `// Error: Unsupported schema for ${schemaKey} \n`;
+                    result += `// Error: Unsupported schema for ${schemaKey}\n`;
                 }
             } catch (error) {
-                result += `// Error: Unhandled error with ${schemaKey} \n`;
+                result += `// Error: Unhandled error with ${schemaKey}\n`;
             }
         });
 
-        result += ` \n`;
+        result += `\n`;
         return result;
     } else {
         return 'ERROR! Check provided swagger version.';

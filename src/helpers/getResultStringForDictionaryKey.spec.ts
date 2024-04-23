@@ -1,3 +1,4 @@
+import { ResultStringForDictionaryKey } from '../types';
 import { getResultStringForDictionaryKey } from './getResultStringForDictionaryKey';
 
 const defaultProps = {
@@ -7,25 +8,28 @@ const defaultProps = {
     propertyName: 'propertyName mocked',
 };
 
-const scenarios = [
-    {
-        scenarioName: 'With all props defined',
-        props: defaultProps,
-        expected: `/**\n * description mocked\n */\n\tpropertyName mocked: {\n[key in dictionaryKeyMocked]: additionalPropertiesMocked; \n }; \n`,
-    },
-    {
-        scenarioName: 'Description undefined',
-        props: { ...defaultProps, description: undefined },
-        expected: `\tpropertyName mocked: {\n[key in dictionaryKeyMocked]: additionalPropertiesMocked; \n }; \n`,
-    },
+const scenarios: [string, { input: ResultStringForDictionaryKey; output: string }][] = [
+    [
+        'With all props defined',
+        {
+            input: defaultProps,
+            output: `/**\n * description mocked\n */\n\tpropertyName mocked: {\n\t[key in dictionaryKeyMocked]: additionalPropertiesMocked;\n};\n`,
+        },
+    ],
+
+    [
+        'Description undefined',
+        {
+            input: { ...defaultProps, description: undefined },
+            output: `\tpropertyName mocked: {\n\t[key in dictionaryKeyMocked]: additionalPropertiesMocked;\n};\n`,
+        },
+    ],
 ];
 
 describe(`getResultStringForDictionaryKey`, () => {
-    scenarios.forEach(config => {
-        it(`should return expected string when for ${config.scenarioName}`, async () => {
-            const result = getResultStringForDictionaryKey(config.props);
+    it.each(scenarios)(`should return expected string when for %s`, (_, { input, output }) => {
+        const result = getResultStringForDictionaryKey(input);
 
-            expect(result).toBe(config.expected);
-        });
+        expect(result).toBe(output);
     });
 });

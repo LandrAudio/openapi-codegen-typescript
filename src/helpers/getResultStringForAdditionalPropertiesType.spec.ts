@@ -1,5 +1,6 @@
 import { getResultStringForAdditionalPropertiesType } from './getResultStringForAdditionalPropertiesType';
 import { getDictionaryValueResultString } from './getDictionaryValueResultString';
+import { DictionaryValueResultString, ResultStringForAdditionalPropertiesType } from '../types';
 
 jest.mock('./getDictionaryValueResultString', () => ({
     getDictionaryValueResultString: jest.fn(),
@@ -9,144 +10,162 @@ beforeEach(() => {
     jest.clearAllMocks();
 });
 
-const scenarios = [
-    {
-        scenarioName: 'Boolean additional properties type',
-        props: {
-            additionalProperties: { type: 'boolean' },
-            description: 'description mocked',
-            propertyName: 'propertyName mocked',
-        },
-        expectedString: `/**\n * description mocked\n */\n\tpropertyName mocked: {\n [key: string]: boolean;\n };\n`,
-        expectedParams: {
-            description: 'description mocked',
-            propertyName: 'propertyName mocked',
-            dictionaryRef: 'ref-value',
-            value: 'boolean',
-        },
-    },
-    {
-        scenarioName: 'Integer additional properties type',
-        props: {
-            additionalProperties: { type: 'integer' },
-            description: 'description mocked',
-            propertyName: 'propertyName mocked',
-        },
-        expectedString: `/**\n * description mocked\n */\n\tpropertyName mocked: {\n [key: string]: number;\n };\n`,
-        expectedParams: {
-            description: 'description mocked',
-            propertyName: 'propertyName mocked',
-            dictionaryRef: 'ref-value',
-            value: 'number',
-        },
-    },
-    {
-        scenarioName: 'Number additional properties type',
-        props: {
-            additionalProperties: { type: 'number' },
-            description: 'description mocked',
-            propertyName: 'propertyName mocked',
-        },
-        expectedString: `/**\n * description mocked\n */\n\tpropertyName mocked: {\n [key: string]: number;\n };\n`,
-        expectedParams: {
-            description: 'description mocked',
-            propertyName: 'propertyName mocked',
-            dictionaryRef: 'ref-value',
-            value: 'number',
-        },
-    },
-    {
-        scenarioName: 'String additional properties type',
-        props: {
-            additionalProperties: { type: 'string' },
-            description: 'description mocked',
-            propertyName: 'propertyName mocked',
-        },
-        expectedString: `/**\n * description mocked\n */\n\tpropertyName mocked: {\n [key: string]: string;\n };\n`,
-        expectedParams: {
-            description: 'description mocked',
-            propertyName: 'propertyName mocked',
-            dictionaryRef: 'ref-value',
-            value: 'string',
-        },
-    },
-    {
-        scenarioName: 'Array additional properties type without item ref',
-        props: {
-            additionalProperties: {
-                type: 'array',
-                items: {
-                    type: 'string',
-                },
+const scenarios: [
+    string,
+    { input: ResultStringForAdditionalPropertiesType; outputString: string; outputParams: DictionaryValueResultString },
+][] = [
+    [
+        'Boolean additional properties type',
+        {
+            input: {
+                additionalProperties: { type: 'boolean' },
+                description: 'description mocked',
+                propertyName: 'propertyName mocked',
             },
-            description: 'description mocked',
-            propertyName: 'propertyName mocked',
-        },
-        expectedString: `/**\n * description mocked\n */\n\tpropertyName mocked: {\n [key: string]: "// Error: The additionalProperties items or the items ref is missing";\n };\n`,
-        expectedParams: {
-            description: 'description mocked',
-            propertyName: 'propertyName mocked',
-            dictionaryRef: 'ref-value',
-            value: '"// Error: The additionalProperties items or the items ref is missing"',
-        },
-    },
-
-    {
-        scenarioName: 'Array additional properties type with item ref',
-        props: {
-            additionalProperties: {
-                type: 'array',
-                items: {
-                    $ref: '#/components/schemas/AssetFileDto',
-                },
+            outputString: `/**\n * description mocked\n */\n\tpropertyName mocked: {\n\t[key: string]: boolean;\n};\n`,
+            outputParams: {
+                description: 'description mocked',
+                propertyName: 'propertyName mocked',
+                dictionaryRef: 'ref-value',
+                value: 'boolean',
             },
-            description: 'description mocked',
-            propertyName: 'propertyName mocked',
         },
-        expectedString: `/**\n * description mocked\n */\n\tpropertyName mocked: {\n [key: string]: AssetFileDto[];\n };\n`,
-        expectedParams: {
-            description: 'description mocked',
-            propertyName: 'propertyName mocked',
-            dictionaryRef: 'ref-value',
-            value: 'AssetFileDto[]',
+    ],
+    [
+        'Integer additional properties type',
+        {
+            input: {
+                additionalProperties: { type: 'integer' },
+                description: 'description mocked',
+                propertyName: 'propertyName mocked',
+            },
+            outputString: `/**\n * description mocked\n */\n\tpropertyName mocked: {\n\t[key: string]: number;\n};\n`,
+            outputParams: {
+                description: 'description mocked',
+                propertyName: 'propertyName mocked',
+                dictionaryRef: 'ref-value',
+                value: 'number',
+            },
         },
-    },
-    {
-        scenarioName: 'Invalid additional properties type',
-        props: {
-            additionalProperties: { type: 'test' },
-            description: 'description mocked',
-            propertyName: 'propertyName mocked',
+    ],
+    [
+        'Number additional properties type',
+        {
+            input: {
+                additionalProperties: { type: 'number' },
+                description: 'description mocked',
+                propertyName: 'propertyName mocked',
+            },
+            outputString: `/**\n * description mocked\n */\n\tpropertyName mocked: {\n\t[key: string]: number;\n};\n`,
+            outputParams: {
+                description: 'description mocked',
+                propertyName: 'propertyName mocked',
+                dictionaryRef: 'ref-value',
+                value: 'number',
+            },
         },
-        expectedString: `/**\n * description mocked\n */\n\tpropertyName mocked: {\n [key: string]: "// Error: test is not supported";\n };\n`,
-        expectedParams: {
-            description: 'description mocked',
-            propertyName: 'propertyName mocked',
-            dictionaryRef: 'ref-value',
-            value: '"// Error: test is not supported"',
+    ],
+    [
+        'String additional properties type',
+        {
+            input: {
+                additionalProperties: { type: 'string' },
+                description: 'description mocked',
+                propertyName: 'propertyName mocked',
+            },
+            outputString: `/**\n * description mocked\n */\n\tpropertyName mocked: {\n\t[key: string]: string;\n};\n`,
+            outputParams: {
+                description: 'description mocked',
+                propertyName: 'propertyName mocked',
+                dictionaryRef: 'ref-value',
+                value: 'string',
+            },
         },
-    },
+    ],
+    [
+        'Array additional properties type without item ref',
+        {
+            input: {
+                additionalProperties: {
+                    type: 'array',
+                    items: {
+                        type: 'string',
+                    },
+                },
+                description: 'description mocked',
+                propertyName: 'propertyName mocked',
+            },
+            outputString: `/**\n * description mocked\n */\n\tpropertyName mocked: {\n\t[key: string]: "// Error: The additionalProperties items or the items ref is missing";\n};\n`,
+            outputParams: {
+                description: 'description mocked',
+                propertyName: 'propertyName mocked',
+                dictionaryRef: 'ref-value',
+                value: '"// Error: The additionalProperties items or the items ref is missing"',
+            },
+        },
+    ],
+    [
+        'Array additional properties type with item ref',
+        {
+            input: {
+                additionalProperties: {
+                    type: 'array',
+                    items: {
+                        $ref: '#/components/schemas/AssetFileDto',
+                    },
+                },
+                description: 'description mocked',
+                propertyName: 'propertyName mocked',
+            },
+            outputString: `/**\n * description mocked\n */\n\tpropertyName mocked: {\n\t[key: string]: AssetFileDto[];\n};\n`,
+            outputParams: {
+                description: 'description mocked',
+                propertyName: 'propertyName mocked',
+                dictionaryRef: 'ref-value',
+                value: 'AssetFileDto[]',
+            },
+        },
+    ],
+    [
+        'Invalid additional properties type',
+        {
+            input: {
+                additionalProperties: { type: 'test' },
+                description: 'description mocked',
+                propertyName: 'propertyName mocked',
+            },
+            outputString: `/**\n * description mocked\n */\n\tpropertyName mocked: {\n\t[key: string]: "// Error: test is not supported";\n};\n`,
+            outputParams: {
+                description: 'description mocked',
+                propertyName: 'propertyName mocked',
+                dictionaryRef: 'ref-value',
+                value: '"// Error: test is not supported"',
+            },
+        },
+    ],
 ];
 
 describe(`getResultStringForAdditionalPropertiesType`, () => {
-    scenarios.forEach(config => {
-        it(`should return expected result when props is ${config.scenarioName} and xDictionaryKey is undefined`, async () => {
-            const result = getResultStringForAdditionalPropertiesType({ ...config.props, xDictionaryKey: undefined });
+    it.each(scenarios)(
+        `should return expected result when props is %s and xDictionaryKey is undefined`,
+        (_, { input, outputString }) => {
+            const result = getResultStringForAdditionalPropertiesType({ ...input, xDictionaryKey: undefined });
 
-            expect(result).toBe(config.expectedString);
-        });
-    });
+            expect(result).toBe(outputString);
+        },
+    );
 
-    scenarios.forEach(config => {
-        it(`should invoke getDictionaryValueResultString with expected props when scenario is ${config.scenarioName} and xDictionaryKey is defined`, async () => {
+    it.each(scenarios)(
+        `should return expected result when props is %s and xDictionaryKey is defined`,
+        (_, { input, outputParams }) => {
             getResultStringForAdditionalPropertiesType({
-                ...config.props,
+                ...input,
                 xDictionaryKey: {
                     $ref: 'path/ref-value',
                 },
             });
 
-            expect(getDictionaryValueResultString).toHaveBeenCalledWith(config.expectedParams);
-        });
-    });
+            expect(getDictionaryValueResultString).toHaveBeenCalledWith(outputParams);
+        },
+    );
 });

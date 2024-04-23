@@ -1,5 +1,9 @@
-import { parseObject } from './parseObject';
-import { convertToTypesFromSchemaProperties } from './convertToTypesFromSchemaProperties';
+import { ParseObjectProps, parseObject } from './parseObject';
+import {
+    ConvertToTypesFromSchemaPropertiesProps,
+    convertToTypesFromSchemaProperties,
+} from './convertToTypesFromSchemaProperties';
+import { aSwaggerV2Mock, aSwaggerV3Mock } from '../utils/test-utils';
 
 jest.mock('./convertToTypesFromSchemaProperties', () => ({
     convertToTypesFromSchemaProperties: jest.fn(),
@@ -16,32 +20,53 @@ const SchemaWithAllOf = {
     ],
 };
 
-const scenarios = [
-    {
-        scenarioName: 'With all props defined',
-        props: { schema: 'schema mocked', schemaKey: 'schemaKey mocked' },
-        expected: { schema: 'schema mocked', schemaKey: 'schemaKey mocked' },
-    },
-    {
-        scenarioName: 'With oneOf',
-        props: { schema: SchemaWithAllOf, schemaKey: 'schemaKey mocked' },
-        expected: {
-            schema: {
-                $ref: 'pathname/first',
-                type: 'first type mocked',
+const scenarios: [string, { input: ParseObjectProps; output: ConvertToTypesFromSchemaPropertiesProps }][] = [
+    [
+        'With all props defined',
+        {
+            input: {
+                schema: {
+                    description: 'any',
+                    properties: {
+                        type: 'string',
+                    },
+                },
+                schemaKey: 'schemaKey mocked',
             },
-            schemaKey: 'schemaKey mocked',
-            interfaces: ['first', 'second'],
+            output: {
+                schema: {
+                    description: 'any',
+                    properties: {
+                        type: 'string',
+                    },
+                },
+                schemaKey: 'schemaKey mocked',
+            },
         },
-    },
+    ],
+    [
+        'With allOf defined',
+        {
+            input: { schema: SchemaWithAllOf, schemaKey: 'schemaKey mocked' },
+            output: {
+                schema: {
+                    $ref: 'pathname/first',
+                    type: 'first type mocked',
+                },
+                schemaKey: 'schemaKey mocked',
+                interfaces: ['first', 'second'],
+            },
+        },
+    ],
 ];
 
 describe(`parseRefType`, () => {
-    scenarios.forEach(config => {
-        it(`should call convertToTypesFromSchemaProperties with expected parameters for ${config.scenarioName}`, async () => {
-            parseObject(config.props);
+    it.each(scenarios)(
+        `should call convertToTypesFromSchemaProperties with expected parameters for  %s`,
+        (_, { input, output }) => {
+            parseObject(input);
 
-            expect(convertToTypesFromSchemaProperties).toHaveBeenCalledWith(config.expected);
-        });
-    });
+            expect(convertToTypesFromSchemaProperties).toHaveBeenCalledWith(output);
+        },
+    );
 });

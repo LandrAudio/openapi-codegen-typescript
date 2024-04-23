@@ -1,24 +1,18 @@
+import { SchemaProperties } from '../types';
 import { getDescription } from './getDescription';
 
-const scenarios = [
-    {
-        scenarioName: 'Description provided',
-        props: { description: 'description mocked' },
-        expected: `/**\n * description mocked\n */\n`,
-    },
-    {
-        scenarioName: 'Description undefined',
-        props: { description: undefined },
-        expected: '',
-    },
+const scenarios: [string, { input: Pick<SchemaProperties, 'description'>; output: string }][] = [
+    [
+        'return a description when provided',
+        { input: { description: 'mock description' }, output: `/**\n * mock description\n */\n` },
+    ],
+    ['return empty string when description is undefined', { input: { description: undefined }, output: '' }],
 ];
 
 describe(`getDescription`, () => {
-    scenarios.forEach(config => {
-        it(`should return expected string when for ${config.scenarioName}`, async () => {
-            const result = getDescription(config.props);
+    it.each(scenarios)(`should %s`, (_, { input, output }) => {
+        const result = getDescription(input);
 
-            expect(result).toBe(config.expected);
-        });
+        expect(result).toBe(output);
     });
 });

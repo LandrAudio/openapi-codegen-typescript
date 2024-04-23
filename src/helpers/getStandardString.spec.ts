@@ -1,74 +1,82 @@
 import { getStandardString } from './getStandardString';
 
-const scenarios = [
-    {
-        scenarioName: 'All props defined',
-        props: {
-            propertyName: 'propertyName mocked',
-            description: 'description mocked',
-            nullable: true,
-            refType: ['first', 'second'],
-            format: 'format mocked',
-            isArray: true,
+const scenarios: [string, { input: any; output: string }][] = [
+    [
+        'All props defined',
+        {
+            input: {
+                propertyName: 'propertyName mocked',
+                description: 'description mocked',
+                nullable: true,
+                refType: ['first', 'second'],
+                format: 'format mocked',
+                isArray: true,
+            },
+            output: `/**\n * description mocked\n */\n\tpropertyName mocked?: second[];format: "format mocked"\n`,
         },
-        expected: `/**\n * description mocked\n */\n\tpropertyName mocked?: second[];format: "format mocked"\n`,
-    },
-    {
-        scenarioName: 'Description undefined',
-        props: {
-            propertyName: 'propertyName mocked',
-            description: undefined,
-            nullable: true,
-            refType: ['first', 'second'],
-            format: 'format mocked',
-            isArray: true,
+    ],
+    [
+        'Description undefined',
+        {
+            input: {
+                propertyName: 'propertyName mocked',
+                description: undefined,
+                nullable: true,
+                refType: ['first', 'second'],
+                format: 'format mocked',
+                isArray: true,
+            },
+            output: `\tpropertyName mocked?: second[];format: "format mocked"\n`,
         },
-        expected: `\tpropertyName mocked?: second[];format: "format mocked"\n`,
-    },
-    {
-        scenarioName: 'Nullable false',
-        props: {
-            propertyName: 'propertyName mocked',
-            description: undefined,
-            nullable: false,
-            refType: ['first', 'second'],
-            format: 'format mocked',
-            isArray: true,
+    ],
+    [
+        'Nullable false',
+        {
+            input: {
+                propertyName: 'propertyName mocked',
+                description: undefined,
+                nullable: false,
+                refType: ['first', 'second'],
+                format: 'format mocked',
+                isArray: true,
+            },
+            output: `\tpropertyName mocked: second[];format: "format mocked"\n`,
         },
-        expected: `\tpropertyName mocked: second[];format: "format mocked"\n`,
-    },
-    {
-        scenarioName: 'IsArray false',
-        props: {
-            propertyName: 'propertyName mocked',
-            description: undefined,
-            nullable: true,
-            refType: ['first', 'second'],
-            format: 'format mocked',
-            isArray: false,
+    ],
+    [
+        'IsArray false',
+        {
+            input: {
+                propertyName: 'propertyName mocked',
+                description: undefined,
+                nullable: true,
+                refType: ['first', 'second'],
+                format: 'format mocked',
+                isArray: false,
+            },
+            output: `\tpropertyName mocked?: second;format: "format mocked"\n`,
         },
-        expected: `\tpropertyName mocked?: second;format: "format mocked"\n`,
-    },
-    {
-        scenarioName: 'Format undefined',
-        props: {
-            propertyName: 'propertyName mocked',
-            description: undefined,
-            nullable: true,
-            refType: ['first', 'second'],
-            format: undefined,
-            isArray: false,
+    ],
+    [
+        'Format undefined',
+        {
+            input: {
+                propertyName: 'propertyName mocked',
+                description: undefined,
+                nullable: true,
+                refType: ['first', 'second'],
+                format: undefined,
+                isArray: false,
+            },
+            output: `\tpropertyName mocked?: second;\n`,
         },
-        expected: `\tpropertyName mocked?: second;\n`,
-    },
+    ],
 ];
 
 describe(`getDescription`, () => {
-    scenarios.forEach(config => {
-        it(`should return expected string when for ${config.scenarioName}`, async () => {
-            const result = getStandardString(config.props);
+    it.each(scenarios)(`should return expected string when for %s`, (_, { input, output }) => {
+        const result = getStandardString(input);
 
-            expect(result).toBe(config.expected);
-        });
+        expect(result).toBe(output);
     });
 });
