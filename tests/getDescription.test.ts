@@ -1,8 +1,12 @@
 import { getDescription } from '../src/helpers/getDescription';
+import { SchemaProperties } from '../src/types';
 
-const scenarios: [string, { input?: string; output: string }][] = [
-    ['return a description when provided', { input: 'mock description', output: `/**\n * mock description\n */\n` }],
-    ['return empty string when description is undefined', { input: undefined, output: '' }],
+const scenarios: [string, { input: Pick<SchemaProperties, 'description'>; output: string }][] = [
+    [
+        'return a description when provided',
+        { input: { description: 'mock description' }, output: `/**\n * mock description\n */\n` },
+    ],
+    ['return empty string when description is undefined', { input: { description: undefined }, output: '' }],
 ];
 
 describe(`getDescription`, () => {
