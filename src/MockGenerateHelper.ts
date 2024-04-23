@@ -278,7 +278,7 @@ export class MockGenerateHelper {
                 result = '[]';
                 break;
             default: {
-                result = ' // TODO: Wrong dictionary value';
+                result = ' // Error: Invalid additionalProperties.type';
                 break;
             }
         }
