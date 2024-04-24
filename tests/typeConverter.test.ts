@@ -1,4 +1,6 @@
-import { parseEnum, parseObject, parseSchemas } from '../src/typesConverter';
+import { parseEnum } from '../src/helpers/parseEnum';
+import { parseObject } from '../src/helpers/parseObject';
+import { parseSchemas } from '../src/typesConverter';
 import { aSwaggerV2Mock, aSwaggerV3Mock } from '../src/utils/test-utils';
 
 describe('TS types generation', () => {
@@ -12,10 +14,7 @@ describe('TS types generation', () => {
 
         const result = parseObject({ schema, schemaKey: 'TypeWithId' });
 
-        const expectedString = `export interface TypeWithId {
-    id: string; // format: "guid"
-}
-`;
+        const expectedString = `export interface TypeWithId {\n\tid: string; // format: "guid"\n}\n`;
         expect(result).toEqual(expectedString);
     });
 
@@ -38,10 +37,8 @@ describe('TS types generation', () => {
 
         const result = parseObject({ schema: swaggerJson, schemaKey: 'NumberType' });
 
-        const expectedString = `export interface NumberType {
-    price: number; // format: "decimal"; maximum: 100; exclusiveMinimum: true; exclusiveMaximum: true
-}
-`;
+        const expectedString = `export interface NumberType {\n\tprice: number; // format: "decimal"; maximum: 100; exclusiveMinimum: true; exclusiveMaximum: true\n}\n`;
+
         expect(result).toEqual(expectedString);
     });
 
@@ -62,10 +59,8 @@ describe('TS types generation', () => {
 
         const result = parseObject({ schema: swaggerJson, schemaKey: 'NumberType' });
 
-        const expectedString = `export interface NumberType {
-    price: number; // exclusiveMinimum: true; exclusiveMaximum: true
-}
-`;
+        const expectedString = `export interface NumberType {\n\tprice: number; // exclusiveMinimum: true; exclusiveMaximum: true\n}\n`;
+
         expect(result).toEqual(expectedString);
     });
 
@@ -85,10 +80,8 @@ describe('TS types generation', () => {
 
         const result = parseObject({ schema: swaggerJson, schemaKey: 'Format' });
 
-        const expectedString = `export interface Format {
-    password: string; // format: "password"; minLength: 1; maxLength: 255
-}
-`;
+        const expectedString = `export interface Format {\n\tpassword: string; // format: "password"; minLength: 1; maxLength: 255\n}\n`;
+
         expect(result).toEqual(expectedString);
     });
 
@@ -107,16 +100,14 @@ describe('TS types generation', () => {
 
         const result = parseObject({ schema: swaggerJson, schemaKey: 'AssetDto' });
 
-        const expectedString = `/**
- * DESCRIPTION 
- */
+        const expectedString = `/**\n * DESCRIPTION\n */
 export interface AssetDto {
-    id: string; // format: "guid"
-    name?: string;
-    type: AssetType;
-    files?: AssetFileDto[];
-}
-`;
+\tid: string; // format: "guid"
+\tname?: string;
+\ttype: AssetType;
+\tfiles?: AssetFileDto[];
+}\n`;
+
         expect(result).toEqual(expectedString);
     });
 
@@ -170,14 +161,14 @@ export interface AssetDto {
         const result = parseObject({ schema: swaggerJson, schemaKey: 'ServiceTypeDto' });
 
         const expectedString = `export interface ServiceTypeDto extends ServiceTypeBasicDto {
-    description?: string;
-    turnAroundDays?: number;
-    serviceCategory?: ServiceCategoryDto;
-    priceRanges?: ServiceTypePriceRangeDto[];
-    lowestPrice?: number; // format: "decimal"
-    isConfigured?: boolean;
-}
-`;
+\tdescription?: string;
+\tturnAroundDays?: number;
+\tserviceCategory?: ServiceCategoryDto;
+\tpriceRanges?: ServiceTypePriceRangeDto[];
+\tlowestPrice?: number; // format: "decimal"
+\tisConfigured?: boolean;
+}\n`;
+
         expect(result).toEqual(expectedString);
     });
 
@@ -202,9 +193,8 @@ export interface AssetDto {
 
         const result = parseObject({ schema: swaggerJson, schemaKey: 'CustomType' });
 
-        const expectedString = `export interface CustomType extends One, Two, Three {
-}
-`;
+        const expectedString = `export interface CustomType extends One, Two, Three {\n}\n`;
+
         expect(result).toEqual(expectedString);
     });
 
@@ -239,10 +229,10 @@ export interface AssetDto {
         });
 
         const expectedTypesString = `export interface PatchBriefDto {
-    requestedDelivery?: string; // format: "date-time"
-    tiers?: PriceTier[];
-}
-`;
+\trequestedDelivery?: string; // format: "date-time"
+\ttiers?: PriceTier[];
+}\n`;
+
         expect(result).toEqual(expectedTypesString);
     });
 
@@ -269,11 +259,11 @@ export interface AssetDto {
         const result = parseObject({ schema: swaggerJson, schemaKey: 'ServiceTypePriceRangeDto' });
 
         const expectedString = `export interface ServiceTypePriceRangeDto {
-    priceTier: PriceTier;
-    lowerBound: number; // format: "float"
-    upperBound?: number; // format: "decimal"
-}
-`;
+\tpriceTier: PriceTier;
+\tlowerBound: number; // format: "float"
+\tupperBound?: number; // format: "decimal"
+}\n`;
+
         expect(result).toEqual(expectedString);
     });
 
@@ -311,11 +301,11 @@ export interface AssetDto {
         const result = parseObject({ schema: swaggerJson, schemaKey: 'PageOfAssetDto' });
 
         const expectedString = `export interface PageOfAssetDto {
-    data?: AssetDto[];
-    next?: NextPage;
-    meta?: MetaPage;
-}
-`;
+\tdata?: AssetDto[];
+\tnext?: NextPage;
+\tmeta?: MetaPage;
+}\n`;
+
         expect(result).toEqual(expectedString);
     });
 
@@ -365,14 +355,14 @@ export interface AssetDto {
         const result = parseObject({ schema: swaggerJson, schemaKey: 'CreateBriefDto' });
 
         const expectedString = `export interface CreateBriefDto {
-    title: string; // minLength: 1; maxLength: 255
-    description: string; // minLength: 1; maxLength: 4000
-    briefType: BriefType;
-    inspirationalLinks?: string[]; // maxItems: 5
-    serviceType?: ServiceTypeBasicDto;
-    providerServiceId?: string; // format: "guid"
-}
-`;
+\ttitle: string; // minLength: 1; maxLength: 255
+\tdescription: string; // minLength: 1; maxLength: 4000
+\tbriefType: BriefType;
+\tinspirationalLinks?: string[]; // maxItems: 5
+\tserviceType?: ServiceTypeBasicDto;
+\tproviderServiceId?: string; // format: "guid"
+}\n`;
+
         expect(result).toEqual(expectedString);
     });
 
@@ -422,17 +412,17 @@ export interface AssetDto {
         const result = parseObject({ schema: swaggerJson, schemaKey: 'AssetFileDto' });
 
         const expectedString = `export interface AssetFileDto {
-    state: FileState;
-    kind: FileKind;
-    creationTime: string; // format: "date-time"
-    contentType?: string;
-    hash?: string;
-    location?: string;
-    sizeBytes: number; // format: "int64"
-    duration?: number; // format: "double"
-    url?: string;
-}
-`;
+\tstate: FileState;
+\tkind: FileKind;
+\tcreationTime: string; // format: "date-time"
+\tcontentType?: string;
+\thash?: string;
+\tlocation?: string;
+\tsizeBytes: number; // format: "int64"
+\tduration?: number; // format: "double"
+\turl?: string;
+}\n`;
+
         expect(result).toEqual(expectedString);
     });
 
@@ -541,31 +531,30 @@ export interface AssetDto {
         const resultString = parseSchemas({ json });
 
         const expectedString = `export interface AssetDto {
-    id: string; // format: "guid"
-    name?: string;
-    type: AssetType;
-    files?: AssetFileDto[];
+\tid: string; // format: "guid"
+\tname?: string;
+\ttype: AssetType;
+\tfiles?: AssetFileDto[];
 }
 export type AssetType = 'Audio' | 'Video' | 'Image';
 export interface AssetFileDto {
-    state: FileState;
-    kind: FileKind;
-    creationTime: string; // format: "date-time"
-    contentType?: string;
-    hash?: string;
-    location?: string;
-    sizeBytes: number; // format: "int64"
-    duration?: number; // format: "double"
-    url?: string;
+\tstate: FileState;
+\tkind: FileKind;
+\tcreationTime: string; // format: "date-time"
+\tcontentType?: string;
+\thash?: string;
+\tlocation?: string;
+\tsizeBytes: number; // format: "int64"
+\tduration?: number; // format: "double"
+\turl?: string;
 }
 export type FileState = 'Created' | 'Uploading' | 'Processing' | 'Failed' | 'Available' | 'Deleted';
-export type FileKind = 'Original' | 'Stream' | 'Waveform';
- 
-`;
+export type FileKind = 'Original' | 'Stream' | 'Waveform';\n\n`;
+
         expect(resultString).toEqual(expectedString);
     });
 
-    it('should return TODO text if data type is wrong (catch block)', async () => {
+    it('should return Error text if data type is wrong (catch block)', async () => {
         const json = aSwaggerV3Mock({
             FileState: {
                 type: 'string',
@@ -576,12 +565,12 @@ export type FileKind = 'Original' | 'Stream' | 'Waveform';
 
         const resultString = parseSchemas({ json });
 
-        const expectedString = '// TODO: ERROR! Something wrong with FileState \n \n';
+        const expectedString = '// Error: Unhandled error with FileState\n\n';
 
         expect(resultString).toEqual(expectedString);
     });
 
-    it('should return TODO text if type was not converted', async () => {
+    it('should return Error text if type was not converted', async () => {
         const json = aSwaggerV3Mock({
             AssetDto: {
                 type: 'object',
@@ -614,16 +603,9 @@ export type FileKind = 'Original' | 'Stream' | 'Waveform';
 
         const resultString = parseSchemas({ json });
 
-        const expectedString = `export interface AssetDto {
-    id: string; // format: "guid"
-    name?: string;
-}
-// TODO: ERROR! Something wrong with WrongData 
-export interface AssetFileDto {
-    creationTime: string; // format: "date-time"
-}
- 
-`;
+        const expectedString = `export interface AssetDto {\n\tid: string; // format: "guid"\n\tname?: string;\n}
+// Error: Unsupported schema for WrongData\nexport interface AssetFileDto {\n\tcreationTime: string; // format: "date-time"\n}\n\n`;
+
         expect(resultString).toEqual(expectedString);
     });
 
@@ -647,11 +629,7 @@ export interface AssetFileDto {
 
         const resultString = parseSchemas({ json });
 
-        const expectedString = `export interface ArrayOfIntegers {
-    invoiceNumbers?: number[];
-}
- 
-`;
+        const expectedString = `export interface ArrayOfIntegers {\n\tinvoiceNumbers?: number[];\n}\n\n`;
         expect(resultString).toEqual(expectedString);
     });
 
@@ -670,11 +648,8 @@ export interface AssetFileDto {
 
         const resultString = parseSchemas({ json });
 
-        const expectedString = `export interface Notification {
-    payload?: any;
-}
- 
-`;
+        const expectedString = `export interface Notification {\n\tpayload?: any;\n}\n\n`;
+
         expect(resultString).toEqual(expectedString);
     });
 
@@ -695,11 +670,8 @@ export interface AssetFileDto {
 
         const resultString = parseSchemas({ json });
 
-        const expectedString = `export interface ArrayOfAny {
-    invoiceNumbers?: any[];
-}
- 
-`;
+        const expectedString = `export interface ArrayOfAny {\n\tinvoiceNumbers?: any[];\n}\n\n`;
+
         expect(resultString).toEqual(expectedString);
     });
 
@@ -750,15 +722,9 @@ export interface AssetFileDto {
         const expectedString = `export type BillingProviderKind = 'Legacy' | 'Fusebill';
 export type ServiceOfferKind = 'MasteringAndDistribution' | 'Video' | 'Samples' | 'Mastering' | 'Distribution';
 export interface UserMetadata {
-    serviceOffers: {
-[key in ServiceOfferKind]: BillingProviderKind; 
- }; 
-    copy: {
-[key in ServiceOfferKind]: BillingProviderKind; 
- }; 
-}
- 
-`;
+\tserviceOffers: {\n\t[key in ServiceOfferKind]: BillingProviderKind;\n};
+\tcopy: {\n\t[key in ServiceOfferKind]: BillingProviderKind;\n};\n}\n\n`;
+
         expect(resultString).toEqual(expectedString);
     });
 });
@@ -810,15 +776,9 @@ it('should return type for a multiple "dictionary" types', async () => {
     const expectedString = `export type BillingProviderKind = 'Legacy' | 'Fusebill';
 export type ServiceOfferKind = 'MasteringAndDistribution' | 'Video' | 'Samples' | 'Mastering' | 'Distribution';
 export interface UserSubscriptions {
-    current: {
-[key in ServiceOfferKind]: CurrentSubscription; 
- }; 
-    next: {
-[key in ServiceOfferKind]: NextSubscription; 
- }; 
-}
- 
-`;
+\tcurrent: {\n\t[key in ServiceOfferKind]: CurrentSubscription;\n};
+\tnext: {\n\t[key in ServiceOfferKind]: NextSubscription;\n};\n}\n\n`;
+
     expect(resultString).toEqual(expectedString);
 });
 
@@ -904,26 +864,19 @@ it('should return type for a "dictionary" type boolean', async () => {
 
     const resultString = parseSchemas({ json });
 
-    const expectedString = `export interface ContentDtoOfCollectionDto {
-    data?: CollectionDto[];
-    paging?: PagingOptionsDto;
-}
+    const expectedString = `export interface ContentDtoOfCollectionDto {\n\tdata?: CollectionDto[];\n\tpaging?: PagingOptionsDto;\n}
 export interface CollectionDto {
-    id: string; // format: "guid"
-    ownerId: string; // format: "guid"
-    name?: string;
-    type: CollectionType;
-    creationTime: string; // format: "date-time"
-    lastModifiedTime: string; // format: "date-time"
-    isSoftDeleted: boolean;
-    collaborators?: CollaboratorDto[];
-    permissions: {
-[key in UserOperation]: boolean; 
- }; 
-}
-export type UserOperation = 'Read' | 'Write';
- 
-`;
+\tid: string; // format: "guid"
+\townerId: string; // format: "guid"
+\tname?: string;
+\ttype: CollectionType;
+\tcreationTime: string; // format: "date-time"
+\tlastModifiedTime: string; // format: "date-time"
+\tisSoftDeleted: boolean;
+\tcollaborators?: CollaboratorDto[];
+\tpermissions: {\n\t[key in UserOperation]: boolean;\n};\n}
+export type UserOperation = 'Read' | 'Write';\n\n`;
+
     expect(resultString).toEqual(expectedString);
 });
 
@@ -952,12 +905,9 @@ it('should return overrided enum schema', async () => {
         ],
     });
 
-    const expectedString = `/**
- * Warning! This type is overrided 
- */
-export type ServiceOfferKind = 'masteringAndDistribution' | 'video' | 'samples' | 'mastering' | 'distribution' | 'sessions';
- 
-`;
+    const expectedString = `/**\n * Warning! This type is overrided\n */
+export type ServiceOfferKind = 'masteringAndDistribution' | 'video' | 'samples' | 'mastering' | 'distribution' | 'sessions';\n\n`;
+
     expect(resultString).toEqual(expectedString);
 });
 
@@ -1022,42 +972,39 @@ it('should return description', async () => {
     const resultString = parseSchemas({ json });
 
     const expectedString = `/**
- * PlanFrequencyIdentifier description 
+ * PlanFrequencyIdentifier description
  */
 export interface PlanFrequencyIdentifier {
 /**
- * The Fusebill plan code. 
+ * The Fusebill plan code.
  */
-    code?: string;
+\tcode?: string;
 /**
- * The current quantity of the product within the subscription. 
+ * The current quantity of the product within the subscription.
  */
-    currentQuantity: number; // format: "decimal"
+\tcurrentQuantity: number; // format: "decimal"
 /**
- * The number of credits associated to this subscription product. 
+ * The number of credits associated to this subscription product.
  */
-    numberOfCredits?: number; // format: "int32"
+\tnumberOfCredits?: number; // format: "int32"
 /**
- * The interval of the plan (monthly/yearly). 
+ * The interval of the plan (monthly/yearly).
  */
-    frequency: Interval;
+\tfrequency: Interval;
 /**
- * Says if the user has overdue payments by service offer. 
+ * Says if the user has overdue payments by service offer.
  */
-    hasOverduePayment: {
-[key in ServiceOfferKind]: boolean; 
- }; 
+\thasOverduePayment: {\n\t[key in ServiceOfferKind]: boolean;\n};
 /**
- * The user IDs. 
+ * The user IDs.
  */
-    userIds: string[];
+\tuserIds: string[];
 /**
- * Boolean description 
+ * Boolean description
  */
-    isDefault: boolean;
-}
- 
-`;
+\tisDefault: boolean;
+}\n\n`;
+
     expect(resultString).toEqual(expectedString);
 });
 
@@ -1082,12 +1029,8 @@ it('should return CollectionResponseDto', async () => {
 
     const resultString = parseSchemas({ json });
 
-    const expectedString = `export interface CollectionResponseDto {
-    data: StoredCreditCardDto[];
-    paging: PagingDto;
-}
- 
-`;
+    const expectedString = `export interface CollectionResponseDto {\n\tdata: StoredCreditCardDto[];\n\tpaging: PagingDto;\n}\n\n`;
+
     expect(resultString).toEqual(expectedString);
 });
 
@@ -1121,14 +1064,8 @@ describe('Dictionary types', () => {
 
         const resultString = parseSchemas({ json });
 
-        const expectedString = `export interface GlobalStateCounters {
-    states: {
-[key in ProductState]: number; 
- }; 
-}
-export type ProductState = 'Draft' | 'ConfirmDraft';
- 
-`;
+        const expectedString = `export interface GlobalStateCounters {\n\tstates: {\n\t[key in ProductState]: number;\n};\n}\nexport type ProductState = 'Draft' | 'ConfirmDraft';\n\n`;
+
         expect(resultString).toEqual(expectedString);
     });
 
@@ -1160,14 +1097,8 @@ export type ProductState = 'Draft' | 'ConfirmDraft';
 
         const resultString = parseSchemas({ json });
 
-        const expectedString = `export interface GlobalStateCounters {
-    states: {
-[key in ProductState]: number; 
- }; 
-}
-export type ProductState = 'Draft' | 'ConfirmDraft';
- 
-`;
+        const expectedString = `export interface GlobalStateCounters {\n\tstates: {\n\t[key in ProductState]: number;\n};\n}\nexport type ProductState = 'Draft' | 'ConfirmDraft';\n\n`;
+
         expect(resultString).toEqual(expectedString);
     });
 
@@ -1199,14 +1130,8 @@ export type ProductState = 'Draft' | 'ConfirmDraft';
 
         const resultString = parseSchemas({ json });
 
-        const expectedString = `export interface GlobalStateCounters {
-    states: {
-[key in ProductState]: string; 
- }; 
-}
-export type ProductState = 'Draft' | 'ConfirmDraft';
- 
-`;
+        const expectedString = `export interface GlobalStateCounters {\n\tstates: {\n\t[key in ProductState]: string;\n};\n}\nexport type ProductState = 'Draft' | 'ConfirmDraft';\n\n`;
+
         expect(resultString).toEqual(expectedString);
     });
 });

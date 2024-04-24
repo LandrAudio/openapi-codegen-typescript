@@ -60,10 +60,7 @@ export interface PropertyNameProp {
     propertyName: string;
 }
 
-export interface ResultStringProps extends PropertyNameProp {
-    nullable?: boolean;
-    description?: string;
-}
+export type ResultStringProps = Pick<SchemaProperties, 'propertyName' | 'description' | 'nullable'>;
 
 export interface EnumProps {
     type: string;
@@ -106,30 +103,53 @@ export interface GetSchemasProps {
     overrideSchemas?: Array<EnumSchema>;
 }
 
-export interface ResultStringPropsForNumberType extends ResultStringProps {
-    format?: string;
-    description?: string;
-    minimum?: number;
-    maximum?: number;
-    exclusiveMinimum?: boolean;
-    exclusiveMaximum?: boolean;
-}
+export type ResultStringPropsForNumberType = Pick<
+    SchemaProperties,
+    | 'description'
+    | 'propertyName'
+    | 'nullable'
+    | 'format'
+    | 'minimum'
+    | 'maximum'
+    | 'exclusiveMinimum'
+    | 'exclusiveMaximum'
+>;
 
-export interface ResultStringPropsForArrayType extends ResultStringProps {
-    format?: string;
-    description?: string;
+export interface ResultStringPropsForArrayType
+    extends Pick<
+        SchemaProperties,
+        'propertyName' | 'description' | 'nullable' | 'format' | 'minItems' | 'maxItems' | 'uniqueItems'
+    > {
     refType: string[];
-    minItems?: number;
-    maxItems?: number;
-    uniqueItems?: boolean;
 }
 
-export interface ResultStringPropsForStringType extends ResultStringProps {
-    format?: string;
-    description?: string;
-    minLength?: number;
-    maxLength?: number;
+export type ResultStringPropsForStringType = Pick<
+    SchemaProperties,
+    'propertyName' | 'description' | 'nullable' | 'format' | 'minLength' | 'maxLength'
+>;
+
+export type ResultStringForAdditionalPropertiesType = Pick<
+    SchemaProperties,
+    'additionalProperties' | 'xDictionaryKey' | 'description' | 'propertyName'
+>;
+
+export type ResultStringForArrayWithoutItemRef = Pick<
+    SchemaProperties,
+    'items' | 'propertyName' | 'description' | 'nullable' | 'format' | 'maxItems'
+>;
+
+export interface DictionaryValueResultString extends Pick<SchemaProperties, 'description' | 'propertyName'> {
+    value: string;
+    dictionaryRef: string;
 }
+export interface InvalidSchemaProperties extends Pick<SchemaProperties, 'propertyName'> {
+    errorMessage: string;
+}
+
+export type ResultStringForDictionaryKey = Pick<
+    SchemaProperties,
+    'xDictionaryKey' | 'additionalProperties' | 'description' | 'propertyName'
+>;
 
 export interface MockArrayProps extends PropertyNameProp {
     value: any;
@@ -138,14 +158,12 @@ export interface MockArrayProps extends PropertyNameProp {
 export interface GetStringMockProps extends PropertyNameProp {
     name: string;
     format: string;
-    minLength: number;
-    maxLength: number;
 }
 
 export interface GetNumberMockProps extends PropertyNameProp {
     type: DataTypes.Integer | DataTypes.Number;
-    minimum: number;
-    maximum: number;
+    minimum?: number;
+    maximum?: number;
 }
 
 export interface GetArrayOfItemsMockProps extends PropertyNameProp {
@@ -182,6 +200,7 @@ export interface SwaggerSchema {
     description?: string;
     properties?: {
         type?: string;
+        [key: string]: any;
     };
 }
 
@@ -192,3 +211,25 @@ export interface ConvertRefType extends PropertyNameProp {
     ref: string;
     isArray?: boolean;
 }
+
+export type SchemaProperties = {
+    $ref: any;
+    additionalProperties: any;
+    description: string | undefined;
+    exclusiveMinimum?: boolean;
+    exclusiveMaximum?: boolean;
+    format: string;
+    items: any;
+    maxItems?: number;
+    maxLength?: number;
+    maximum?: number;
+    minItems?: number;
+    minLength?: number;
+    minimum?: number;
+    nullable: boolean;
+    oneOf: any;
+    propertyName: string;
+    type: string;
+    uniqueItems?: boolean;
+    xDictionaryKey?: any;
+};

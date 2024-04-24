@@ -1,15 +1,11 @@
-import { DataTypes, SwaggerProps } from '../types';
+import { DataTypes, ResultStringForAdditionalPropertiesType, SwaggerProps } from '../types';
 import { getDescription } from './getDescription';
+import { getDictionaryValueResultString } from './getDictionaryValueResultString';
 import { parseRefType } from './parseRefType';
-
-export type ResultStringForAdditionalPropertiesType = {
-    additionalProperties: any;
-    description?: string;
-    propertyName: string;
-};
 
 export const getResultStringForAdditionalPropertiesType = ({
     additionalProperties,
+    xDictionaryKey,
     description,
     propertyName,
 }: ResultStringForAdditionalPropertiesType) => {
@@ -32,13 +28,24 @@ export const getResultStringForAdditionalPropertiesType = ({
             if (additionalProperties.items && additionalProperties.items[SwaggerProps.$ref]) {
                 res = `${parseRefType(additionalProperties.items[SwaggerProps.$ref].split('/'))}[]`;
             } else {
-                res = `"// TODO: Something is wrong"`;
+                res = `"// Error: The additionalProperties items or the items ref is missing"`;
             }
             break;
         default:
-            res = `"// TODO: Something is wrong, type ${additionalProperties.type} is not supported"`;
+            res = `"// Error: ${additionalProperties.type} is not supported"`;
             break;
     }
 
-    return `${getDescription(description)}    ${propertyName}: {\n [key: string]: ${res};\n };\n`;
+    if (xDictionaryKey && !!xDictionaryKey[SwaggerProps.$ref]) {
+        const dictionaryRef = parseRefType(xDictionaryKey[SwaggerProps.$ref].split('/'));
+
+        return getDictionaryValueResultString({
+            description,
+            dictionaryRef,
+            propertyName,
+            value: res,
+        });
+    } else {
+        return `${getDescription({ description })}\t${propertyName}: {\n\t[key: string]: ${res};\n};\n`;
+    }
 };

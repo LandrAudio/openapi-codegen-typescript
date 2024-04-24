@@ -143,8 +143,6 @@ export const parseSchema = ({ schema, name, DTOs, overrideSchemas }: ParseSchema
                         name,
                         propertyName,
                         format,
-                        minLength,
-                        maxLength,
                     });
                     mocks.push(stringMock);
                 }
