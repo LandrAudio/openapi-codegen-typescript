@@ -1,5 +1,107 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Additional properties without dictionary should generate mocks for a type array 1`] = `
+"/* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {FilterCounters} from './pathToTypes';
+
+export const aFilterCountersAPI = (overrides?: Partial<FilterCounters>): FilterCounters => {
+  return {
+    instrumentFilters: {
+	 est: [], 
+},
+  ...overrides,
+  };
+};
+ 
+"
+`;
+
+exports[`Additional properties without dictionary should generate mocks for a type boolean 1`] = `
+"/* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {FilterCounters} from './pathToTypes';
+
+export const aFilterCountersAPI = (overrides?: Partial<FilterCounters>): FilterCounters => {
+  return {
+    instrumentFilters: {
+	 est: true, 
+},
+  ...overrides,
+  };
+};
+ 
+"
+`;
+
+exports[`Additional properties without dictionary should generate mocks for a type integer 1`] = `
+"/* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {FilterCounters} from './pathToTypes';
+
+export const aFilterCountersAPI = (overrides?: Partial<FilterCounters>): FilterCounters => {
+  return {
+    instrumentFilters: {
+	 reiciendis: 65, 
+},
+  ...overrides,
+  };
+};
+ 
+"
+`;
+
+exports[`Additional properties without dictionary should generate mocks for a type invalid 1`] = `
+"/* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {FilterCounters} from './pathToTypes';
+
+export const aFilterCountersAPI = (overrides?: Partial<FilterCounters>): FilterCounters => {
+  return {
+    instrumentFilters: {
+	  /** Error: Invalid additionalProperties.type instrumentFilters */ 
+},
+  ...overrides,
+  };
+};
+ 
+"
+`;
+
+exports[`Additional properties without dictionary should generate mocks for a type number 1`] = `
+"/* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {FilterCounters} from './pathToTypes';
+
+export const aFilterCountersAPI = (overrides?: Partial<FilterCounters>): FilterCounters => {
+  return {
+    instrumentFilters: {
+	 reiciendis: 64.8914810270071, 
+},
+  ...overrides,
+  };
+};
+ 
+"
+`;
+
+exports[`Additional properties without dictionary should generate mocks for a type string 1`] = `
+"/* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {FilterCounters} from './pathToTypes';
+
+export const aFilterCountersAPI = (overrides?: Partial<FilterCounters>): FilterCounters => {
+  return {
+    instrumentFilters: {
+	 et: 'est reiciendis dolorum neque voluptatibus quo non', 
+},
+  ...overrides,
+  };
+};
+ 
+"
+`;
+
 exports[`Dictionary type should generate mocks for a "dictionary" type array 1`] = `
 "/* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable @typescript-eslint/no-unused-vars */

@@ -6,6 +6,7 @@ import {
     DataTypes,
     EnumProps,
     EnumSchema,
+    GetAdditionalPropertiesProps,
     GetArrayOfItemsMockProps,
     GetArrayOfOneOfMockProps,
     GetDictionaryMockProps,
@@ -254,6 +255,47 @@ export class MockGenerateHelper {
         }
 
         return { propertyName, value: `" // TODO: Wrong dictionary value",` };
+    }
+
+    getAdditionalPropertiesMock({ propertyName, additionalProperties }: GetAdditionalPropertiesProps): MockArrayProps {
+        let hasError: boolean;
+        let mockValue: string | Function | undefined = undefined;
+
+        switch (additionalProperties.type) {
+            case DataTypes.Integer:
+                hasError = false;
+                mockValue = () => casual.integer(0, 100);
+                break;
+            case DataTypes.Number:
+                hasError = false;
+                mockValue = () => casual.double(0, 100);
+                break;
+            case DataTypes.String:
+                hasError = false;
+                mockValue = () => `'${casual.string}'`;
+                break;
+            case DataTypes.Boolean:
+                hasError = false;
+                mockValue = 'true';
+                break;
+            case DataTypes.Array:
+                hasError = false;
+                mockValue = '[]';
+                break;
+            default: {
+                hasError = true;
+                mockValue = ` /** Error: Invalid additionalProperties.type ${propertyName} */`;
+                break;
+            }
+        }
+
+        const result = typeof mockValue === 'function' ? mockValue() : mockValue;
+        const value = hasError ? `{\n\t ${result} \n}` : `{\n\t ${casual.word}: ${result}, \n}`;
+
+        return {
+            propertyName,
+            value,
+        };
     }
 
     getAnyMock({ propertyName }: { propertyName: string }): MockArrayProps {

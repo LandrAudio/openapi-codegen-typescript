@@ -193,6 +193,15 @@ export const parseSchema = ({ schema, name, DTOs, overrideSchemas }: ParseSchema
                     );
                 }
 
+                if (!xDictionaryKey && additionalProperties) {
+                    mocks.push(
+                        mockGenerator.getAdditionalPropertiesMock({
+                            propertyName,
+                            additionalProperties,
+                        }),
+                    );
+                }
+
                 if (!type && !$ref && !oneOf) {
                     mocks.push(mockGenerator.getAnyMock({ propertyName }));
                 }

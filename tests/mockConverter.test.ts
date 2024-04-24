@@ -1768,46 +1768,203 @@ export const aGlobalStateCountersAPI = (overrides?: Partial<GlobalStateCounters>
     it('should generate mocks for a "dictionary" type array', async () => {
         const json = aSwaggerV3Mock({
             ComplexDto: {
-              type: 'object',
-              additionalProperties: false,
-              properties: {
-                name: {
-                  type: 'string',
-                  nullable: true
-                }
-              }
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                    name: {
+                        type: 'string',
+                        nullable: true,
+                    },
+                },
             },
             MainDto: {
-              type: 'object',
-              additionalProperties: false,
-              properties: {
-                contributors: {
-                  type: 'object',
-                  nullable: true,
-                  'x-dictionaryKey': {
-                    $ref: '#/components/schemas/Role'
-                  },
-                  additionalProperties: {
-                    type: 'array',
-                    items: {
-                      $ref: '#/components/schemas/ComplexDto'
-                    }
-                  }
-                }
-              }
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                    contributors: {
+                        type: 'object',
+                        nullable: true,
+                        'x-dictionaryKey': {
+                            $ref: '#/components/schemas/Role',
+                        },
+                        additionalProperties: {
+                            type: 'array',
+                            items: {
+                                $ref: '#/components/schemas/ComplexDto',
+                            },
+                        },
+                    },
+                },
             },
             Role: {
-              type: 'string',
-              'x-enumNames': [
-                'Role1',
-                'Role2',
-                'Role3'
-              ],
-              enum: [
-                'role1',
-                'role2',
-                'role3'
-              ]
+                type: 'string',
+                'x-enumNames': ['Role1', 'Role2', 'Role3'],
+                enum: ['role1', 'role2', 'role3'],
+            },
+        });
+
+        const result = await convertToMocks({
+            json,
+            fileName: "doesn't matter",
+            folderPath: './someFolder',
+            typesPath: './pathToTypes',
+        });
+
+        expect(result).toMatchSnapshot();
+    });
+});
+
+describe('Additional properties without dictionary', () => {
+    it('should generate mocks for a type integer', async () => {
+        const json = aSwaggerV3Mock({
+            FilterCounters: {
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                    instrumentFilters: {
+                        type: 'object',
+                        nullable: true,
+                        additionalProperties: {
+                            type: 'integer',
+                            format: 'int64',
+                        },
+                    },
+                },
+            },
+        });
+
+        const result = await convertToMocks({
+            json,
+            fileName: "doesn't matter",
+            folderPath: './someFolder',
+            typesPath: './pathToTypes',
+        });
+
+        expect(result).toMatchSnapshot();
+    });
+
+    it('should generate mocks for a type number', async () => {
+        const json = aSwaggerV3Mock({
+            FilterCounters: {
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                    instrumentFilters: {
+                        type: 'object',
+                        nullable: true,
+                        additionalProperties: {
+                            type: 'number',
+                        },
+                    },
+                },
+            },
+        });
+
+        const result = await convertToMocks({
+            json,
+            fileName: "doesn't matter",
+            folderPath: './someFolder',
+            typesPath: './pathToTypes',
+        });
+
+        expect(result).toMatchSnapshot();
+    });
+
+    it('should generate mocks for a type string', async () => {
+        const json = aSwaggerV3Mock({
+            FilterCounters: {
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                    instrumentFilters: {
+                        type: 'object',
+                        nullable: true,
+                        additionalProperties: {
+                            type: 'string',
+                        },
+                    },
+                },
+            },
+        });
+
+        const result = await convertToMocks({
+            json,
+            fileName: "doesn't matter",
+            folderPath: './someFolder',
+            typesPath: './pathToTypes',
+        });
+
+        expect(result).toMatchSnapshot();
+    });
+
+    it('should generate mocks for a type boolean', async () => {
+        const json = aSwaggerV3Mock({
+            FilterCounters: {
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                    instrumentFilters: {
+                        type: 'object',
+                        nullable: true,
+                        additionalProperties: {
+                            type: 'boolean',
+                        },
+                    },
+                },
+            },
+        });
+
+        const result = await convertToMocks({
+            json,
+            fileName: "doesn't matter",
+            folderPath: './someFolder',
+            typesPath: './pathToTypes',
+        });
+
+        expect(result).toMatchSnapshot();
+    });
+
+    it('should generate mocks for a type array', async () => {
+        const json = aSwaggerV3Mock({
+            FilterCounters: {
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                    instrumentFilters: {
+                        type: 'object',
+                        nullable: true,
+                        additionalProperties: {
+                            type: 'array',
+                        },
+                    },
+                },
+            },
+        });
+
+        const result = await convertToMocks({
+            json,
+            fileName: "doesn't matter",
+            folderPath: './someFolder',
+            typesPath: './pathToTypes',
+        });
+
+        expect(result).toMatchSnapshot();
+    });
+
+    it('should generate mocks for a type invalid', async () => {
+        const json = aSwaggerV3Mock({
+            FilterCounters: {
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                    instrumentFilters: {
+                        type: 'object',
+                        nullable: true,
+                        additionalProperties: {
+                            type: 'a-invalid-type',
+                        },
+                    },
+                },
             },
         });
 
