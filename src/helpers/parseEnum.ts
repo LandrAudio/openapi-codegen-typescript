@@ -7,7 +7,7 @@ import { ParseProps } from '../types';
 export const parseEnum = ({ schema, schemaKey }: ParseProps): string => {
     const description = schema.description;
 
-    let result = `${description ? `/**\n * ${description} \n */\n` : ''}export type ${schemaKey} = `;
+    let result = `${description ? `/**\n * ${description}\n */\n` : ''}export type ${schemaKey} = `;
 
     const enums = schema.enum;
     const len = enums.length;

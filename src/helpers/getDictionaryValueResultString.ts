@@ -7,5 +7,5 @@ export const getDictionaryValueResultString = ({
     dictionaryRef,
     value,
 }: DictionaryValueResultString) => {
-    return `${getDescription({ description })}    ${propertyName}: {\n[key in ${dictionaryRef}]: ${value}; \n }; \n`;
+    return `${getDescription({ description })}\t${propertyName}: {\n\t[key in ${dictionaryRef}]: ${value};\n};\n`;
 };

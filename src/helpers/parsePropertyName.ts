@@ -5,4 +5,4 @@ export const parsePropertyName = ({
     nullable,
     type,
 }: Pick<SchemaProperties, 'propertyName' | 'type' | 'nullable'>): string =>
-    `    ${propertyName}${nullable ? '?' : ''}: ${type};`;
+    `\t${propertyName}${nullable ? '?' : ''}: ${type};`;
