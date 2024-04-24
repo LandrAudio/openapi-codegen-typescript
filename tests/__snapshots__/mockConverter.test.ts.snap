@@ -59,7 +59,8 @@ import {FilterCounters} from './pathToTypes';
 export const aFilterCountersAPI = (overrides?: Partial<FilterCounters>): FilterCounters => {
   return {
     instrumentFilters: {
-	  /** Error: Invalid additionalProperties.type instrumentFilters */ 
+	/** Error: Invalid additionalProperties.type instrumentFilters */
+	 est: undefined, 
 },
   ...overrides,
   };

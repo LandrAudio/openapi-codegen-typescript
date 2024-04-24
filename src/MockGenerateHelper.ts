@@ -258,39 +258,36 @@ export class MockGenerateHelper {
     }
 
     getAdditionalPropertiesMock({ propertyName, additionalProperties }: GetAdditionalPropertiesProps): MockArrayProps {
-        let hasError: boolean;
+        let hasError = false;
         let mockValue: string | Function | undefined = undefined;
 
         switch (additionalProperties.type) {
             case DataTypes.Integer:
-                hasError = false;
                 mockValue = () => casual.integer(0, 100);
                 break;
             case DataTypes.Number:
-                hasError = false;
                 mockValue = () => casual.double(0, 100);
                 break;
             case DataTypes.String:
-                hasError = false;
                 mockValue = () => `'${casual.string}'`;
                 break;
             case DataTypes.Boolean:
-                hasError = false;
                 mockValue = 'true';
                 break;
             case DataTypes.Array:
-                hasError = false;
                 mockValue = '[]';
                 break;
             default: {
                 hasError = true;
-                mockValue = ` /** Error: Invalid additionalProperties.type ${propertyName} */`;
+                mockValue = `undefined`;
                 break;
             }
         }
 
+        const errorMessage = hasError ? `\n\t/** Error: Invalid additionalProperties.type ${propertyName} */` : '';
+
         const result = typeof mockValue === 'function' ? mockValue() : mockValue;
-        const value = hasError ? `{\n\t ${result} \n}` : `{\n\t ${casual.word}: ${result}, \n}`;
+        const value = `{${errorMessage}\n\t ${casual.word}: ${result}, \n}`;
 
         return {
             propertyName,
