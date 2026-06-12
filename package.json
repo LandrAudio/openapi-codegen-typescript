@@ -5,6 +5,10 @@
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "repository": "LandrAudio/openapi-codegen-typescript",
+    "bugs": {
+        "url": "https://github.com/LandrAudio/openapi-codegen-typescript/issues"
+    },
+    "homepage": "https://github.com/LandrAudio/openapi-codegen-typescript#readme",
     "author": {
         "name": "LANDR Audio Inc.",
         "email": "development@landr.com",
