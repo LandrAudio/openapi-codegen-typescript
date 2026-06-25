@@ -33,7 +33,7 @@ export class MockGenerateHelper {
         if (!format) {
             // simple string
             value = `'${propertyName}-${name.toLowerCase()}'`;
-        } else if (format === StringFormats.Guid || propertyName === PropertyNames.Id) {
+        } else if (format === StringFormats.Guid || format === StringFormats.Uuid || propertyName === PropertyNames.Id) {
             value = `'${this.casual.uuid}'`;
         } else if (format === StringFormats.DateTime || format === StringFormats.TimeSpan) {
             value = `'2019-06-10T06:20:01.389Z'`;

@@ -27,6 +27,7 @@ export enum StringFormats {
     Binary = 'binary',
     Email = 'email',
     Guid = 'guid',
+    Uuid = 'uuid',
     Uri = 'uri',
     Hostname = 'hostname',
     Ipv4 = 'ipv4',
